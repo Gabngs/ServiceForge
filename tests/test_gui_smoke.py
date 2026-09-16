@@ -23,7 +23,7 @@ from generador.settings import Settings  # noqa: E402
 def test_main_window_constructs(qtbot):
     window = MainWindow()
     qtbot.addWidget(window)
-    assert window.windowTitle().startswith("Generador Front-Back")
+    assert window.windowTitle().startswith("Service-Forge")
     assert len(window.preview_widgets) == 10
     assert [a.text() for a in window.menuBar().actions()] == ["&Archivo", "&Editar", "A&yuda"]
 

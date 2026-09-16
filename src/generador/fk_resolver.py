@@ -92,7 +92,7 @@ class FkResolutionCache:
 
 def default_cache_path() -> Path:
     base = os.environ.get("APPDATA") or str(Path.home())
-    return Path(base) / "GeneradorFrontBack" / "fk_resolutions.json"
+    return Path(base) / "ServiceForge" / "fk_resolutions.json"
 
 
 def resolve_fk(

@@ -40,4 +40,4 @@ class Settings:
 
 def default_settings_path() -> Path:
     base = os.environ.get("APPDATA") or str(Path.home())
-    return Path(base) / "GeneradorFrontBack" / "settings.json"
+    return Path(base) / "ServiceForge" / "settings.json"

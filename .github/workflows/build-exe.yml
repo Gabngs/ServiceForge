@@ -52,8 +52,8 @@ jobs:
       - name: Subir .exe como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GeneradorFrontBack-windows
-          path: dist/GeneradorFrontBack.exe
+          name: ServiceForge-windows
+          path: dist/ServiceForge.exe
           if-no-files-found: error
 
       - name: Extraer notas de release del CHANGELOG (solo en tags v*)
@@ -74,5 +74,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/GeneradorFrontBack.exe
+          files: dist/ServiceForge.exe
           body_path: release_notes.md

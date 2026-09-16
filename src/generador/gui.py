@@ -444,10 +444,31 @@ class SettingsDialog(QDialog):
         return "dark" if self.theme_combo.currentIndex() == 0 else "light"
 
 
+class _PreviewPopout(QDialog):
+    """Ventana aparte para el preview — reusa el mismo QTabWidget del panel
+    principal (no una copia) moviéndolo temporalmente, así no hay que
+    sincronizar contenido entre dos widgets distintos."""
+
+    def __init__(self, preview_tabs: QTabWidget, on_close, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Preview — vista ampliada")
+        self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
+        self.resize(1400, 900)
+        self._on_close = on_close
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.addWidget(preview_tabs)
+
+    def closeEvent(self, event) -> None:
+        self._on_close()
+        super().closeEvent(event)
+
+
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("Generador Front-Back — prototipo")
+        self.setWindowTitle("Service-Forge — prototipo")
         self.resize(1300, 860)
 
         self.settings = Settings.load()
@@ -532,8 +553,8 @@ class MainWindow(QMainWindow):
         splitter.addWidget(grid_container)
 
         preview_container = QWidget()
-        preview_layout = QVBoxLayout(preview_container)
-        preview_layout.setContentsMargins(0, 0, 0, 0)
+        self.preview_layout = QVBoxLayout(preview_container)
+        self.preview_layout.setContentsMargins(0, 0, 0, 0)
 
         actions_row = QHBoxLayout()
         self.preview_btn = QPushButton("Actualizar preview")
@@ -543,19 +564,22 @@ class MainWindow(QMainWindow):
         self.generate_btn.setProperty("accent", "true")
         self.generate_btn.clicked.connect(self._on_generate)
         self.generate_btn.setEnabled(False)
+        self.preview_popout_btn = QPushButton("Ampliar preview ↗")
+        self.preview_popout_btn.clicked.connect(self._on_toggle_preview_popout)
         self.backup_btn = QPushButton("Backup de la BD…")
         self.backup_btn.clicked.connect(self._on_backup)
         self.backup_btn.setEnabled(False)
         actions_row.addWidget(self.preview_btn)
         actions_row.addWidget(self.generate_btn)
+        actions_row.addWidget(self.preview_popout_btn)
         actions_row.addStretch()
         actions_row.addWidget(self.backup_btn)
-        preview_layout.addLayout(actions_row)
+        self.preview_layout.addLayout(actions_row)
 
         self.preview_note = QLabel(
             "El preview es editable — lo que esté en cada pestaña al generar es lo que se escribe."
         )
-        preview_layout.addWidget(self.preview_note)
+        self.preview_layout.addWidget(self.preview_note)
 
         self.preview_tabs = QTabWidget()
         self.preview_widgets: dict[str, QPlainTextEdit] = {}
@@ -566,7 +590,9 @@ class MainWindow(QMainWindow):
             editor.setFont(font)
             self.preview_widgets[key] = editor
             self.preview_tabs.addTab(editor, title)
-        preview_layout.addWidget(self.preview_tabs, stretch=1)
+        self.preview_layout.addWidget(self.preview_tabs, stretch=1)
+
+        self._preview_popout: _PreviewPopout | None = None
 
         splitter.addWidget(preview_container)
         splitter.setStretchFactor(0, 0)
@@ -675,10 +701,10 @@ class MainWindow(QMainWindow):
         QMessageBox.information(
             self,
             "Acerca de",
-            f"Generador Front-Back — v{__version__}\n\n"
+            f"Service-Forge — v{__version__}\n\n"
             "Genera el patrón de servicio Laravel + interfaces del frontend "
             "a partir del análisis de una tabla de base de datos.\n\n"
-            "github.com/Gabngs/generador-front-back",
+            "github.com/Gabngs/ServiceForge",
         )
 
     def _on_import_mapping(self) -> None:
@@ -917,6 +943,20 @@ class MainWindow(QMainWindow):
         for key, content in contents.items():
             if key in self.preview_widgets:
                 self.preview_widgets[key].setPlainText(content)
+
+    def _on_toggle_preview_popout(self) -> None:
+        if self._preview_popout is not None:
+            self._preview_popout.close()
+            return
+        self.preview_layout.removeWidget(self.preview_tabs)
+        self._preview_popout = _PreviewPopout(self.preview_tabs, self._on_preview_popout_closed, self)
+        self.preview_popout_btn.setText("Volver al panel ↙")
+        self._preview_popout.show()
+
+    def _on_preview_popout_closed(self) -> None:
+        self._preview_popout = None
+        self.preview_popout_btn.setText("Ampliar preview ↗")
+        self.preview_layout.addWidget(self.preview_tabs, stretch=1)
 
     def _on_generate(self) -> None:
         manifest = self._build_manifest()

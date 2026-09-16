@@ -1,6 +1,16 @@
 # Changelog
 
-Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/). Versionando `0.x` (beta) hasta un `1.0.0` estable.
+Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
+
+## [1.0.0]
+
+### Cambiado
+- **Renombrado el proyecto** de "Generador Front-Back" a **Service-Forge** — nuevo nombre de paquete (`service-forge`), ejecutable (`ServiceForge.exe`), carpeta de datos de usuario (`%APPDATA%\ServiceForge`) y referencias al repo (`github.com/Gabngs/ServiceForge`). El README y los mensajes de la GUI (título de ventana, "Acerca de") quedan actualizados al nuevo nombre.
+- Primera versión `1.0.0`: se marca como release estable del flujo completo, aunque la app se sigue lanzando **en modo prototipo** (el título de ventana y el README lo indican explícitamente) mientras se valida contra proyectos reales.
+
+### Añadido
+- Botón "Ampliar preview ↗" en el panel de preview: abre el mismo `QTabWidget` (no una copia) en una ventana aparte más grande, para editar el código generado con más espacio antes de escribir a disco. Al cerrar esa ventana, el panel vuelve a su lugar en el layout principal.
+- `start.sh` + `scripts/dev_watch.py`: forma de correr la GUI en local para probar cambios sin esperar el `.exe` de CI. PySide6 no soporta hot-reload real, así que `dev_watch.py` vigila los `.py`/`.j2` bajo `src/` y, ante un cambio guardado, mata la ventana vieja y levanta una nueva sola.
 
 ## [0.1.6]
 
