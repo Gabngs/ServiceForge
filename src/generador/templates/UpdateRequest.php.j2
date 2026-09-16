@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Requests\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }};
+
+use App\Http\Requests\{{ manifest.prefijo_studly }}\Traits\{{ manifest.modulo_studly }}\Validates{{ manifest.modulo_studly }};
+use Illuminate\Foundation\Http\FormRequest;
+
+class Update{{ manifest.modulo_studly }}Request extends FormRequest
+{
+    use Validates{{ manifest.modulo_studly }};
+
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        // $this->route('{{ manifest.table }}') obtiene el modelo inyectado por Route Model Binding.
+        // Se usa para excluir el registro actual de la validación unique.
+        $modelId = $this->route('{{ manifest.table }}')?->pkid;
+
+        return array_merge(
+            $this->getRelacionesRules(forUpdate: true),
+            [
+{% for f in non_fk_fields %}
+                '{{ f.name }}' => "{{ f.update_rule_final }}",
+{% endfor %}
+            ]
+        );
+    }
+
+    public function messages(): array
+    {
+        return array_merge(
+            $this->getRelacionesMensajes(),
+            [
+{% for f in unique_fields %}
+                '{{ f.name }}.unique' => 'El valor de {{ f.name }} ya existe',
+{% endfor %}
+            ]
+        );
+    }
+}

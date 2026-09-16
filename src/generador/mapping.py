@@ -1,0 +1,176 @@
+"""Mapeo columna SQL -> reglas de validación Laravel, casts y tipos TypeScript.
+
+Refleja la tabla de referencia documentada en el estándar de backend
+(ver "Mapeo de columnas -> reglas de validación" en Script Generador Backend.md).
+No inventa reglas nuevas: cada rama de este módulo tiene que poder señalarse
+a una fila de esa tabla.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+
+# Campos que nunca van en fillable de usuario ni en validación — los asigna
+# el CrudService/Laravel automáticamente.
+EXCLUDED_FIELDS = frozenset(
+    {
+        "pkid",
+        "id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+        "created_by_id",
+        "updated_by_id",
+        "deleted_by_id",
+    }
+)
+
+# Familias de tipos SQL que comparten regla de validación.
+_TEXT_FAMILY = {"text", "longtext", "mediumtext", "tinytext"}
+_INT_FAMILY = {"int", "integer", "bigint", "smallint", "mediumint"}
+_DATETIME_FAMILY = {"datetime", "timestamp"}
+
+_TYPE_RE = re.compile(r"^\s*(\w+)\s*(\(([^)]*)\))?", re.IGNORECASE)
+_ENUM_VALUE_RE = re.compile(r"'((?:[^'\\]|\\.)*)'")
+
+
+@dataclass(frozen=True)
+class ParsedType:
+    base: str
+    length: int | None = None
+    precision: int | None = None
+    scale: int | None = None
+    enum_values: tuple[str, ...] = field(default_factory=tuple)
+    raw: str = ""
+
+
+def parse_sql_type(sql_type: str) -> ParsedType:
+    """Parsea un tipo SQL crudo (tal como lo devuelve DESCRIBE) a sus partes."""
+    raw = sql_type.strip()
+    match = _TYPE_RE.match(raw)
+    if not match:
+        return ParsedType(base=raw.lower(), raw=raw)
+
+    base = match.group(1).lower()
+    inside = match.group(3)
+
+    if base in ("varchar", "char") and inside:
+        return ParsedType(base=base, length=int(inside.strip()), raw=raw)
+
+    if base in ("decimal", "numeric") and inside:
+        parts = [p.strip() for p in inside.split(",")]
+        precision = int(parts[0]) if parts and parts[0].isdigit() else None
+        scale = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else None
+        return ParsedType(base="decimal", precision=precision, scale=scale, raw=raw)
+
+    if base in ("enum", "set") and inside:
+        values = tuple(_ENUM_VALUE_RE.findall(inside))
+        return ParsedType(base=base, enum_values=values, raw=raw)
+
+    if inside and inside.strip().isdigit():
+        return ParsedType(base=base, length=int(inside.strip()), raw=raw)
+
+    return ParsedType(base=base, raw=raw)
+
+
+def _normalized_family(parsed: ParsedType) -> str:
+    if parsed.base in _TEXT_FAMILY:
+        return "text"
+    if parsed.base in _INT_FAMILY:
+        return "int"
+    if parsed.base in _DATETIME_FAMILY:
+        return "datetime"
+    return parsed.base
+
+
+def validation_rules(
+    parsed: ParsedType,
+    nullable: bool,
+    *,
+    is_fk: bool = False,
+    fk_table: str | None = None,
+) -> tuple[str, str]:
+    """Retorna (regla_store, regla_update) para Store{Modulo}Request / Update{Modulo}Request."""
+    if is_fk:
+        table = fk_table or "{tabla}"
+        base = f"string|exists:{table},id"
+        if nullable:
+            return f"nullable|{base}", f"nullable|{base}"
+        return f"required|{base}", f"sometimes|{base}"
+
+    family = _normalized_family(parsed)
+    presence_required = "nullable" if nullable else "required"
+    presence_update = "nullable" if nullable else "sometimes"
+
+    if family in ("varchar",):
+        return (
+            f"{presence_required}|string|max:{parsed.length or 255}",
+            f"{presence_update}|string|max:{parsed.length or 255}",
+        )
+    if family == "char":
+        return (
+            f"{presence_required}|string|size:{parsed.length or 1}",
+            f"{presence_update}|string|size:{parsed.length or 1}",
+        )
+    if family == "text":
+        return f"{presence_required}|string", f"{presence_update}|string"
+    if family == "int":
+        return f"{presence_required}|integer", f"{presence_update}|integer"
+    if family == "tinyint" and parsed.length == 1:
+        # Booleano: el estándar usa `sometimes` en ambas reglas, tenga o no default.
+        return "sometimes|boolean", "sometimes|boolean"
+    if family == "decimal":
+        return f"{presence_required}|numeric", f"{presence_update}|numeric"
+    if family == "date":
+        return f"{presence_required}|date", f"{presence_update}|date"
+    if family == "datetime":
+        fmt = "date_format:Y-m-d H:i:s"
+        return f"{presence_required}|{fmt}", f"{presence_update}|{fmt}"
+    if family == "json":
+        return f"{presence_required}|array", f"{presence_update}|array"
+    if family == "enum" and parsed.enum_values:
+        values = ",".join(parsed.enum_values)
+        return f"{presence_required}|in:{values}", f"{presence_update}|in:{values}"
+
+    # Fallback conservador para tipos no listados en el estándar — nunca reventar.
+    return f"{presence_required}|string", f"{presence_update}|string"
+
+
+def laravel_cast(parsed: ParsedType) -> str | None:
+    """Cast automático a declarar en `$casts` del Model, si aplica."""
+    if parsed.base == "tinyint" and parsed.length == 1:
+        return "boolean"
+    if parsed.base == "decimal" and parsed.scale is not None:
+        return f"decimal:{parsed.scale}"
+    if parsed.base == "json":
+        return "array"
+    if parsed.base == "date":
+        return "date"
+    if parsed.base in _DATETIME_FAMILY:
+        return "datetime"
+    return None
+
+
+def is_searchable(parsed: ParsedType) -> bool:
+    """Campos elegibles para `$allowedSearch` (LIKE) en la clase Filters — ver useFilters.md."""
+    return _normalized_family(parsed) in ("varchar", "char", "text")
+
+
+def ts_type(parsed: ParsedType, *, is_fk: bool = False) -> str:
+    """Tipo TypeScript equivalente, para las interfaces del frontend."""
+    if is_fk:
+        return "string"  # UUID en Create/Update; en I{Modulo} se sobreescribe con la Tiny relacionada
+
+    family = _normalized_family(parsed)
+    if family in ("varchar", "char", "text", "date", "datetime"):
+        return "string"
+    if family == "tinyint" and parsed.length == 1:
+        return "boolean"
+    if family in ("int", "decimal"):
+        return "number"
+    if family == "json":
+        return "unknown[]"
+    if family == "enum" and parsed.enum_values:
+        return " | ".join(f"'{v}'" for v in parsed.enum_values)
+    return "unknown"

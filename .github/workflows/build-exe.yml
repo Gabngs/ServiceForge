@@ -1,0 +1,78 @@
+name: Build Windows .exe
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: windows-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Instalar dependencias
+        run: pip install -r requirements-dev.txt
+
+      - name: Correr tests
+        run: python -m pytest -q
+
+  build:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Instalar dependencias
+        run: pip install -r requirements-dev.txt
+
+      - name: Construir .exe con PyInstaller
+        run: python -m PyInstaller generador.spec --noconfirm
+
+      - name: Subir .exe como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeneradorFrontBack-windows
+          path: dist/GeneradorFrontBack.exe
+          if-no-files-found: error
+
+      - name: Extraer notas de release del CHANGELOG (solo en tags v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: python
+        run: |
+          import os
+          import pathlib
+          import re
+
+          tag = os.environ["GITHUB_REF_NAME"].lstrip("v")
+          text = pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8")
+          match = re.search(rf"## \[{re.escape(tag)}\][^\n]*\n(.*?)(?=\n## \[|\Z)", text, re.S)
+          notes = match.group(1).strip() if match else "Sin notas específicas para esta versión — ver CHANGELOG.md."
+          pathlib.Path("release_notes.md").write_text(notes, encoding="utf-8")
+
+      - name: Adjuntar .exe al release (solo en tags v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/GeneradorFrontBack.exe
+          body_path: release_notes.md

@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\db{{ manifest.prefijo }}\{{ manifest.model_class }};
+
+class {{ manifest.modulo_studly }}Service extends AbstractModuleService
+{
+    public function __construct(protected CrudService $crud) {}
+
+    /**
+     * Relaciones eager-loaded en index/show, y en la respuesta de store/update/destroy.
+     * Centralizada acá — el Controller nunca decide qué relaciones cargar.
+     */
+    const RELATIONS = [
+{% for rel in relations %}
+        '{{ rel.method }}',
+{% endfor %}
+        'created_by', 'updated_by', 'deleted_by',
+    ];
+
+    /**
+     * Mapeo de campos UUID -> PKID.
+     * Clave: nombre del campo en $data que llega del frontend (UUID)
+     * Valor: clase del modelo donde se busca ese UUID para obtener su pkid
+     */
+    protected array $uuidMapping = [
+{% for rel in relations %}
+        '{{ rel.column }}' => \App\Models\db{{ manifest.prefijo }}\{{ rel.model_class }}::class,
+{% endfor %}
+    ];
+
+    // ─── INDEX / GETALL ───────────────────────────────────────────────────────
+    public function index(bool $paginate = false): mixed
+    {
+        $query = {{ manifest.model_class }}::useFilters()->with(self::RELATIONS);
+
+        return $paginate
+            ? $query->dynamicPaginate()
+            : $query->get();
+    }
+
+    // ─── SHOW ─────────────────────────────────────────────────────────────────
+    public function show({{ manifest.model_class }} $model): {{ manifest.model_class }}
+    {
+        return $model->load(self::RELATIONS);
+    }
+
+    // ─── STORE ────────────────────────────────────────────────────────────────
+    public function store(array $data): {{ manifest.model_class }}
+    {
+        $this->crud->mapUuidsToPkids($data, $this->uuidMapping);
+
+        $model = $this->crud->create(
+            {{ manifest.model_class }}::class,
+            $data,
+            'crear_{{ manifest.modulo }}',
+        );
+
+        return $model->load(self::RELATIONS);
+    }
+
+    // ─── UPDATE ───────────────────────────────────────────────────────────────
+    public function update({{ manifest.model_class }} $model, array $data): {{ manifest.model_class }}
+    {
+        $this->crud->mapUuidsToPkids($data, $this->uuidMapping);
+
+        $model = $this->crud->update(
+            $model,
+            $data,
+            'actualizar_{{ manifest.modulo }}',
+        );
+
+        return $model->load(self::RELATIONS);
+    }
+
+    // ─── DESTROY ──────────────────────────────────────────────────────────────
+    public function destroy({{ manifest.model_class }} $model): {{ manifest.model_class }}
+    {
+        $model->load(self::RELATIONS);
+
+        return $this->crud->delete(
+            $model,
+            'eliminar_{{ manifest.modulo }}',
+        );
+    }
+}

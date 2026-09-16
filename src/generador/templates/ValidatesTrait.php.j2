@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Http\Requests\{{ manifest.prefijo_studly }}\Traits\{{ manifest.modulo_studly }};
+
+trait Validates{{ manifest.modulo_studly }}
+{
+    /**
+     * Reglas para campos que son FK (llegan como UUID desde el frontend).
+     * La validación 'exists' confirma que el UUID existe en la tabla antes de persistir.
+     * El mapeo UUID -> PKID lo hace el Service después (ver Mapeo UUID PKID.md).
+     */
+    protected function getRelacionesRules(string $prefix = '', bool $forUpdate = false): array
+    {
+        if ($forUpdate) {
+            return [
+{% for f in fk_fields %}
+                "{$prefix}{{ f.name }}" => "{{ f.update_rule }}",
+{% endfor %}
+            ];
+        }
+
+        return [
+{% for f in fk_fields %}
+            "{$prefix}{{ f.name }}" => "{{ f.store_rule }}",
+{% endfor %}
+        ];
+    }
+
+    protected function getRelacionesMensajes(string $prefix = ''): array
+    {
+        return [
+{% for f in fk_fields %}
+            "{$prefix}{{ f.name }}.required" => 'El campo {{ f.name }} es requerido',
+            "{$prefix}{{ f.name }}.exists"   => 'El valor de {{ f.name }} no existe',
+{% endfor %}
+        ];
+    }
+}

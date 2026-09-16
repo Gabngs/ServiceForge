@@ -1,0 +1,39 @@
+// src/app/interfaces/models/{{ manifest.modulo }}.interface.ts
+// Generado por el script generador — ver Script Generador Backend.md / Interfaz de Modulo.md
+import { IAuditUser } from '@interfaces/shared/audit-user.interface';
+{% for studly, snake in fk_imports %}
+import { I{{ studly }}Tiny } from '@interfaces/models/{{ snake }}.interface';
+{% endfor %}
+
+export interface I{{ manifest.modulo_studly }} {
+  id?: string;
+{% for f in fields %}
+  {{ f.name if not f.is_fk else f.relation_method }}?: {{ f.ts_type_full() }};
+{% endfor %}
+  created_by_id?: IAuditUser | null;
+  updated_by_id?: IAuditUser | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Payload de creación — sin id ni campos de auditoría
+export interface I{{ manifest.modulo_studly }}Create {
+{% for f in fields %}
+  {{ f.name }}{{ "?" if f.nullable else "" }}: {{ f.ts_type_create() }};
+{% endfor %}
+}
+
+// Payload de edición — parcial, el backend usa `sometimes`
+export interface I{{ manifest.modulo_studly }}Update extends Partial<I{{ manifest.modulo_studly }}Create> {
+  id: string;
+}
+
+// Forma mínima — equivalente a {{ manifest.modulo_studly }}RelationResource / respuesta con ?tiny=true
+export interface I{{ manifest.modulo_studly }}Tiny {
+  id?: string;
+{% for f in fields %}
+{% if f.tiny %}
+  {{ f.name if not f.is_fk else f.relation_method }}?: {{ f.ts_type_full() }};
+{% endif %}
+{% endfor %}
+}

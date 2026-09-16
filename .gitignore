@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+
+# Backups generados por la app (nunca committear un dump real)
+*.sql
+
+# IDE
+.vscode/
+.idea/

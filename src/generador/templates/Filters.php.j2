@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filters;
+
+use Essa\APIToolKit\Filters\QueryFilters;
+
+class {{ manifest.model_class }}Filters extends QueryFilters
+{
+    // Campos permitidos para búsqueda de texto libre (LIKE) — ver ?search=
+    protected array $allowedSearch = [
+{% for f in search_fields %}
+        '{{ f.name }}',
+{% endfor %}
+    ];
+
+    // Campos permitidos para filtro por valor exacto — ver ?campo=valor
+    protected array $allowedFilters = [
+{% for f in fields %}
+        '{{ f.name }}',
+{% endfor %}
+    ];
+
+    // Relaciones permitidas para eager loading desde query param — ver ?include=
+    protected array $allowedIncludes = [
+{% for rel in relations %}
+        '{{ rel.method }}',
+{% endfor %}
+    ];
+
+    // Campos permitidos para ordenamiento — ver ?sorts=
+    protected array $allowedSorts = [
+{% for f in fields %}
+        '{{ f.name }}',
+{% endfor %}
+        'created_at',
+        'updated_at',
+    ];
+{% for f in fk_fields %}
+
+    // {{ f.name }} guarda el pkid en la columna, pero el frontend filtra por UUID
+    // (igual que en el payload de create/update) — sin este método, useFilters()
+    // compararía el UUID crudo contra la columna entera y nunca matchearía nada.
+    public function {{ f.name }}($value)
+    {
+        if ($value === null || $value === '') {
+            return $this->builder;
+        }
+
+        $pkid = \App\Models\db{{ f.fk_table_prefijo }}\{{ f.fk_table }}::where('id', $value)->value('pkid');
+
+        if (!$pkid) {
+            return $this->builder->whereNull('{{ f.name }}');
+        }
+
+        return $this->builder->where('{{ f.name }}', $pkid);
+    }
+{% endfor %}
+}

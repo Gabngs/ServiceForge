@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers\Api\{{ manifest.prefijo_studly }};
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}\Store{{ manifest.modulo_studly }}Request;
+use App\Http\Requests\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}\Update{{ manifest.modulo_studly }}Request;
+use App\Http\Resources\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}Resource;
+use App\Http\Resources\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}RelationResource;
+use App\Models\db{{ manifest.prefijo }}\{{ manifest.model_class }};
+use App\Services\{{ manifest.modulo_studly }}Service;
+use Essa\APIToolKit\Api\ApiResponse;
+use Illuminate\Http\Request;
+
+class {{ manifest.model_class }}Controller extends Controller
+{
+    use ApiResponse;
+
+    public function __construct(protected {{ manifest.modulo_studly }}Service $service) {}
+
+    // ─── INDEX ────────────────────────────────────────────────────────────────
+    // GET /api/{{ manifest.table }}?paginate=true&page=1&per_page=20&tiny=true
+    public function index(Request $request)
+    {
+        $paginate = $request->boolean('paginate');
+
+        $data = $this->service->index($paginate);
+
+        // El Resource a usar (completo o mínimo) es una decisión de presentación,
+        // no del Service — ver Controller.md#Parámetro `tiny`.
+        $resource = $request->boolean('tiny')
+            ? {{ manifest.modulo_studly }}RelationResource::class
+            : {{ manifest.modulo_studly }}Resource::class;
+
+        return $this->responseSuccess(
+            'Registros obtenidos correctamente',
+            $resource::collection($data)
+        );
+    }
+
+    // ─── SHOW ─────────────────────────────────────────────────────────────────
+    // GET /api/{{ manifest.table }}/{id}
+    public function show({{ manifest.model_class }} ${{ manifest.table }})
+    {
+        $model = $this->service->show(${{ manifest.table }});
+
+        return $this->responseSuccess(
+            'Registro obtenido correctamente',
+            new {{ manifest.modulo_studly }}Resource($model)
+        );
+    }
+
+    // ─── STORE ────────────────────────────────────────────────────────────────
+    // POST /api/{{ manifest.table }}
+    public function store(Store{{ manifest.modulo_studly }}Request $request)
+    {
+        $model = $this->service->store($request->validated());
+
+        return $this->responseSuccess(
+            'Registro creado correctamente',
+            new {{ manifest.modulo_studly }}Resource($model)
+        );
+    }
+
+    // ─── UPDATE ───────────────────────────────────────────────────────────────
+    // PUT /api/{{ manifest.table }}/{id}
+    public function update(Update{{ manifest.modulo_studly }}Request $request, {{ manifest.model_class }} ${{ manifest.table }})
+    {
+        $model = $this->service->update(${{ manifest.table }}, $request->validated());
+
+        return $this->responseSuccess(
+            'Registro actualizado correctamente',
+            new {{ manifest.modulo_studly }}Resource($model)
+        );
+    }
+
+    // ─── DESTROY ──────────────────────────────────────────────────────────────
+    // DELETE /api/{{ manifest.table }}/{id}
+    public function destroy({{ manifest.model_class }} ${{ manifest.table }})
+    {
+        $deleted = $this->service->destroy(${{ manifest.table }});
+
+        return $this->responseSuccess(
+            'Registro eliminado correctamente',
+            new {{ manifest.modulo_studly }}Resource($deleted)
+        );
+    }
+}
