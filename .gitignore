@@ -11,6 +11,10 @@ build/
 dist/
 *.spec.bak
 
+# Version pineada por CI al construir un release (ver __init__.py) — nunca
+# se commitea, se genera sola en cada build de un tag v*.
+src/generador/_version.py
+
 # Backups generados por la app (nunca committear un dump real)
 *.sql
 

@@ -16,13 +16,14 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import Qt, QThread, Signal
-from PySide6.QtGui import QAction
+from PySide6.QtCore import Qt, QStringListModel, QThread, Signal
+from PySide6.QtGui import QAction, QTextCursor
 from PySide6.QtWidgets import (
     QApplication,
     QButtonGroup,
     QCheckBox,
     QComboBox,
+    QCompleter,
     QDialog,
     QDialogButtonBox,
     QFileDialog,
@@ -69,6 +70,48 @@ _PREVIEW_TABS: list[tuple[str, str]] = [
     ("routes_module", "routes/modules/{modulo}.php"),
     ("interfaces", "{modulo}.interface.ts"),
     ("audit_user", "audit-user.interface.ts"),
+]
+
+# Autocompletado "por palabras" del preview (sin IA/Copilot): combina esta
+# lista curada de PHP/Laravel/Eloquent con las palabras que ya aparecen en
+# el propio documento — ver _CodeEditor más abajo.
+_PHP_LARAVEL_COMPLETIONS = [
+    "abstract", "class", "extends", "implements", "interface", "trait", "use",
+    "namespace", "public", "protected", "private", "static", "final", "const",
+    "function", "return", "void", "array", "string", "int", "float", "bool",
+    "null", "true", "false", "self", "parent", "new", "instanceof", "throw",
+    "try", "catch", "finally", "if", "else", "elseif", "foreach", "as", "while",
+    "match", "fn", "readonly", "enum", "yield", "clone",
+    "Model", "SoftDeletes", "HasFactory",
+    "Illuminate\\Database\\Eloquent\\Model",
+    "Illuminate\\Database\\Eloquent\\Builder",
+    "Illuminate\\Database\\Eloquent\\SoftDeletes",
+    "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+    "Illuminate\\Database\\Eloquent\\Relations\\HasMany",
+    "Illuminate\\Database\\Eloquent\\Relations\\HasOne",
+    "Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany",
+    "Illuminate\\Http\\Request",
+    "Illuminate\\Http\\JsonResponse",
+    "Illuminate\\Support\\Facades\\DB",
+    "Illuminate\\Support\\Facades\\Auth",
+    "Illuminate\\Support\\Facades\\Route",
+    "Illuminate\\Support\\Str",
+    "Illuminate\\Validation\\Rule",
+    "belongsTo", "hasMany", "hasOne", "belongsToMany", "morphTo", "morphMany",
+    "fillable", "guarded", "casts", "hidden", "appends", "with", "withCount",
+    "where", "whereIn", "whereNotIn", "whereNull", "whereHas", "orderBy",
+    "orderByDesc", "paginate", "simplePaginate", "findOrFail", "firstOrFail",
+    "firstOrCreate", "updateOrCreate", "create", "update", "delete", "save",
+    "all", "get", "first", "pluck", "count", "exists", "toArray", "toJson",
+    "validate", "validated", "rules", "messages", "authorize", "input", "only",
+    "except", "json", "response", "now", "Carbon", "collect", "compact",
+    "dd", "dump", "abort", "abort_if", "abort_unless", "auth", "request",
+]
+
+_TS_INTERFACE_COMPLETIONS = [
+    "export", "interface", "extends", "type", "readonly", "string", "number",
+    "boolean", "null", "undefined", "Array", "Record", "Partial", "Omit",
+    "Pick", "Date", "IAuditUser", "created_by", "updated_by", "deleted_by",
 ]
 
 
@@ -444,6 +487,76 @@ class SettingsDialog(QDialog):
         return "dark" if self.theme_combo.currentIndex() == 0 else "light"
 
 
+class _CodeEditor(QPlainTextEdit):
+    """QPlainTextEdit con autocompletado "por palabras" (sin IA / sin Copilot):
+    combina una lista curada de keywords de PHP/Laravel (o TS) con las
+    palabras que ya aparecen en el propio documento — el mismo patrón que el
+    ejemplo "Custom Completer" de Qt. Se dispara solo al escribir 2+
+    caracteres, o a mano con Ctrl+Espacio."""
+
+    def __init__(self, keywords: list[str], parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._static_words = set(keywords)
+
+        self.completer = QCompleter(self)
+        self.completer.setWidget(self)
+        self.completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.completer.setCaseSensitivity(Qt.CaseInsensitive)
+        self.completer.activated.connect(self._insert_completion)
+
+        self._refresh_completion_model()
+        self.textChanged.connect(self._refresh_completion_model)
+
+    def _refresh_completion_model(self) -> None:
+        doc_words = set(re.findall(r"[A-Za-z_\\][A-Za-z0-9_\\]{2,}", self.toPlainText()))
+        model = QStringListModel(sorted(self._static_words | doc_words), self.completer)
+        self.completer.setModel(model)
+
+    def _text_under_cursor(self) -> str:
+        cursor = self.textCursor()
+        cursor.select(QTextCursor.WordUnderCursor)
+        return cursor.selectedText()
+
+    def _insert_completion(self, completion: str) -> None:
+        cursor = self.textCursor()
+        extra = len(completion) - len(self.completer.completionPrefix())
+        cursor.movePosition(QTextCursor.Left)
+        cursor.movePosition(QTextCursor.EndOfWord)
+        cursor.insertText(completion[-extra:])
+        self.setTextCursor(cursor)
+
+    def keyPressEvent(self, event) -> None:
+        if self.completer.popup().isVisible() and event.key() in (
+            Qt.Key_Enter,
+            Qt.Key_Return,
+            Qt.Key_Escape,
+            Qt.Key_Tab,
+            Qt.Key_Backtab,
+        ):
+            event.ignore()
+            return
+
+        is_shortcut = event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_Space
+        if not is_shortcut:
+            super().keyPressEvent(event)
+
+        prefix = self._text_under_cursor()
+        if not is_shortcut and (len(prefix) < 2 or not event.text()):
+            self.completer.popup().hide()
+            return
+
+        if prefix != self.completer.completionPrefix():
+            self.completer.setCompletionPrefix(prefix)
+            self.completer.popup().setCurrentIndex(self.completer.completionModel().index(0, 0))
+
+        rect = self.cursorRect()
+        rect.setWidth(
+            self.completer.popup().sizeHintForColumn(0)
+            + self.completer.popup().verticalScrollBar().sizeHint().width()
+        )
+        self.completer.complete(rect)
+
+
 class _PreviewPopout(QDialog):
     """Ventana aparte para el preview — reusa el mismo QTabWidget del panel
     principal (no una copia) moviéndolo temporalmente, así no hay que
@@ -577,14 +690,16 @@ class MainWindow(QMainWindow):
         self.preview_layout.addLayout(actions_row)
 
         self.preview_note = QLabel(
-            "El preview es editable — lo que esté en cada pestaña al generar es lo que se escribe."
+            "El preview es editable — lo que esté en cada pestaña al generar es lo que se escribe. "
+            "Autocompletado: escribí 2+ letras o Ctrl+Espacio."
         )
         self.preview_layout.addWidget(self.preview_note)
 
         self.preview_tabs = QTabWidget()
         self.preview_widgets: dict[str, QPlainTextEdit] = {}
         for key, title in _PREVIEW_TABS:
-            editor = QPlainTextEdit()
+            keywords = _TS_INTERFACE_COMPLETIONS if title.endswith(".ts") else _PHP_LARAVEL_COMPLETIONS
+            editor = _CodeEditor(keywords)
             font = editor.font()
             font.setFamily("Consolas")
             editor.setFont(font)

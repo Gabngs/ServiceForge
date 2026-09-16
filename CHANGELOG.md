@@ -2,6 +2,14 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.0.1]
+
+### Añadido
+- Autocompletado "por palabras" en los editores del preview (sin IA / sin Copilot): cada pestaña `.php` sugiere keywords de PHP/Eloquent/Laravel (`belongsTo`, `Illuminate\Database\Eloquent\Model`, `fillable`, etc.) y cada pestaña `.ts` sugiere keywords de TypeScript — combinadas en ambos casos con las palabras que ya aparecen en ese mismo documento. Se dispara solo (2+ letras escritas) o a mano con Ctrl+Espacio.
+
+### Cambiado
+- **La versión ya no se escribe a mano.** `__version__` (`src/generador/__init__.py`) ahora se resuelve solo: usa `_version.py` si CI lo generó al construir el `.exe` de un tag `v*`, si no corre `git describe --tags --dirty` contra el repo local (refleja el tag/commit actual y si hay cambios sin commitear). `pyproject.toml` ahora declara `version` como `dynamic` y lo lee de `generador.__version__` — un solo lugar de verdad, sin riesgo de que los dos archivos queden desincronizados (como pasó antes: `0.1.6` en pyproject vs `0.1.4` en `__init__.py`).
+
 ## [1.0.0]
 
 ### Cambiado
