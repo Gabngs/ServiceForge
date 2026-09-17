@@ -2,6 +2,12 @@
 
 namespace App\Models\db{{ manifest.prefijo }};
 
+{% for prefijo, model_class in cross_prefix_imports %}
+use App\Models\db{{ prefijo }}\{{ model_class }};
+{% endfor %}
+{% if manifest.user_model_needs_import %}
+use {{ manifest.user_model_class }};
+{% endif %}
 use Essa\APIToolKit\Filters\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,16 +57,16 @@ class {{ manifest.model_class }} extends Model
     // ver `const RELATIONS` en {{ manifest.modulo_studly }}Service y Auditoría.md.
     public function created_by(): BelongsTo
     {
-        return $this->belongsTo(\{{ manifest.user_model_class }}::class, 'created_by_id', 'pkid');
+        return $this->belongsTo({{ manifest.user_model_short_class }}::class, 'created_by_id', 'pkid');
     }
 
     public function updated_by(): BelongsTo
     {
-        return $this->belongsTo(\{{ manifest.user_model_class }}::class, 'updated_by_id', 'pkid');
+        return $this->belongsTo({{ manifest.user_model_short_class }}::class, 'updated_by_id', 'pkid');
     }
 
     public function deleted_by(): BelongsTo
     {
-        return $this->belongsTo(\{{ manifest.user_model_class }}::class, 'deleted_by_id', 'pkid');
+        return $this->belongsTo({{ manifest.user_model_short_class }}::class, 'deleted_by_id', 'pkid');
     }
 }

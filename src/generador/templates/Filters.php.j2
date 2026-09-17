@@ -2,6 +2,9 @@
 
 namespace App\Filters;
 
+{% for prefijo, table in fk_model_imports %}
+use App\Models\db{{ prefijo }}\{{ table }};
+{% endfor %}
 use Essa\APIToolKit\Filters\QueryFilters;
 
 class {{ manifest.model_class }}Filters extends QueryFilters
@@ -14,6 +17,12 @@ class {{ manifest.model_class }}Filters extends QueryFilters
     ];
 
     // Campos permitidos para filtro por valor exacto — ver ?campo=valor
+    // Solo columnas directas. Los FK *_id van como método resolver más abajo
+    // (ver useFilters.md#FKs que guardan pkid) — nunca acá también: si un
+    // campo tiene método Y está en $allowedFilters, QueryFilters aplica los
+    // dos WHERE (el resolver y el genérico), y el genérico compara el UUID
+    // crudo contra la columna entera — esa condición nunca matchea, y en AND
+    // con la primera el resultado queda siempre vacío.
     protected array $allowedFilters = [
 {% for f in fields %}
         '{{ f.name }}',
@@ -28,6 +37,8 @@ class {{ manifest.model_class }}Filters extends QueryFilters
     ];
 
     // Campos permitidos para ordenamiento — ver ?sorts=
+    // Mismo criterio que $allowedFilters: sin los FK *_id (el pkid es un
+    // detalle interno, no un orden con sentido de negocio para el frontend).
     protected array $allowedSorts = [
 {% for f in fields %}
         '{{ f.name }}',
@@ -46,7 +57,7 @@ class {{ manifest.model_class }}Filters extends QueryFilters
             return $this->builder;
         }
 
-        $pkid = \App\Models\db{{ f.fk_table_prefijo }}\{{ f.fk_table }}::where('id', $value)->value('pkid');
+        $pkid = {{ f.fk_table }}::where('id', $value)->value('pkid');
 
         if (!$pkid) {
             return $this->builder->whereNull('{{ f.name }}');

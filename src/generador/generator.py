@@ -39,9 +39,16 @@ class ManifestField:
 
     @property
     def relation_method(self) -> str | None:
+        """Nombre del método belongsTo. La convención `{campo}_id` -> `{campo}`
+        asume que la columna termina en `_id`, pero una FK asignada a mano
+        (ver GUI: combo "FK -> tabla" en cualquier columna) puede no seguir
+        esa convención -- en ese caso el método usa el nombre de columna tal
+        cual, en vez de cortar mal los últimos 3 caracteres."""
         if not self.is_fk:
             return None
-        return self.name[: -len("_id")]
+        if self.name.endswith("_id") and self.name != "_id":
+            return self.name[: -len("_id")]
+        return self.name
 
     @property
     def fk_related_modulo_studly(self) -> str | None:
@@ -105,6 +112,7 @@ class ManifestRelation:
     column: str
     method: str
     model_class: str  # clase del Model relacionado (nombre literal de tabla, ver naming.model_class_name)
+    fk_table_prefijo: str  # prefijo (namespace App\Models\db{prefijo}) de la tabla relacionada
 
 
 @dataclass
@@ -126,6 +134,23 @@ class ModuleManifest:
     @property
     def prefijo_studly(self) -> str:
         return naming.studly(self.prefijo)
+
+    @property
+    def user_model_namespace(self) -> str:
+        """`App\\Models\\User` -> `App\\Models`. Usado para decidir si hace
+        falta un `use` para el modelo de usuario, o si ya cae en el mismo
+        namespace que este Model (ver `Model.php.j2` — importar una clase
+        que ya está en el namespace actual es un fatal error de PHP, no un
+        warning: "Cannot use X as X because the name is already in use")."""
+        return self.user_model_class.rsplit("\\", 1)[0] if "\\" in self.user_model_class else ""
+
+    @property
+    def user_model_short_class(self) -> str:
+        return self.user_model_class.rsplit("\\", 1)[-1]
+
+    @property
+    def user_model_needs_import(self) -> bool:
+        return self.user_model_namespace != "" and self.user_model_namespace != f"App\\Models\\db{self.prefijo}"
 
 
 def build_manifest(
@@ -190,11 +215,13 @@ def build_manifest(
         fields.append(manifest_field)
 
         if is_fk and fk_table:
+            fk_prefijo, _ = naming.split_prefijo_modulo(fk_table)
             relations.append(
                 ManifestRelation(
                     column=column.name,
                     method=manifest_field.relation_method or fk_table,
                     model_class=naming.model_class_name(fk_table),
+                    fk_table_prefijo=fk_prefijo,
                 )
             )
 
@@ -227,29 +254,73 @@ class Renderer:
     def render_model_php(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
         casts = [(f.name, f.cast) for f in included if f.cast]
+        # Import solo para relaciones que cruzan de prefijo -- una del MISMO
+        # prefijo que este Model ya resuelve el nombre corto por estar en el
+        # mismo namespace (App\Models\db{prefijo}); importarla igual sería un
+        # fatal error de PHP ("already in use"), no un problema cosmético.
+        cross_prefix_imports = sorted(
+            {
+                (rel.fk_table_prefijo, rel.model_class)
+                for rel in manifest.relations
+                if rel.fk_table_prefijo != manifest.prefijo
+            }
+        )
         return self.env.get_template("Model.php.j2").render(
-            manifest=manifest, fields=included, casts=casts, relations=manifest.relations
+            manifest=manifest,
+            fields=included,
+            casts=casts,
+            relations=manifest.relations,
+            cross_prefix_imports=cross_prefix_imports,
         )
 
     def render_service_php(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
+        # Service.php vive en el namespace App\Services -- distinto del
+        # árbol App\Models\db*, así que acá SIEMPRE se puede importar (nunca
+        # hay riesgo de "already in use" por namespace), salvo el caso
+        # degenerado de una FK autorreferencial (ej. parent_id -> la misma
+        # tabla, posible ahora que el combo "FK -> tabla" de la GUI permite
+        # asignar cualquier columna a cualquier tabla) -- ese caso ya está
+        # importado por la línea de arriba (el propio modelo del módulo), y
+        # un `use` duplicado de la misma clase es un fatal error de PHP.
+        own = (manifest.prefijo, manifest.model_class)
+        relation_imports = sorted(
+            {(rel.fk_table_prefijo, rel.model_class) for rel in manifest.relations} - {own}
+        )
         return self.env.get_template("Service.php.j2").render(
-            manifest=manifest, fields=included, relations=manifest.relations
+            manifest=manifest, fields=included, relations=manifest.relations, relation_imports=relation_imports
         )
 
     def render_filters_php(self, manifest: ModuleManifest) -> str:
-        included = self._included(manifest)
-        search_fields = [f for f in included if not f.is_fk and mapping.is_searchable(f.parsed)]
+        non_fk = self._non_fk_fields(manifest)
+        search_fields = [f for f in non_fk if mapping.is_searchable(f.parsed)]
         return self.env.get_template("Filters.php.j2").render(
             manifest=manifest,
-            fields=included,
+            # $allowedFilters / $allowedSorts: SOLO columnas directas -- un FK
+            # que guarda pkid nunca va acá (ver useFilters.md#FKs que guardan
+            # pkid). Dejarlo también en $allowedFilters duplica el WHERE: el
+            # método resolver ya filtra por pkid, y el pipeline genérico de
+            # QueryFilters agrega ADEMÁS "WHERE columna = <uuid crudo>" contra
+            # una columna entera -- esa segunda condición nunca matchea, y al
+            # ir en AND con la primera, el resultado final es siempre vacío.
+            fields=non_fk,
             relations=manifest.relations,
             search_fields=search_fields,
             fk_fields=self._fk_fields(manifest),
+            fk_model_imports=self._fk_model_imports(manifest),
         )
 
     def _fk_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
         return [f for f in self._included(manifest) if f.is_fk]
+
+    def _fk_model_imports(self, manifest: ModuleManifest) -> list[tuple[str, str]]:
+        return sorted(
+            {
+                (f.fk_table_prefijo, f.fk_table)
+                for f in self._fk_fields(manifest)
+                if f.fk_table_prefijo and f.fk_table
+            }
+        )
 
     def _non_fk_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
         return [f for f in self._included(manifest) if not f.is_fk]

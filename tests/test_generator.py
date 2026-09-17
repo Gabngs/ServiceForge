@@ -65,6 +65,40 @@ def test_build_manifest_relation_detected():
     assert relation.model_class == "siaw_roles"
 
 
+def test_build_manifest_relation_method_for_manually_assigned_non_id_column():
+    """Una FK asignada a mano (combo 'FK -> tabla' en la GUI, ver gui.py
+    _on_fk_combo_changed) puede vivir en una columna que no termina en
+    '_id' -- la detección automática (fk_resolver.find_fk_candidates) exige
+    ese sufijo, pero el combo permite asignar cualquier columna igual.
+    relation_method no debe cortar mal el nombre en ese caso."""
+    columns = [
+        Column("pkid", "int", nullable=False, key="", default=None, extra="auto_increment"),
+        Column("id", "varchar(36)", nullable=False, key="PRI", default=None, extra=""),
+        Column("nombre", "varchar(100)", nullable=False, key="", default=None, extra=""),
+        Column("tienda", "int", nullable=False, key="MUL", default=None, extra=""),  # sin sufijo _id
+    ]
+    fk_resolutions = {
+        "tienda": FkResolution(
+            column="tienda", base_name="tienda", candidates=["catalogo_tienda"], status="manual", table="catalogo_tienda"
+        )
+    }
+    manifest = build_manifest(
+        "siaw_productos",
+        columns,
+        fk_resolutions=fk_resolutions,
+        unique_indexes={},
+        included_fields={"nombre", "tienda"},
+        tiny_fields=set(),
+    )
+    tienda_field = next(f for f in manifest.fields if f.name == "tienda")
+    assert tienda_field.is_fk is True
+    assert tienda_field.relation_method == "tienda"  # no "tie" (cortar los últimos 3 chars sería un bug)
+
+    php = Renderer().render_model_php(manifest)
+    assert "public function tienda(): BelongsTo" in php
+    assert "return $this->belongsTo(catalogo_tienda::class, 'tienda', 'pkid');" in php
+
+
 def test_build_manifest_unique_field_gets_unique_rule():
     manifest = _build_test_manifest()
     email_field = next(f for f in manifest.fields if f.name == "email")
@@ -97,17 +131,49 @@ def test_render_model_php_contains_belongs_to():
     php = Renderer().render_model_php(manifest)
     assert "class siaw_usuarios extends Model" in php
     assert "public function rol(): BelongsTo" in php
+    # rol_id -> siaw_roles: MISMO prefijo (siaw) que este propio Model --
+    # nombre corto sin `use`, importarlo sería fatal error de PHP
+    # ("already in use", ver Model.php.j2 / generator.py).
     assert "return $this->belongsTo(siaw_roles::class, 'rol_id', 'pkid');" in php
+    assert "use App\\Models\\dbsiaw\\siaw_roles;" not in php
     assert "'activo' => 'boolean'" in php
     assert "'pkid'" not in php.split("$fillable")[1].split("];")[0]  # nunca en fillable
+
+
+def test_render_model_php_imports_cross_prefix_relation():
+    """rol_id -> catalogo_roles (prefijo "catalogo", distinto del propio
+    módulo "siaw") sí necesita `use` — el nombre corto solo no resuelve
+    porque la clase vive en un namespace distinto (App\\Models\\dbcatalogo)."""
+    manifest = _build_test_manifest(
+        fk_resolutions={
+            "rol_id": FkResolution(
+                column="rol_id", base_name="rol", candidates=["catalogo_roles"], status="auto", table="catalogo_roles"
+            )
+        }
+    )
+    php = Renderer().render_model_php(manifest)
+    assert "use App\\Models\\dbcatalogo\\catalogo_roles;" in php
+    assert "return $this->belongsTo(catalogo_roles::class, 'rol_id', 'pkid');" in php
 
 
 def test_render_model_php_contains_audit_relations():
     manifest = _build_test_manifest()
     php = Renderer().render_model_php(manifest)
+    assert "use App\\Models\\User;" in php
     for method, column in [("created_by", "created_by_id"), ("updated_by", "updated_by_id"), ("deleted_by", "deleted_by_id")]:
         assert f"public function {method}(): BelongsTo" in php
-        assert f"return $this->belongsTo(\\App\\Models\\User::class, '{column}', 'pkid');" in php
+        assert f"return $this->belongsTo(User::class, '{column}', 'pkid');" in php
+
+
+def test_render_model_php_user_model_same_prefix_skips_import():
+    """Si el modelo de usuario configurado vive en el MISMO db{prefijo} que
+    el módulo generado, no se importa (sería fatal error) -- se referencia
+    directo por nombre corto, igual que una relación de negocio del mismo
+    prefijo."""
+    manifest = _build_test_manifest(user_model_class="App\\Models\\dbsiaw\\siaw_usuarios_admin")
+    php = Renderer().render_model_php(manifest)
+    assert "use App\\Models\\dbsiaw\\siaw_usuarios_admin;" not in php
+    assert "return $this->belongsTo(siaw_usuarios_admin::class, 'created_by_id', 'pkid');" in php
 
 
 def test_render_service_php_uses_english_method_names():
@@ -118,7 +184,22 @@ def test_render_service_php_uses_english_method_names():
         assert f"function {method}(" in php
     assert "'rol'," in php  # en RELATIONS
     assert "'created_by', 'updated_by', 'deleted_by'" in php
-    assert "'rol_id' => \\App\\Models\\dbsiaw\\siaw_roles::class," in php
+    assert "use App\\Models\\dbsiaw\\siaw_roles;" in php
+    assert "'rol_id' => siaw_roles::class," in php
+    assert "\\App\\Models\\dbsiaw\\siaw_roles::class" not in php
+
+
+def test_render_service_php_imports_cross_prefix_relation():
+    manifest = _build_test_manifest(
+        fk_resolutions={
+            "rol_id": FkResolution(
+                column="rol_id", base_name="rol", candidates=["catalogo_roles"], status="auto", table="catalogo_roles"
+            )
+        }
+    )
+    php = Renderer().render_service_php(manifest)
+    assert "use App\\Models\\dbcatalogo\\catalogo_roles;" in php
+    assert "'rol_id' => catalogo_roles::class," in php
 
 
 def test_render_filters_php():
@@ -129,15 +210,30 @@ def test_render_filters_php():
     assert "'nombre'," in search_block
     assert "'email'," in search_block  # varchar -> texto libre, elegible para LIKE
     assert "'rol'," in php.split("$allowedIncludes")[1].split("];")[0]
-    for field_name in ("nombre", "email", "rol_id", "activo"):
-        assert f"'{field_name}'," in php.split("$allowedFilters")[1].split("];")[0]
+
+    # $allowedFilters / $allowedSorts: solo columnas directas -- rol_id (FK)
+    # NUNCA va acá, tiene su propio método resolver (ver test de abajo). Si
+    # quedara acá también, QueryFilters aplicaría el WHERE genérico (UUID
+    # crudo contra la columna entera) en AND con el del método, y el
+    # resultado sería siempre vacío -- ver useFilters.md#FKs que guardan pkid.
+    allowed_filters_block = php.split("protected array $allowedFilters = [")[1].split("];")[0]
+    allowed_sorts_block = php.split("protected array $allowedSorts = [")[1].split("];")[0]
+    for field_name in ("nombre", "email", "activo"):
+        assert f"'{field_name}'," in allowed_filters_block
+        assert f"'{field_name}'," in allowed_sorts_block
+    assert "'rol_id'," not in allowed_filters_block
+    assert "'rol_id'," not in allowed_sorts_block
 
 
 def test_render_filters_php_generates_fk_resolution_method():
     manifest = _build_test_manifest()
     php = Renderer().render_filters_php(manifest)
+    # Import arriba + nombre corto en el método (nunca FQCN inline) -- así lo
+    # documenta el estándar (ver useFilters.md, ejemplo AghTareasLimpiezaFilters).
+    assert "use App\\Models\\dbsiaw\\siaw_roles;" in php
     assert "public function rol_id($value)" in php
-    assert "\\App\\Models\\dbsiaw\\siaw_roles::where('id', $value)->value('pkid');" in php
+    assert "\\App\\Models\\dbsiaw\\siaw_roles::where" not in php
+    assert "siaw_roles::where('id', $value)->value('pkid');" in php
     assert "return $this->builder->where('rol_id', $pkid);" in php
     assert "return $this->builder->whereNull('rol_id');" in php
 

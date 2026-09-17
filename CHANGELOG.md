@@ -2,6 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.3.0]
+
+### Corregido
+- `{table}Filters.php`: los campos FK (`*_id`) quedaban listados en `$allowedFilters` y `$allowedSorts` ADEMÁS de tener su método resolver — QueryFilters aplica los dos WHERE (el del método y el genérico), y el genérico compara el UUID crudo del frontend contra una columna que guarda el `pkid` (entero). Esa segunda condición nunca matchea, y en AND con la primera el resultado quedaba siempre vacío: el filtro (y el sort) por cualquier FK no funcionaba nunca, aunque el método resolver estuviera bien generado. Ahora los FK se excluyen de ambos arrays — ver useFilters.md#FKs que guardan pkid.
+- `{table}Filters.php`: el método resolver de cada FK referenciaba el modelo relacionado con la ruta completa inline (`\App\Models\db{prefijo}\Tabla::where(...)`) en vez de un `use` al principio del archivo + nombre corto en el cuerpo — no coincidía con la convención documentada (ver el ejemplo `AghTareasLimpiezaFilters` de useFilters.md). Mismo fix aplicado a `Model.php` (las relaciones `belongsTo` y el modelo de usuario de auditoría) y a `{Modulo}Service.php` (`$uuidMapping`).
+- `{Modulo}Service.php`: `$uuidMapping` armaba la ruta del modelo relacionado con el prefijo del **módulo actual** en vez del prefijo de la **tabla relacionada** — para una FK que cruza de prefijo (ej. módulo `mdt_pedidos` con una FK a `catalogo_tienda`, prefijo `catalogo`), el `use` generado apuntaba a una clase que no existe (`App\Models\dbmdt\catalogo_tienda`). `ManifestRelation` ahora carga su propio `fk_table_prefijo` en vez de asumir el del módulo.
+- `Model.php`: la relación `belongsTo` de una FK cruzando de prefijo no tenía ningún `use`, dependía de que la clase relacionada estuviera por casualidad en el mismo namespace — ahora se agrega el `use` solo cuando el prefijo de la FK es distinto del propio (agregarlo cuando es el mismo sería un fatal error de PHP: "already in use").
+
+### Añadido
+- El combo "FK -> tabla" de la grilla de columnas ahora permite asignar manualmente CUALQUIER columna a una tabla relacionada, no solo las que terminan en `_id` (la detección automática de `fk_resolver` exige ese sufijo; la asignación manual no). Útil para tablas legadas o con una convención de nombres distinta. La asignación manual queda cacheada igual que una resolución automática (se recuerda en próximas conexiones y es exportable al mapeo de relaciones compartido).
+
 ## [1.2.0]
 
 ### Añadido

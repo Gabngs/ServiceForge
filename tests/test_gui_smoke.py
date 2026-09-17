@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QPushButton  # noqa: E402
 
 from generador import scaffold  # noqa: E402
 from generador.db import ConnectionConfig  # noqa: E402
+from generador.fk_resolver import FkResolution  # noqa: E402
 from generador.gui import ConnectionOutcome, GenerationLogDialog, MainWindow, ProjectScanDialog, SettingsDialog  # noqa: E402
 from generador.logs import GenerationLogEntry  # noqa: E402
 from generador.project_scan import scan_backend_project  # noqa: E402
@@ -150,6 +151,63 @@ def status_colors_for_test():
     from generador.theme import status_colors
 
     return status_colors("dark")
+
+
+def test_fk_combo_allows_manual_relation_on_any_column(qtbot):
+    """El combo 'FK -> tabla' permite asignar una relación a CUALQUIER
+    columna, no solo a las que terminan en '_id' -- fk_resolver solo detecta
+    automáticamente ese sufijo, pero la relación puede vivir en una columna
+    con otro nombre (ver generator.relation_method)."""
+    from generador.db import Column
+
+    window = MainWindow()
+    qtbot.addWidget(window)
+
+    window.config = ConnectionConfig(host="127.0.0.1", port=3306, user="root", password="", database="db_test")
+    window.tables = ["siaw_usuarios", "catalogo_tienda", "siaw_roles"]
+    window.current_table = "siaw_productos"
+    window.current_columns = [
+        Column("nombre", "varchar(100)", nullable=False, key="", default=None, extra=""),
+        Column("tienda", "int", nullable=False, key="", default=None, extra=""),  # sin sufijo _id
+    ]
+    window.current_resolutions = {}
+    window._populate_grid()
+
+    fk_combo = window.grid.cellWidget(1, 5)
+    from PySide6.QtWidgets import QComboBox
+
+    assert isinstance(fk_combo, QComboBox)
+    assert fk_combo.currentText() == "(ninguna)"
+    assert "tienda" not in window.current_resolutions
+
+    fk_combo.setCurrentText("catalogo_tienda")
+    assert window.current_resolutions["tienda"].table == "catalogo_tienda"
+    assert window.current_resolutions["tienda"].status == "manual"
+    assert window.session_resolved_fks["tienda"] == "catalogo_tienda"
+
+    fk_combo.setCurrentText("(ninguna)")
+    assert "tienda" not in window.current_resolutions
+
+
+def test_fk_combo_preselects_auto_detected_resolution(qtbot):
+    from generador.db import Column
+
+    window = MainWindow()
+    qtbot.addWidget(window)
+
+    window.config = ConnectionConfig(host="127.0.0.1", port=3306, user="root", password="", database="db_test")
+    window.tables = ["siaw_usuarios", "siaw_roles"]
+    window.current_table = "siaw_usuarios"
+    window.current_columns = [
+        Column("rol_id", "int", nullable=False, key="MUL", default=None, extra=""),
+    ]
+    window.current_resolutions = {
+        "rol_id": FkResolution(column="rol_id", base_name="rol", candidates=["siaw_roles"], status="auto", table="siaw_roles")
+    }
+    window._populate_grid()
+
+    fk_combo = window.grid.cellWidget(0, 5)
+    assert fk_combo.currentText() == "siaw_roles"
 
 
 def test_generation_log_dialog_constructs_empty(qtbot):

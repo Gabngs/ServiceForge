@@ -59,7 +59,16 @@ _FK_STATUS_LABELS = {
     "auto": "auto",
     "resolved_from_cache": "caché local",
     "from_mapping_file": "mapeo importado",
+    "manual": "manual",
 }
+
+# Detección automática de FK exige que la columna termine en "_id" (ver
+# fk_resolver.find_fk_candidates) — pero una relación puede vivir en una
+# columna con otro nombre (ej. legado, o una convención distinta). El combo
+# de "FK -> tabla" permite asignar manualmente CUALQUIER columna a una
+# tabla, sin esa restricción — no es una opción, es el mismo mecanismo que
+# ya resuelve columnas ambiguas, solo que a mano y para cualquier columna.
+_FK_NONE_LABEL = "(ninguna)"
 
 _PREVIEW_TABS: list[tuple[str, str]] = [
     ("model", "Model.php"),
@@ -1294,16 +1303,45 @@ class MainWindow(QMainWindow):
             tiny_cb.setChecked(row < 2)  # sugerencia inicial, editable
             self.grid.setCellWidget(row, 4, tiny_cb)
 
-            if resolution is None:
-                fk_text = ""
-            elif resolution.table:
+            fk_combo = QComboBox()
+            fk_combo.addItem(_FK_NONE_LABEL)
+            fk_combo.addItems(sorted(self.tables))
+            if resolution and resolution.table:
+                fk_combo.setCurrentText(resolution.table)
                 status_label = _FK_STATUS_LABELS.get(resolution.status, resolution.status)
-                fk_text = f"{resolution.table} ({status_label})"
+                fk_combo.setToolTip(f"Detectado: {status_label}")
+            elif resolution and resolution.status == "ambiguous":
+                fk_combo.setCurrentText(_FK_NONE_LABEL)
+                fk_combo.setToolTip(
+                    "Ambiguo — el desarrollador canceló la resolución asistida. Elegí la tabla a mano."
+                )
             else:
-                fk_text = "⚠ sin resolver"
-            self.grid.setItem(row, 5, QTableWidgetItem(fk_text))
+                fk_combo.setCurrentText(_FK_NONE_LABEL)
+                fk_combo.setToolTip(
+                    "Sin relación detectada automáticamente — se puede asignar igual a mano "
+                    "(no hace falta que el nombre de la columna termine en \"_id\")."
+                )
+            fk_combo.currentTextChanged.connect(
+                lambda text, name=column.name: self._on_fk_combo_changed(name, text)
+            )
+            self.grid.setCellWidget(row, 5, fk_combo)
 
         self.grid.resizeColumnsToContents()
+
+    def _on_fk_combo_changed(self, column_name: str, table_name: str) -> None:
+        """El combo de 'FK -> tabla' es la fuente de verdad al generar (ver
+        _build_manifest) — cualquier columna se puede asignar a cualquier
+        tabla acá, sin depender de que el nombre termine en '_id'."""
+        if table_name == _FK_NONE_LABEL or not table_name:
+            self.current_resolutions.pop(column_name, None)
+            return
+
+        self.current_resolutions[column_name] = fk_resolver.FkResolution(
+            column_name, column_name, [table_name], "manual", table_name
+        )
+        self.session_resolved_fks[column_name] = table_name
+        if self.config:
+            self.fk_cache.set(self.config.connection_id, column_name, table_name)
 
     def _current_field_selection(self) -> tuple[set[str], set[str]]:
         included: set[str] = set()

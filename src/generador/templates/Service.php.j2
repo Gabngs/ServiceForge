@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\db{{ manifest.prefijo }}\{{ manifest.model_class }};
+{% for prefijo, model_class in relation_imports %}
+use App\Models\db{{ prefijo }}\{{ model_class }};
+{% endfor %}
 
 class {{ manifest.modulo_studly }}Service extends AbstractModuleService
 {
@@ -26,7 +29,7 @@ class {{ manifest.modulo_studly }}Service extends AbstractModuleService
      */
     protected array $uuidMapping = [
 {% for rel in relations %}
-        '{{ rel.column }}' => \App\Models\db{{ manifest.prefijo }}\{{ rel.model_class }}::class,
+        '{{ rel.column }}' => {{ rel.model_class }}::class,
 {% endfor %}
     ];
 
