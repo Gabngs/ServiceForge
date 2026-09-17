@@ -679,6 +679,10 @@ class MainWindow(QMainWindow):
         menu_bar = self.menuBar()
 
         file_menu = menu_bar.addMenu("&Archivo")
+        connection_action = QAction("Conexión…", self)
+        connection_action.triggered.connect(self._on_open_connection_dialog)
+        file_menu.addAction(connection_action)
+        file_menu.addSeparator()
         exit_action = QAction("Salir", self)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
@@ -703,12 +707,17 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         root = QVBoxLayout(central)
 
-        top_row = QHBoxLayout()
-        connection_box = self._build_connection_box()
-        project_box = self._build_project_box()
-        top_row.addWidget(connection_box, stretch=2, alignment=Qt.AlignTop)
-        top_row.addWidget(project_box, stretch=3, alignment=Qt.AlignTop)
-        root.addLayout(top_row)
+        # La conexión a BD se configura una vez por sesión (o rara vez) — vive
+        # en un diálogo aparte (mismo patrón que Logs/Preferencias) en vez de
+        # ocupar espacio fijo en la ventana principal. Acá solo queda una
+        # fila de estado compacta.
+        self.connection_dialog = self._build_connection_dialog()
+        root.addWidget(self._build_connection_status_row())
+
+        # "Proyectos destino" sí se deja visible: a diferencia de la conexión,
+        # conviene tener la raíz backend/frontend siempre a la vista mientras
+        # se genera, para no escribir en la carpeta equivocada.
+        root.addWidget(self._build_project_box())
 
         table_row = QHBoxLayout()
         self.table_combo = QComboBox()
@@ -791,29 +800,28 @@ class MainWindow(QMainWindow):
         self.status_label = QLabel("Sin conexión.")
         root.addWidget(self.status_label)
 
-    _CONNECTION_BOX_TITLE = "Conexión — BD objetivo"
+    def _build_connection_status_row(self) -> QWidget:
+        container = QWidget()
+        row = QHBoxLayout(container)
+        row.setContentsMargins(0, 0, 0, 0)
+        self.connection_summary_label = QLabel("● Sin conexión")
+        self.connection_dialog_btn = QPushButton("Conexión…")
+        self.connection_dialog_btn.clicked.connect(self._on_open_connection_dialog)
+        row.addWidget(self.connection_summary_label)
+        row.addStretch()
+        row.addWidget(self.connection_dialog_btn)
+        return container
 
-    def _build_connection_box(self) -> QGroupBox:
-        # Colapsable: el formulario de conexión solo hace falta antes de
-        # conectar (o para cambiar de BD después) — una vez conectado, deja
-        # de usarse en el flujo normal (analizar → generar) y solo ocupa
-        # espacio vertical que le hace falta al grid/preview. Se arranca
-        # expandido (hace falta para el primer "Conectar"), con un botón
-        # para colapsarlo sin conectar ("configurar después"), y se colapsa
-        # solo al conectar con éxito.
-        box = QGroupBox(self._CONNECTION_BOX_TITLE)
-        box.setCheckable(True)
-        box.setChecked(True)
-        box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
-        box.setToolTip("Clic en el título para expandir/colapsar.")
-        outer = QVBoxLayout(box)
+    def _build_connection_dialog(self) -> QDialog:
+        # Vive en un diálogo aparte (mismo patrón que Preferencias/Logs): la
+        # conexión se configura una vez por sesión, no debe competir por
+        # espacio con el grid/preview que es lo que se usa todo el tiempo.
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Conexión — BD objetivo")
+        dialog.setMinimumWidth(440)
+        layout = QVBoxLayout(dialog)
 
-        self._connection_form_widget = QWidget()
-        form = QFormLayout(self._connection_form_widget)
-        form.setContentsMargins(0, 4, 0, 0)
-        outer.addWidget(self._connection_form_widget)
-        box.toggled.connect(self._connection_form_widget.setVisible)
-
+        form = QFormLayout()
         self.host_input = QLineEdit("127.0.0.1")
         self.port_input = QSpinBox()
         self.port_input.setRange(1, 65535)
@@ -831,25 +839,28 @@ class MainWindow(QMainWindow):
         form.addRow("Contraseña:", self.password_input)
         form.addRow("Base de datos:", self.database_input)
         form.addRow("Conexión Eloquent ($connection):", self.connection_name_input)
+        layout.addLayout(form)
 
         connect_row = QHBoxLayout()
         self.connect_btn = QPushButton("Conectar")
         self.connect_btn.clicked.connect(lambda: self._start_connection("connect"))
         self.test_connection_btn = QPushButton("Probar conexión")
         self.test_connection_btn.clicked.connect(lambda: self._start_connection("test"))
-        self.configure_later_btn = QPushButton("Configurar después")
-        self.configure_later_btn.setToolTip("Colapsa esta sección sin conectar — se puede retomar más tarde.")
-        self.configure_later_btn.clicked.connect(lambda: box.setChecked(False))
         self.connection_status = QLabel("● Desconectado")
         connect_row.addWidget(self.connect_btn)
         connect_row.addWidget(self.test_connection_btn)
-        connect_row.addWidget(self.configure_later_btn)
         connect_row.addWidget(self.connection_status)
         connect_row.addStretch()
-        form.addRow(connect_row)
+        layout.addLayout(connect_row)
 
-        self.connection_box = box
-        return box
+        close_btn = QPushButton("Cerrar")
+        close_btn.clicked.connect(dialog.accept)
+        layout.addWidget(close_btn, alignment=Qt.AlignRight)
+
+        return dialog
+
+    def _on_open_connection_dialog(self) -> None:
+        self.connection_dialog.exec()
 
     def _build_project_box(self) -> QGroupBox:
         box = QGroupBox("Proyectos destino")
@@ -898,6 +909,7 @@ class MainWindow(QMainWindow):
         self.status_label.setStyleSheet(f"color: {self.colors['idle']};")
         if not self.conn:
             self.connection_status.setStyleSheet(f"color: {self.colors['idle']};")
+            self.connection_summary_label.setStyleSheet(f"color: {self.colors['idle']};")
 
     def _on_open_settings(self) -> None:
         dialog = SettingsDialog(self.settings, self)
@@ -976,6 +988,10 @@ class MainWindow(QMainWindow):
         color = self.colors.get(state, self.colors["idle"])
         self.connection_status.setStyleSheet(f"color: {color};")
         self.connection_status.setText(f"● {text}")
+        # El diálogo de conexión puede estar cerrado — la fila de estado
+        # compacta de la ventana principal repite el mismo texto siempre.
+        self.connection_summary_label.setStyleSheet(f"color: {color};")
+        self.connection_summary_label.setText(f"● {text}")
 
     def _start_connection(self, mode: str) -> None:
         if self._connection_worker is not None and self._connection_worker.isRunning():
@@ -1019,13 +1035,11 @@ class MainWindow(QMainWindow):
         self.table_combo.addItems(self.tables)
         self.analyze_btn.setEnabled(bool(self.tables))
         self.backup_btn.setEnabled(True)
-        self._set_connection_status("ok", f"Conectado — {len(self.tables)} tablas")
+        self._set_connection_status("ok", f"Conectado — {config.database}@{config.host} · {len(self.tables)} tablas")
 
-        # Ya conectado — colapsar el formulario para devolverle el espacio a
-        # la parte que se usa todo el tiempo (grid + preview). El título
-        # deja la conexión activa a la vista sin necesidad de expandir.
-        self.connection_box.setTitle(f"{self._CONNECTION_BOX_TITLE} — {config.database}@{config.host} ✓")
-        self.connection_box.setChecked(False)
+        # Ya conectado — cerrar el diálogo solo, no hace falta que el
+        # desarrollador lo cierre a mano para seguir con "Analizar".
+        self.connection_dialog.accept()
 
     def _on_connection_failed(self, mode: str, message: str) -> None:
         self._set_connection_status("error", "Error de conexión")

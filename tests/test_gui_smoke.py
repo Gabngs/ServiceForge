@@ -30,39 +30,40 @@ def test_main_window_constructs(qtbot):
     assert [a.text() for a in window.menuBar().actions()] == ["&Archivo", "&Editar", "&Logs", "A&yuda"]
 
 
-def test_connection_box_starts_expanded_and_configure_later_collapses(qtbot):
+def test_connection_lives_in_a_separate_dialog_not_the_main_window(qtbot):
     window = MainWindow()
     qtbot.addWidget(window)
-    assert window.connection_box.isChecked() is True
-    assert window._connection_form_widget.isHidden() is False
+    # La ventana principal no tiene ningún QGroupBox/form de conexión propio
+    # — solo el resumen compacto y el botón que abre el diálogo.
+    assert not window.connection_dialog.isVisible()
+    assert window.connection_summary_label.text() == "● Sin conexión"
+    assert window.connection_dialog_btn.text() == "Conexión…"
 
-    window.configure_later_btn.click()
-    assert window.connection_box.isChecked() is False
-    assert window._connection_form_widget.isHidden() is True
 
-
-def test_connection_box_collapses_on_successful_connect(qtbot):
+def test_connection_dialog_closes_on_successful_connect(qtbot):
     window = MainWindow()
     qtbot.addWidget(window)
     config = ConnectionConfig(host="127.0.0.1", port=3306, user="root", password="", database="db_test")
     outcome = ConnectionOutcome(tables=["siaw_usuarios"], connection=object())
 
+    window.connection_dialog.show()
     window._on_connection_succeeded(config, "connect", outcome)
 
-    assert window.connection_box.isChecked() is False
-    assert "db_test" in window.connection_box.title()
+    assert not window.connection_dialog.isVisible()
+    assert "db_test" in window.connection_summary_label.text()
     assert window.analyze_btn.isEnabled()
 
 
-def test_connection_box_stays_expanded_on_test_mode(qtbot):
+def test_connection_dialog_stays_open_on_test_mode(qtbot):
     window = MainWindow()
     qtbot.addWidget(window)
     config = ConnectionConfig(host="127.0.0.1", port=3306, user="root", password="", database="db_test")
     outcome = ConnectionOutcome(tables=[], connection=None)
 
+    window.connection_dialog.show()
     window._on_connection_succeeded(config, "test", outcome)
 
-    assert window.connection_box.isChecked() is True
+    assert window.connection_dialog.isVisible()
 
 
 def test_theme_toggle_applies(qtbot):

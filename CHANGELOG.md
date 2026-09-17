@@ -2,6 +2,12 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.1.2]
+
+### Cambiado
+- La sección "Conexión — BD objetivo" se saca de la ventana principal y pasa a un diálogo aparte (mismo patrón que Logs/Preferencias), abierto desde un botón "Conexión…" o desde Archivo → Conexión… — reemplaza el enfoque colapsable de 1.1.1 (un checkbox en el título no comunicaba bien que la sección se podía ocultar, y aun así ocupaba todo el espacio la primera vez, antes de conectar). La ventana principal ahora solo muestra una fila de estado compacta (`● Conectado — db@host · N tablas`) y el diálogo se cierra solo al conectar con éxito.
+- "Proyectos destino" pasa a ocupar el ancho completo de la ventana en vez de compartir fila con la conexión — más lugar para los campos de ruta backend/frontend sin apretarlos.
+
 ## [1.1.1]
 
 ### Cambiado
