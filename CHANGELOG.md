@@ -2,7 +2,7 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
-## [Unreleased]
+## [1.1.1]
 
 ### Cambiado
 - La sección "Conexión — BD objetivo" ahora es colapsable (clic en el título o botón "Configurar después") y se colapsa sola al conectar con éxito, dejando el título con un resumen (`db@host ✓`) — antes quedaba siempre expandida y competía por espacio vertical con el grid/preview, que es lo que se usa todo el tiempo una vez conectado.
