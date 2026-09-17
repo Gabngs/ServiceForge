@@ -173,7 +173,7 @@ def test_fk_combo_allows_manual_relation_on_any_column(qtbot):
     window.current_resolutions = {}
     window._populate_grid()
 
-    fk_combo = window.grid.cellWidget(1, 5)
+    fk_combo = window.grid.cellWidget(1, 6)
     from PySide6.QtWidgets import QComboBox
 
     assert isinstance(fk_combo, QComboBox)
@@ -206,7 +206,7 @@ def test_fk_combo_preselects_auto_detected_resolution(qtbot):
     }
     window._populate_grid()
 
-    fk_combo = window.grid.cellWidget(0, 5)
+    fk_combo = window.grid.cellWidget(0, 6)
     assert fk_combo.currentText() == "siaw_roles"
 
 

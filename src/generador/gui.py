@@ -49,11 +49,24 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import __version__, backup, db, fk_resolver, generator, logs, mapping, naming, project_scan, scaffold, table_mapping
+from . import (
+    __version__,
+    backup,
+    db,
+    fk_resolver,
+    generator,
+    logs,
+    mapping,
+    migration_import,
+    naming,
+    project_scan,
+    scaffold,
+    table_mapping,
+)
 from .settings import Settings
 from .theme import build_stylesheet, status_colors
 
-_GRID_COLUMNS = ["Campo", "Tipo SQL", "Nullable", "Incluir", "Tiny", "FK -> tabla"]
+_GRID_COLUMNS = ["Campo", "Tipo SQL", "Nullable", "Incluir", "Tiny", "Relación", "FK -> tabla"]
 
 _FK_STATUS_LABELS = {
     "auto": "auto",
@@ -400,6 +413,122 @@ class FkResolutionDialog(QDialog):
             if combo.currentIndex() > 0:
                 result[column] = combo.currentText()
         return result
+
+
+class MigrationImportDialog(QDialog):
+    """Fuente alternativa a la conexión a BD: parsea una migración Laravel de
+    `Schema::create(...)` (ver migration_import.py) — el desarrollador elige
+    entre un archivo del proyecto o texto pegado a mano (ej. copiado del editor
+    sin tener el proyecto abierto en esta misma máquina)."""
+
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Importar desde migración")
+        self.setMinimumWidth(560)
+        self.parsed: migration_import.ParsedMigration | None = None
+
+        layout = QVBoxLayout(self)
+
+        source_row = QHBoxLayout()
+        self.file_radio = QRadioButton("Archivo de migración (.php)")
+        self.paste_radio = QRadioButton("Pegar texto de la migración")
+        self.file_radio.setChecked(True)
+        group = QButtonGroup(self)
+        group.addButton(self.file_radio)
+        group.addButton(self.paste_radio)
+        source_row.addWidget(self.file_radio)
+        source_row.addWidget(self.paste_radio)
+        source_row.addStretch()
+        layout.addLayout(source_row)
+
+        file_row = QHBoxLayout()
+        self.file_path_input = QLineEdit()
+        self.file_path_input.setPlaceholderText(r"C:\proyecto\database\migrations\...\create_x_table.php")
+        browse_btn = QPushButton("Elegir…")
+        browse_btn.clicked.connect(self._on_browse)
+        file_row.addWidget(self.file_path_input)
+        file_row.addWidget(browse_btn)
+        layout.addLayout(file_row)
+
+        self.paste_text = QPlainTextEdit()
+        self.paste_text.setPlaceholderText(
+            "Pegar acá el contenido completo del archivo de migración "
+            "(o al menos el bloque Schema::create(...) { ... });)"
+        )
+        self.paste_text.setMinimumHeight(220)
+        layout.addWidget(self.paste_text)
+
+        self.file_radio.toggled.connect(self._on_source_toggled)
+        self._on_source_toggled()
+
+        self.status_label = QLabel("")
+        self.status_label.setWordWrap(True)
+        layout.addWidget(self.status_label)
+
+        button_row = QHBoxLayout()
+        parse_btn = QPushButton("Analizar migración")
+        parse_btn.clicked.connect(self._on_parse)
+        button_row.addWidget(parse_btn)
+        button_row.addStretch()
+        layout.addLayout(button_row)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self._on_accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def _on_source_toggled(self) -> None:
+        is_file = self.file_radio.isChecked()
+        self.file_path_input.setEnabled(is_file)
+        self.paste_text.setEnabled(not is_file)
+
+    def _on_browse(self) -> None:
+        path_str, _ = QFileDialog.getOpenFileName(
+            self, "Elegir migración", "", "Migración PHP (*.php)"
+        )
+        if path_str:
+            self.file_path_input.setText(path_str)
+
+    def _read_source_text(self) -> str | None:
+        if self.file_radio.isChecked():
+            path_str = self.file_path_input.text().strip()
+            if not path_str:
+                QMessageBox.warning(self, "Falta el archivo", "Elegí el archivo de migración.")
+                return None
+            try:
+                return Path(path_str).read_text(encoding="utf-8", errors="ignore")
+            except OSError as exc:
+                QMessageBox.critical(self, "No se pudo leer el archivo", str(exc))
+                return None
+
+        text = self.paste_text.toPlainText().strip()
+        if not text:
+            QMessageBox.warning(self, "Falta el texto", "Pegá el contenido de la migración.")
+            return None
+        return text
+
+    def _on_parse(self) -> None:
+        text = self._read_source_text()
+        if text is None:
+            return
+        try:
+            self.parsed = migration_import.parse_migration(text)
+        except migration_import.MigrationParseError as exc:
+            self.parsed = None
+            self.status_label.setText(f"❌ {exc}")
+            return
+
+        detail = f"✅ Tabla '{self.parsed.table}' — {len(self.parsed.columns)} columnas."
+        if self.parsed.warnings:
+            detail += " Avisos: " + "; ".join(self.parsed.warnings)
+        self.status_label.setText(detail)
+
+    def _on_accept(self) -> None:
+        if self.parsed is None:
+            self._on_parse()
+        if self.parsed is None:
+            return
+        self.accept()
 
 
 class ProjectScanDialog(QDialog):
@@ -866,11 +995,23 @@ class MainWindow(QMainWindow):
         self.analyze_btn = QPushButton("→ Analizar")
         self.analyze_btn.clicked.connect(self._on_analyze)
         self.analyze_btn.setEnabled(False)
+        self.import_migration_btn = QPushButton("Importar migración…")
+        self.import_migration_btn.clicked.connect(self._on_import_migration)
         table_row.addWidget(QLabel("Tabla:"))
         table_row.addWidget(self.table_combo)
         table_row.addWidget(self.analyze_btn)
+        table_row.addWidget(self.import_migration_btn)
         table_row.addStretch()
         root.addLayout(table_row)
+
+        pagination_row = QHBoxLayout()
+        self.pagination_checkbox = QCheckBox(
+            "El Controller admite ?paginate=true (agrega meta de paginación — ver Controller.md)"
+        )
+        self.pagination_checkbox.setChecked(True)
+        pagination_row.addWidget(self.pagination_checkbox)
+        pagination_row.addStretch()
+        root.addLayout(pagination_row)
 
         # Grid (mapeo de columnas) y preview en un splitter — el preview es
         # donde se edita el código antes de generar, necesita poder crecer.
@@ -1038,7 +1179,66 @@ class MainWindow(QMainWindow):
         self.write_audit_checkbox.setChecked(False)
         form.addRow(self.write_audit_checkbox)
 
+        # Carpeta de salida separada — para cuando no se quiere escribir
+        # directo en el proyecto real (ej. revisar el resultado antes de
+        # copiarlo a mano, o generar sin tener el proyecto clonado acá). El
+        # backend/frontend de arriba siguen siendo la raíz que se ANALIZA/
+        # escanea (tablas, migraciones, resources existentes); esta carpeta es
+        # solo dónde se ESCRIBEN los archivos generados — ver _on_generate.
+        # write_files ya crea toda la subestructura de carpetas (mkdir
+        # parents=True) así que cualquier carpeta vacía sirve como destino.
+        self.separate_output_checkbox = QCheckBox(
+            "Generar en una carpeta de salida separada (no escribir directo en el proyecto)"
+        )
+        self.separate_output_checkbox.toggled.connect(self._on_separate_output_toggled)
+        form.addRow(self.separate_output_checkbox)
+
+        self.output_backend_root: Path | None = None
+        self.output_backend_input = QLineEdit()
+        self.output_backend_input.setReadOnly(True)
+        output_backend_row = QHBoxLayout()
+        output_backend_browse = QPushButton("Elegir…")
+        output_backend_browse.clicked.connect(self._on_choose_output_backend_root)
+        output_backend_row.addWidget(self.output_backend_input)
+        output_backend_row.addWidget(output_backend_browse)
+        self.output_backend_label = QLabel("Salida backend:")
+        form.addRow(self.output_backend_label, output_backend_row)
+
+        self.output_frontend_root: Path | None = None
+        self.output_frontend_input = QLineEdit()
+        self.output_frontend_input.setReadOnly(True)
+        output_frontend_row = QHBoxLayout()
+        output_frontend_browse = QPushButton("Elegir…")
+        output_frontend_browse.clicked.connect(self._on_choose_output_frontend_root)
+        output_frontend_row.addWidget(self.output_frontend_input)
+        output_frontend_row.addWidget(output_frontend_browse)
+        self.output_frontend_label = QLabel("Salida frontend:")
+        form.addRow(self.output_frontend_label, output_frontend_row)
+
+        self._on_separate_output_toggled(False)
+
         return box
+
+    def _on_separate_output_toggled(self, checked: bool) -> None:
+        for widget in (
+            self.output_backend_label,
+            self.output_backend_input,
+            self.output_frontend_label,
+            self.output_frontend_input,
+        ):
+            widget.setEnabled(checked)
+
+    def _on_choose_output_backend_root(self) -> None:
+        chosen = QFileDialog.getExistingDirectory(self, "Carpeta de salida — backend")
+        if chosen:
+            self.output_backend_root = Path(chosen)
+            self.output_backend_input.setText(chosen)
+
+    def _on_choose_output_frontend_root(self) -> None:
+        chosen = QFileDialog.getExistingDirectory(self, "Carpeta de salida — frontend")
+        if chosen:
+            self.output_frontend_root = Path(chosen)
+            self.output_frontend_input.setText(chosen)
 
     # --------------------------------------------------------- preferencias
     def _apply_theme(self) -> None:
@@ -1225,17 +1425,73 @@ class MainWindow(QMainWindow):
         if not table:
             return
 
-        # Arranca acá el cronómetro del lead time con la herramienta para este
-        # módulo (ver logs.py / 3.2.5 del informe) — se cierra al confirmar
-        # "Generar archivos".
-        self._analysis_started_at = time.monotonic()
-
         try:
             columns = db.describe_table(self.conn, table)
             unique_idx = db.unique_indexes(self.conn, table)
         except Exception as exc:  # noqa: BLE001
             QMessageBox.critical(self, "Error al analizar la tabla", str(exc))
             return
+
+        self._finish_analysis(
+            table,
+            columns,
+            unique_idx,
+            tables_for_fk=self.tables,
+            connection_id=self.config.connection_id,
+        )
+
+    def _on_import_migration(self) -> None:
+        """Fuente alternativa a la conexión a BD: una migración Laravel ya
+        escrita (archivo elegido o texto pegado) — ver migration_import.py.
+        Reproduce exactamente el mismo flujo de análisis (resolución de FK,
+        grid, preview) que `_on_analyze`, solo que sin conexión real."""
+        dialog = MigrationImportDialog(self)
+        if dialog.exec() != QDialog.Accepted:
+            return
+
+        parsed = dialog.parsed
+        if parsed is None:
+            return
+
+        if parsed.warnings:
+            QMessageBox.warning(self, "Migración importada con avisos", "\n".join(parsed.warnings))
+
+        # Sin conexión a BD no hay SHOW TABLES -- se completa la lista de
+        # tablas (necesaria para reconocer candidatas de FK, ver
+        # fk_resolver.find_fk_candidates) escaneando las migraciones del
+        # propio proyecto backend, si ya se eligió una raíz.
+        tables_for_fk = set(self.tables)
+        if self.backend_root:
+            tables_for_fk.update(migration_import.scan_migration_tables(self.backend_root))
+        tables_for_fk.add(parsed.table)
+        self.tables = sorted(tables_for_fk)
+
+        # Los hints de FK explícitos de la migración (->constrained()/->references()
+        # ->on()) tienen la misma prioridad que un mapeo .md importado — ver
+        # fk_resolver.resolve_fk.
+        self.imported_mapping.update(parsed.fk_hints)
+
+        self._finish_analysis(
+            parsed.table,
+            parsed.columns,
+            parsed.unique_indexes,
+            tables_for_fk=self.tables,
+            connection_id=f"migration::{self.backend_root or 'sin-proyecto'}",
+        )
+
+    def _finish_analysis(
+        self,
+        table: str,
+        columns: list[db.Column],
+        unique_idx: dict[str, list[str]],
+        *,
+        tables_for_fk: list[str],
+        connection_id: str,
+    ) -> None:
+        # Arranca acá el cronómetro del lead time con la herramienta para este
+        # módulo (ver logs.py / 3.2.5 del informe) — se cierra al confirmar
+        # "Generar archivos".
+        self._analysis_started_at = time.monotonic()
 
         prefijo, _ = naming.split_prefijo_modulo(table)
         business_columns = [c for c in columns if c.name not in mapping.EXCLUDED_FIELDS]
@@ -1246,8 +1502,8 @@ class MainWindow(QMainWindow):
             resolution = fk_resolver.resolve_fk(
                 column.name,
                 prefijo,
-                self.tables,
-                connection_id=self.config.connection_id,
+                tables_for_fk,
+                connection_id=connection_id,
                 cache=self.fk_cache,
                 imported_mapping=self.imported_mapping,
             )
@@ -1258,11 +1514,11 @@ class MainWindow(QMainWindow):
                 ambiguous.append(resolution)
 
         if ambiguous:
-            dialog = FkResolutionDialog(ambiguous, self.tables, self)
+            dialog = FkResolutionDialog(ambiguous, tables_for_fk, self)
             if dialog.exec() == QDialog.Accepted:
                 chosen = dialog.resolutions()
                 for column, table_name in chosen.items():
-                    self.fk_cache.set(self.config.connection_id, column, table_name)
+                    self.fk_cache.set(connection_id, column, table_name)
                     base = resolutions[column].base_name
                     candidates = resolutions[column].candidates
                     resolutions[column] = fk_resolver.FkResolution(
@@ -1281,6 +1537,7 @@ class MainWindow(QMainWindow):
         self.preview_btn.setEnabled(True)
         self.generate_btn.setEnabled(True)
         self.status_label.setText(f"Tabla '{table}' analizada — {len(business_columns)} columnas de negocio.")
+        self._on_update_preview()
 
         # Preview no vacío desde el primer momento — antes había que acordarse
         # de apretar "Actualizar preview" para ver algo en las pestañas.
@@ -1303,6 +1560,15 @@ class MainWindow(QMainWindow):
             tiny_cb.setChecked(row < 2)  # sugerencia inicial, editable
             self.grid.setCellWidget(row, 4, tiny_cb)
 
+            # "Relación" es un checkbox propio, independiente de "Tiny" — el
+            # mismo campo puede necesitar mostrarse en {Modulo}RelationResource
+            # (lo carga OTRO módulo con whenLoaded()) sin necesariamente ir en
+            # {Modulo}TinyResource (?tiny=true del propio módulo), o viceversa.
+            # Ver ApiResponse.md#Resource triple.
+            relation_cb = QCheckBox()
+            relation_cb.setChecked(row < 2)  # misma sugerencia inicial que Tiny, editable
+            self.grid.setCellWidget(row, 5, relation_cb)
+
             fk_combo = QComboBox()
             fk_combo.addItem(_FK_NONE_LABEL)
             fk_combo.addItems(sorted(self.tables))
@@ -1324,7 +1590,7 @@ class MainWindow(QMainWindow):
             fk_combo.currentTextChanged.connect(
                 lambda text, name=column.name: self._on_fk_combo_changed(name, text)
             )
-            self.grid.setCellWidget(row, 5, fk_combo)
+            self.grid.setCellWidget(row, 6, fk_combo)
 
         self.grid.resizeColumnsToContents()
 
@@ -1343,22 +1609,26 @@ class MainWindow(QMainWindow):
         if self.config:
             self.fk_cache.set(self.config.connection_id, column_name, table_name)
 
-    def _current_field_selection(self) -> tuple[set[str], set[str]]:
+    def _current_field_selection(self) -> tuple[set[str], set[str], set[str]]:
         included: set[str] = set()
         tiny: set[str] = set()
+        relation: set[str] = set()
         for row, column in enumerate(self.current_columns):
             include_cb = self.grid.cellWidget(row, 3)
             tiny_cb = self.grid.cellWidget(row, 4)
+            relation_cb = self.grid.cellWidget(row, 5)
             if isinstance(include_cb, QCheckBox) and include_cb.isChecked():
                 included.add(column.name)
             if isinstance(tiny_cb, QCheckBox) and tiny_cb.isChecked():
                 tiny.add(column.name)
-        return included, tiny
+            if isinstance(relation_cb, QCheckBox) and relation_cb.isChecked():
+                relation.add(column.name)
+        return included, tiny, relation
 
     def _build_manifest(self) -> generator.ModuleManifest | None:
-        if not self.current_table or not self.config:
+        if not self.current_table:
             return None
-        included, tiny = self._current_field_selection()
+        included, tiny, relation = self._current_field_selection()
         fk_resolutions = {name: res for name, res in self.current_resolutions.items() if res.table}
         user_model_class = self.user_model_input.text().strip() or generator.DEFAULT_USER_MODEL_CLASS
         connection_name = self.connection_name_input.text().strip() or self.database_input.text().strip() or "mysql"
@@ -1369,8 +1639,10 @@ class MainWindow(QMainWindow):
             unique_indexes=self.current_unique_indexes,
             included_fields=included,
             tiny_fields=tiny,
+            relation_fields=relation,
             connection_name=connection_name,
             user_model_class=user_model_class,
+            supports_pagination=self.pagination_checkbox.isChecked(),
         )
 
     def _on_update_preview(self) -> None:
@@ -1410,6 +1682,18 @@ class MainWindow(QMainWindow):
             )
             return
 
+        use_separate_output = self.separate_output_checkbox.isChecked()
+        if use_separate_output and (not self.output_backend_root or not self.output_frontend_root):
+            QMessageBox.warning(
+                self,
+                "Falta la carpeta de salida",
+                "Elegí la carpeta de salida (backend y frontend) o desmarcá "
+                "\"Generar en una carpeta de salida separada\".",
+            )
+            return
+        write_backend_root = self.output_backend_root if use_separate_output else self.backend_root
+        write_frontend_root = self.output_frontend_root if use_separate_output else self.frontend_root
+
         unresolved = [name for name, res in self.current_resolutions.items() if res.status == "ambiguous"]
         if unresolved:
             proceed = QMessageBox.question(
@@ -1431,8 +1715,8 @@ class MainWindow(QMainWindow):
         try:
             written = generator.write_files(
                 manifest,
-                self.backend_root,
-                self.frontend_root,
+                write_backend_root,
+                write_frontend_root,
                 contents,
                 write_audit_interface=self.write_audit_checkbox.isChecked(),
             )

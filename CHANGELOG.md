@@ -2,6 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.4.0]
+
+### Añadido
+- Importación desde migración Laravel (`Schema::create(...)`) como fuente alternativa a la conexión a BD: archivo elegido o texto pegado a mano, parseado por un nuevo `migration_import.py` que traduce la DSL de `Blueprint` a la misma forma que ya usa el flujo de conexión (columnas + índices únicos), así el resto del pipeline (resolución de FK, mapeo, preview, generación) no distingue el origen. Sin conexión a BD, la lista de tablas necesaria para reconocer candidatas de FK se completa escaneando `database/migrations/**/*.php` del propio proyecto; los FK explícitos de la migración (`->constrained()` / `->references()->on()`) tienen la misma prioridad que un mapeo `.md` importado.
+- Checkbox "Relación" propio en el mapeo de columnas, independiente de "Tiny" — `{Modulo}RelationResource` y `{Modulo}TinyResource` ya no comparten forzosamente el mismo conjunto de campos (ver ApiResponse.md#Resource triple).
+- Checkbox "El Controller admite ?paginate=true": desmarcado, el `index()` generado no ofrece paginación ni construye `meta` (ver Controller.md#Módulos sin paginación); marcado (default), genera el patrón completo ya documentado.
+- Carpeta de salida separada: opción para escribir los archivos generados en una carpeta distinta de la raíz del proyecto backend/frontend (que sigue usándose para analizar/escanear tablas, migraciones y estructura existente) — útil para revisar el resultado antes de copiarlo a mano, o generar sin usar el proyecto real como destino directo de escritura.
+
+### Cambiado
+- El método `belongsTo` generado en el Model usa ahora el nombre LITERAL de la tabla relacionada (ej. `catalogo_tienda()`), no una abreviatura derivada de la columna — ver Model.md#Relaciones. La clave pública que expone el Resource (y la interfaz TypeScript) sigue siendo la corta (`tienda`), ahora en un campo propio (`relation_alias`) desacoplado del método real. Excepción: si dos columnas del mismo módulo apuntan a la misma tabla, se mantiene el nombre derivado de columna para evitar que ambos métodos colisionen.
+
 ## [1.3.0]
 
 ### Corregido

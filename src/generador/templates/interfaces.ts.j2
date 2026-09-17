@@ -8,7 +8,7 @@ import { I{{ studly }}Tiny } from '@interfaces/models/{{ snake }}.interface';
 export interface I{{ manifest.modulo_studly }} {
   id?: string;
 {% for f in fields %}
-  {{ f.name if not f.is_fk else f.relation_method }}?: {{ f.ts_type_full() }};
+  {{ f.name if not f.is_fk else f.relation_alias }}?: {{ f.ts_type_full() }};
 {% endfor %}
   created_by_id?: IAuditUser | null;
   updated_by_id?: IAuditUser | null;
@@ -33,7 +33,7 @@ export interface I{{ manifest.modulo_studly }}Tiny {
   id?: string;
 {% for f in fields %}
 {% if f.tiny %}
-  {{ f.name if not f.is_fk else f.relation_method }}?: {{ f.ts_type_full() }};
+  {{ f.name if not f.is_fk else f.relation_alias }}?: {{ f.ts_type_full() }};
 {% endif %}
 {% endfor %}
 }

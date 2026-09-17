@@ -22,6 +22,7 @@ class {{ manifest.model_class }}Controller extends Controller
     public function __construct(protected {{ manifest.modulo_studly }}Service $service) {}
 
     // ─── INDEX ────────────────────────────────────────────────────────────────
+{% if manifest.supports_pagination %}
     // GET /api/{{ manifest.table }}?paginate=true&page=1&per_page=20&tiny=true
     /**
      * @OA\Get(
@@ -30,6 +31,67 @@ class {{ manifest.model_class }}Controller extends Controller
      *      summary="Listar {{ manifest.modulo }}",
      *      security={{ '{{' }}"bearerAuth":{}}},
      *      @OA\Parameter(name="paginate", in="query", @OA\Schema(type="boolean")),
+     *      @OA\Parameter(name="tiny", in="query", @OA\Schema(type="boolean")),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Listado de {{ manifest.modulo }}. Con ?tiny=true, cada item de `data` sigue {{ manifest.modulo_studly }}TinySchema en vez de {{ manifest.modulo_studly }}Schema. Con ?paginate=true, se agrega `meta` al mismo nivel que `data` — ver ApiResponse.md#Paginación sin duplicar `data`.",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="integer", example=200),
+     *              @OA\Property(property="message", type="string", example="Registros obtenidos correctamente"),
+     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/{{ manifest.modulo_studly }}Schema"))
+     *          )
+     *      )
+     * )
+     */
+    public function index(Request $request)
+    {
+        $paginate = $request->boolean('paginate');
+
+        $data = $this->service->index($paginate); // Collection o LengthAwarePaginator
+
+        // El Resource a usar (completo o tiny) es una decisión de presentación,
+        // no del Service — ver Controller.md#Parámetro `tiny`.
+        $resource = $request->boolean('tiny')
+            ? {{ manifest.modulo_studly }}TinyResource::class
+            : {{ manifest.modulo_studly }}Resource::class;
+
+        if (! $paginate) {
+            return $this->responseSuccess(
+                'Registros obtenidos correctamente',
+                $resource::collection($data)
+            );
+        }
+
+        // $data es LengthAwarePaginator: no pasarlo tal cual a responseSuccess()
+        // (produce data.data). Se transforman solo los items (array plano) y se
+        // agrega 'meta' al mismo nivel que 'data' — ver ApiResponse.md#Paginación
+        // sin duplicar `data`.
+        $response = $this->responseSuccess(
+            'Registros obtenidos correctamente',
+            $resource::collection($data->items())
+        );
+
+        return $response->setData(array_merge($response->getData(true), [
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'last_page'    => $data->lastPage(),
+                'per_page'     => $data->perPage(),
+                'total'        => $data->total(),
+                'from'         => $data->firstItem(),
+                'to'           => $data->lastItem(),
+            ],
+        ]));
+    }
+{% else %}
+    // GET /api/{{ manifest.table }}?tiny=true
+    // Módulo sin paginación (ver Controller.md#Módulos sin paginación) — no
+    // acepta ese parámetro de query ni agrega metadata extra a la respuesta.
+    /**
+     * @OA\Get(
+     *      path="/api/{{ manifest.table }}",
+     *      tags={"{{ manifest.modulo_studly }}"},
+     *      summary="Listar {{ manifest.modulo }}",
+     *      security={{ '{{' }}"bearerAuth":{}}},
      *      @OA\Parameter(name="tiny", in="query", @OA\Schema(type="boolean")),
      *      @OA\Response(
      *          response=200,
@@ -44,9 +106,7 @@ class {{ manifest.model_class }}Controller extends Controller
      */
     public function index(Request $request)
     {
-        $paginate = $request->boolean('paginate');
-
-        $data = $this->service->index($paginate);
+        $data = $this->service->index(false);
 
         // El Resource a usar (completo o tiny) es una decisión de presentación,
         // no del Service — ver Controller.md#Parámetro `tiny`.
@@ -59,6 +119,7 @@ class {{ manifest.model_class }}Controller extends Controller
             $resource::collection($data)
         );
     }
+{% endif %}
 
     // ─── SHOW ─────────────────────────────────────────────────────────────────
     // GET /api/{{ manifest.table }}/{id}

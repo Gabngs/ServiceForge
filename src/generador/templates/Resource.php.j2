@@ -17,7 +17,7 @@ use App\Http\Resources\{{ prefijo_studly }}\{{ modulo_studly }}RelationResource;
  *     @OA\Property(property="id", type="string", format="uuid"),
 {% for f in fields %}
 {% if f.is_fk %}
- *     @OA\Property(property="{{ f.relation_method }}", ref="#/components/schemas/{{ f.fk_related_modulo_studly }}RelationSchema", nullable=true),
+ *     @OA\Property(property="{{ f.relation_alias }}", ref="#/components/schemas/{{ f.fk_related_modulo_studly }}RelationSchema", nullable=true),
 {% else %}
  *     @OA\Property(property="{{ f.name }}", type="{{ f.oa_type() }}"{% if f.oa_format() %}, format="{{ f.oa_format() }}"{% endif %}{% if f.oa_max_length() %}, maxLength={{ f.oa_max_length() }}{% endif %}{% if f.nullable %}, nullable=true{% endif %}),
 {% endif %}
@@ -46,7 +46,7 @@ class {{ manifest.modulo_studly }}Resource extends JsonResource
             'id' => $this->id,
 {% for f in fields %}
 {% if f.is_fk %}
-            '{{ f.relation_method }}' => $this->whenLoaded('{{ f.relation_method }}', fn () => new {{ f.fk_related_modulo_studly }}RelationResource($this->{{ f.relation_method }})),
+            '{{ f.relation_alias }}' => $this->whenLoaded('{{ f.relation_method }}', fn () => new {{ f.fk_related_modulo_studly }}RelationResource($this->{{ f.relation_method }})),
 {% elif f.cast == 'boolean' %}
             '{{ f.name }}' => (bool) $this->{{ f.name }},
 {% else %}

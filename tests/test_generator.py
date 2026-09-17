@@ -35,6 +35,7 @@ def _build_test_manifest(**overrides):
         unique_indexes={"email_unique": ["email"]},
         included_fields=included,
         tiny_fields=tiny,
+        relation_fields=tiny,  # mismo criterio que tiny por default en estos tests
         connection_name="mysql_dbmdt_siaw",
     )
     kwargs.update(overrides)
@@ -57,20 +58,28 @@ def test_build_manifest_naming():
 
 
 def test_build_manifest_relation_detected():
+    """El método belongsTo usa el nombre LITERAL de la tabla relacionada (ver
+    Model.md#Relaciones), no una abreviatura derivada de la columna -- la
+    clave pública corta ("rol") queda en relation_alias, para el Resource."""
     manifest = _build_test_manifest()
     assert len(manifest.relations) == 1
     relation = manifest.relations[0]
     assert relation.column == "rol_id"
-    assert relation.method == "rol"
+    assert relation.method == "siaw_roles"
     assert relation.model_class == "siaw_roles"
+
+    rol_field = next(f for f in manifest.fields if f.name == "rol_id")
+    assert rol_field.relation_method == "siaw_roles"
+    assert rol_field.relation_alias == "roles"  # modulo de "siaw_roles"
 
 
 def test_build_manifest_relation_method_for_manually_assigned_non_id_column():
     """Una FK asignada a mano (combo 'FK -> tabla' en la GUI, ver gui.py
     _on_fk_combo_changed) puede vivir en una columna que no termina en
     '_id' -- la detección automática (fk_resolver.find_fk_candidates) exige
-    ese sufijo, pero el combo permite asignar cualquier columna igual.
-    relation_method no debe cortar mal el nombre en ese caso."""
+    ese sufijo, pero el combo permite asignar cualquier columna igual. El
+    método sigue siendo el nombre literal de la tabla relacionada, sin
+    importar cómo se llame la columna que guarda la FK."""
     columns = [
         Column("pkid", "int", nullable=False, key="", default=None, extra="auto_increment"),
         Column("id", "varchar(36)", nullable=False, key="PRI", default=None, extra=""),
@@ -92,11 +101,47 @@ def test_build_manifest_relation_method_for_manually_assigned_non_id_column():
     )
     tienda_field = next(f for f in manifest.fields if f.name == "tienda")
     assert tienda_field.is_fk is True
-    assert tienda_field.relation_method == "tienda"  # no "tie" (cortar los últimos 3 chars sería un bug)
+    assert tienda_field.relation_method == "catalogo_tienda"
+    assert tienda_field.relation_alias == "tienda"
 
     php = Renderer().render_model_php(manifest)
-    assert "public function tienda(): BelongsTo" in php
+    assert "public function catalogo_tienda(): BelongsTo" in php
     assert "return $this->belongsTo(catalogo_tienda::class, 'tienda', 'pkid');" in php
+
+
+def test_build_manifest_relation_method_falls_back_on_same_table_collision():
+    """Dos columnas del mismo módulo apuntando a la MISMA tabla (ej. tienda
+    de origen/destino) no pueden compartir el nombre literal de la tabla como
+    método -- ahí sí se cae al nombre derivado de columna (único disponible)."""
+    columns = [
+        Column("pkid", "int", nullable=False, key="", default=None, extra="auto_increment"),
+        Column("id", "varchar(36)", nullable=False, key="PRI", default=None, extra=""),
+        Column("tienda_origen_id", "int", nullable=False, key="MUL", default=None, extra=""),
+        Column("tienda_destino_id", "int", nullable=False, key="MUL", default=None, extra=""),
+    ]
+    fk_resolutions = {
+        "tienda_origen_id": FkResolution(
+            column="tienda_origen_id", base_name="tienda_origen", candidates=["catalogo_tienda"],
+            status="manual", table="catalogo_tienda",
+        ),
+        "tienda_destino_id": FkResolution(
+            column="tienda_destino_id", base_name="tienda_destino", candidates=["catalogo_tienda"],
+            status="manual", table="catalogo_tienda",
+        ),
+    }
+    manifest = build_manifest(
+        "siaw_traspasos",
+        columns,
+        fk_resolutions=fk_resolutions,
+        unique_indexes={},
+        included_fields={"tienda_origen_id", "tienda_destino_id"},
+        tiny_fields=set(),
+    )
+    origen = next(f for f in manifest.fields if f.name == "tienda_origen_id")
+    destino = next(f for f in manifest.fields if f.name == "tienda_destino_id")
+    assert origen.relation_method == "tienda_origen"
+    assert destino.relation_method == "tienda_destino"
+    assert {r.method for r in manifest.relations} == {"tienda_origen", "tienda_destino"}
 
 
 def test_build_manifest_unique_field_gets_unique_rule():
@@ -130,7 +175,7 @@ def test_render_model_php_contains_belongs_to():
     manifest = _build_test_manifest()
     php = Renderer().render_model_php(manifest)
     assert "class siaw_usuarios extends Model" in php
-    assert "public function rol(): BelongsTo" in php
+    assert "public function siaw_roles(): BelongsTo" in php
     # rol_id -> siaw_roles: MISMO prefijo (siaw) que este propio Model --
     # nombre corto sin `use`, importarlo sería fatal error de PHP
     # ("already in use", ver Model.php.j2 / generator.py).
@@ -182,7 +227,7 @@ def test_render_service_php_uses_english_method_names():
     assert "class UsuariosService extends AbstractModuleService" in php
     for method in ("index", "show", "store", "update", "destroy"):
         assert f"function {method}(" in php
-    assert "'rol'," in php  # en RELATIONS
+    assert "'siaw_roles'," in php  # en RELATIONS -- nombre literal de la tabla, ver Model.md#Relaciones
     assert "'created_by', 'updated_by', 'deleted_by'" in php
     assert "use App\\Models\\dbsiaw\\siaw_roles;" in php
     assert "'rol_id' => siaw_roles::class," in php
@@ -209,7 +254,7 @@ def test_render_filters_php():
     search_block = php.split("$allowedSearch")[1].split("];")[0]
     assert "'nombre'," in search_block
     assert "'email'," in search_block  # varchar -> texto libre, elegible para LIKE
-    assert "'rol'," in php.split("$allowedIncludes")[1].split("];")[0]
+    assert "'siaw_roles'," in php.split("$allowedIncludes")[1].split("];")[0]
 
     # $allowedFilters / $allowedSorts: solo columnas directas -- rol_id (FK)
     # NUNCA va acá, tiene su propio método resolver (ver test de abajo). Si
@@ -279,6 +324,19 @@ def test_render_controller_php():
     assert "function destroy(siaw_usuarios $siaw_usuarios)" in php
 
 
+def test_render_controller_php_without_pagination_support():
+    """Módulo configurado sin paginación (checkbox "El Controller admite
+    ?paginate=true" desmarcado en la GUI) -- ver Controller.md#Módulos sin
+    paginación. No debe ofrecer ?paginate=true ni construir `meta`."""
+    manifest = _build_test_manifest(supports_pagination=False)
+    php = Renderer().render_controller_php(manifest)
+    assert "?paginate=true" not in php
+    assert "request->boolean('paginate')" not in php
+    assert "'meta'" not in php
+    assert "$this->service->index(false)" in php
+    assert "UsuariosTinyResource::class" in php
+
+
 def test_render_controller_php_swagger_annotations():
     manifest = _build_test_manifest()
     php = Renderer().render_controller_php(manifest)
@@ -301,7 +359,9 @@ def test_render_resource_php():
     assert 'schema="UsuariosSchema"' in php
     assert "class UsuariosResource extends JsonResource" in php
     assert "'id' => $this->id," in php
-    assert "'rol' => $this->whenLoaded('rol', fn () => new RolesRelationResource($this->rol))," in php
+    # Clave pública corta ("roles", modulo de siaw_roles) vs. método real del
+    # Model ("siaw_roles", nombre literal de tabla) -- ver ApiResponse.md#Resource triple.
+    assert "'roles' => $this->whenLoaded('siaw_roles', fn () => new RolesRelationResource($this->siaw_roles))," in php
     assert "'activo' => (bool) $this->activo," in php
     assert "'created_by_id' => $this->whenLoaded('created_by'" in php
     assert "'pkid'" not in php
@@ -315,6 +375,20 @@ def test_render_relation_resource_php():
     assert "'id' => $this->id," in php
     assert "'nombre' => $this->nombre," in php
     assert "email" not in php  # solo campos marcados "tiny" en el manifest
+
+
+def test_render_relation_resource_php_independent_from_tiny():
+    """"Relación" es un checkbox propio en el mapeo -- puede llevar campos
+    distintos de "Tiny" (ver ApiResponse.md#Resource triple)."""
+    manifest = _build_test_manifest(tiny_fields={"nombre"}, relation_fields={"email"})
+    relation_php = Renderer().render_relation_resource_php(manifest)
+    tiny_php = Renderer().render_tiny_resource_php(manifest)
+
+    assert "'email' => $this->email," in relation_php
+    assert "'nombre' => $this->nombre," not in relation_php
+
+    assert "'nombre' => $this->nombre," in tiny_php
+    assert "'email' => $this->email," not in tiny_php
 
 
 def test_render_tiny_resource_php():
@@ -342,7 +416,7 @@ def test_render_interfaces_ts_shape():
     assert "export interface IUsuariosUpdate extends Partial<IUsuariosCreate> {" in ts
     assert "export interface IUsuariosTiny {" in ts
     assert "import { IRolesTiny } from '@interfaces/models/roles.interface';" in ts
-    assert "rol?: IRolesTiny | null;" in ts  # relación anidada en la interfaz completa
+    assert "roles?: IRolesTiny | null;" in ts  # relación anidada -- misma clave pública que el Resource
     assert "rol_id: string;" in ts  # UUID plano en el Create (required, no nullable)
     assert "created_by_id?: IAuditUser | null;" in ts
     # Tiny solo trae los campos marcados como tiny (acá: nombre) + id

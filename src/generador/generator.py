@@ -27,9 +27,12 @@ class ManifestField:
     parsed: mapping.ParsedType
     nullable: bool
     include: bool  # incluir en fillable / interfaces (checkbox "incluir")
-    tiny: bool  # incluir en I{Modulo}Tiny
+    tiny: bool  # incluir en I{Modulo}Tiny / {Modulo}TinyResource
+    relation: bool = False  # incluir en {Modulo}RelationResource (checkbox propio, ver ApiResponse.md#Resource triple)
     is_fk: bool = False
     fk_table: str | None = None
+    relation_method: str | None = None  # nombre del método belongsTo en el Model
+    relation_alias: str | None = None  # clave pública corta en el Resource (ApiResponse.md#Resource triple)
     store_rule: str = ""
     update_rule: str = ""
     store_rule_final: str = ""  # store_rule + unique:... si el campo tiene índice único
@@ -38,12 +41,15 @@ class ManifestField:
     cast: str | None = None
 
     @property
-    def relation_method(self) -> str | None:
-        """Nombre del método belongsTo. La convención `{campo}_id` -> `{campo}`
-        asume que la columna termina en `_id`, pero una FK asignada a mano
-        (ver GUI: combo "FK -> tabla" en cualquier columna) puede no seguir
-        esa convención -- en ese caso el método usa el nombre de columna tal
-        cual, en vez de cortar mal los últimos 3 caracteres."""
+    def _column_derived_relation_name(self) -> str | None:
+        """Fallback histórico: nombre derivado de la columna quitando el sufijo
+        `_id` (o la columna tal cual si no sigue esa convención). Ya no es el
+        nombre de método por default -- ver `relation_method` -- pero sigue
+        haciendo falta cuando DOS columnas del mismo módulo apuntan a la
+        MISMA tabla (ej. `tienda_origen_id` / `tienda_destino_id` -> ambas a
+        `catalogo_tienda`): ahí el nombre literal de la tabla no alcanza para
+        distinguir los dos métodos belongsTo, y hay que volver a algo basado
+        en la columna."""
         if not self.is_fk:
             return None
         if self.name.endswith("_id") and self.name != "_id":
@@ -127,6 +133,8 @@ class ModuleManifest:
     user_model_class: str = DEFAULT_USER_MODEL_CLASS
     unique_indexes: dict[str, list[str]] = field(default_factory=dict)
 
+    supports_pagination: bool = True
+
     @property
     def model_class(self) -> str:
         return naming.model_class_name(self.table)
@@ -161,8 +169,10 @@ def build_manifest(
     unique_indexes: dict[str, list[str]],
     included_fields: set[str] | None = None,
     tiny_fields: set[str] | None = None,
+    relation_fields: set[str] | None = None,
     connection_name: str = "mysql",
     user_model_class: str = DEFAULT_USER_MODEL_CLASS,
+    supports_pagination: bool = True,
 ) -> ModuleManifest:
     prefijo, modulo = naming.split_prefijo_modulo(table)
     modulo_studly = naming.studly(modulo)
@@ -185,6 +195,7 @@ def build_manifest(
 
         include = included_fields is None or column.name in included_fields
         tiny = tiny_fields is not None and column.name in tiny_fields
+        relation_field = relation_fields is not None and column.name in relation_fields
         is_unique = column.name in unique_single_fields
 
         store_rule, update_rule = mapping.validation_rules(
@@ -203,6 +214,7 @@ def build_manifest(
             nullable=column.nullable,
             include=include,
             tiny=tiny,
+            relation=relation_field,
             is_fk=is_fk,
             fk_table=fk_table,
             store_rule=store_rule,
@@ -214,16 +226,28 @@ def build_manifest(
         )
         fields.append(manifest_field)
 
-        if is_fk and fk_table:
-            fk_prefijo, _ = naming.split_prefijo_modulo(fk_table)
-            relations.append(
-                ManifestRelation(
-                    column=column.name,
-                    method=manifest_field.relation_method or fk_table,
-                    model_class=naming.model_class_name(fk_table),
-                    fk_table_prefijo=fk_prefijo,
-                )
+    fk_table_counts: dict[str, int] = {}
+    for f in fields:
+        if f.is_fk and f.fk_table:
+            fk_table_counts[f.fk_table] = fk_table_counts.get(f.fk_table, 0) + 1
+
+    for f in fields:
+        if not (f.is_fk and f.fk_table):
+            continue
+        f.relation_method = (
+            f.fk_table if fk_table_counts[f.fk_table] == 1 else f._column_derived_relation_name or f.fk_table
+        )
+        f.relation_alias = f.fk_related_modulo_snake
+
+        fk_prefijo, _ = naming.split_prefijo_modulo(f.fk_table)
+        relations.append(
+            ManifestRelation(
+                column=f.name,
+                method=f.relation_method,
+                model_class=naming.model_class_name(f.fk_table),
+                fk_table_prefijo=fk_prefijo,
             )
+        )
 
     return ModuleManifest(
         table=table,
@@ -235,6 +259,7 @@ def build_manifest(
         relations=relations,
         user_model_class=user_model_class,
         unique_indexes=unique_indexes,
+        supports_pagination=supports_pagination,
     )
 
 
@@ -254,10 +279,7 @@ class Renderer:
     def render_model_php(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
         casts = [(f.name, f.cast) for f in included if f.cast]
-        # Import solo para relaciones que cruzan de prefijo -- una del MISMO
-        # prefijo que este Model ya resuelve el nombre corto por estar en el
-        # mismo namespace (App\Models\db{prefijo}); importarla igual sería un
-        # fatal error de PHP ("already in use"), no un problema cosmético.
+
         cross_prefix_imports = sorted(
             {
                 (rel.fk_table_prefijo, rel.model_class)
@@ -275,14 +297,7 @@ class Renderer:
 
     def render_service_php(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
-        # Service.php vive en el namespace App\Services -- distinto del
-        # árbol App\Models\db*, así que acá SIEMPRE se puede importar (nunca
-        # hay riesgo de "already in use" por namespace), salvo el caso
-        # degenerado de una FK autorreferencial (ej. parent_id -> la misma
-        # tabla, posible ahora que el combo "FK -> tabla" de la GUI permite
-        # asignar cualquier columna a cualquier tabla) -- ese caso ya está
-        # importado por la línea de arriba (el propio modelo del módulo), y
-        # un `use` duplicado de la misma clase es un fatal error de PHP.
+
         own = (manifest.prefijo, manifest.model_class)
         relation_imports = sorted(
             {(rel.fk_table_prefijo, rel.model_class) for rel in manifest.relations} - {own}
@@ -296,13 +311,7 @@ class Renderer:
         search_fields = [f for f in non_fk if mapping.is_searchable(f.parsed)]
         return self.env.get_template("Filters.php.j2").render(
             manifest=manifest,
-            # $allowedFilters / $allowedSorts: SOLO columnas directas -- un FK
-            # que guarda pkid nunca va acá (ver useFilters.md#FKs que guardan
-            # pkid). Dejarlo también en $allowedFilters duplica el WHERE: el
-            # método resolver ya filtra por pkid, y el pipeline genérico de
-            # QueryFilters agrega ADEMÁS "WHERE columna = <uuid crudo>" contra
-            # una columna entera -- esa segunda condición nunca matchea, y al
-            # ir en AND con la primera, el resultado final es siempre vacío.
+
             fields=non_fk,
             relations=manifest.relations,
             search_fields=search_fields,
@@ -326,10 +335,17 @@ class Renderer:
         return [f for f in self._included(manifest) if not f.is_fk]
 
     def _tiny_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
-        """Campos mínimos — comparten selección con I{Modulo}Tiny (ver interfaces.ts.j2)
-        y con {Modulo}RelationResource/{Modulo}TinyResource (ver ApiResponse.md#Resource
-        triple: completo, relación y tiny)."""
+        """Campos mínimos de I{Modulo}Tiny / {Modulo}TinyResource — selector propio,
+        independiente de {Modulo}RelationResource (ver _relation_fields). Ver
+        ApiResponse.md#Resource triple: completo, relación y tiny."""
         return [f for f in self._included(manifest) if f.tiny]
+
+    def _relation_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
+        """Campos de {Modulo}RelationResource — checkbox "Relación" propio en el
+        mapeo, independiente de "Tiny": el mismo módulo puede necesitar mostrar
+        campos distintos cuando lo carga OTRO módulo por whenLoaded() que cuando
+        responde su propio ?tiny=true (ver ApiResponse.md#Resource triple)."""
+        return [f for f in self._included(manifest) if f.relation]
 
     def _fk_resource_imports(self, manifest: ModuleManifest) -> list[tuple[str, str]]:
         return sorted(
@@ -370,7 +386,7 @@ class Renderer:
 
     def render_relation_resource_php(self, manifest: ModuleManifest) -> str:
         return self.env.get_template("RelationResource.php.j2").render(
-            manifest=manifest, relation_fields=self._tiny_fields(manifest)
+            manifest=manifest, relation_fields=self._relation_fields(manifest)
         )
 
     def render_tiny_resource_php(self, manifest: ModuleManifest) -> str:
