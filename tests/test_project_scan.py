@@ -4,7 +4,7 @@ from generador.project_scan import scan_backend_project, suggested_loader_snippe
 def test_scan_unknown_root(tmp_path):
     result = scan_backend_project(tmp_path)
     assert result.laravel_version_hint == "desconocido"
-    assert result.provider_file_checked is None
+    assert result.provider_files_checked == []
     assert any("raíz correcta" in w for w in result.warnings)
 
 
@@ -22,6 +22,37 @@ def test_scan_laravel11_with_loader_registered(tmp_path):
     assert result.laravel_version_hint == "L11+"
     assert result.modules_loader_registered is True
     assert result.warnings == []
+
+
+def test_scan_laravel11_with_loader_in_route_service_provider(tmp_path):
+    # Caso real: proyecto L11+ (bootstrap/app.php con withRouting) que igual
+    # conserva un RouteServiceProvider propio -- registrado a mano en
+    # bootstrap/providers.php -- con el loader de routes/modules/*.php ahí,
+    # en vez de en bootstrap/app.php. Antes esto daba falso negativo porque
+    # la detección de L11+ descartaba RouteServiceProvider.php de plano.
+    bootstrap = tmp_path / "bootstrap"
+    bootstrap.mkdir()
+    (bootstrap / "app.php").write_text(
+        "return Application::configure()->withRouting(api: __DIR__.'/../routes/api/api.php');\n",
+        encoding="utf-8",
+    )
+    provider_dir = tmp_path / "app" / "Providers"
+    provider_dir.mkdir(parents=True)
+    (provider_dir / "RouteServiceProvider.php").write_text(
+        "<?php class RouteServiceProvider extends ServiceProvider {\n"
+        "    public function boot(): void {\n"
+        "        $files = glob(base_path('routes/modules') . DIRECTORY_SEPARATOR . '*.php') ?: [];\n"
+        "        Route::prefix('api')->group(function () use ($files) { foreach ($files as $f) require $f; });\n"
+        "    }\n"
+        "}\n",
+        encoding="utf-8",
+    )
+
+    result = scan_backend_project(tmp_path)
+    assert result.laravel_version_hint == "L11+"
+    assert result.modules_loader_registered is True
+    assert result.warnings == []
+    assert len(result.provider_files_checked) == 2
 
 
 def test_scan_laravel10_without_loader(tmp_path):

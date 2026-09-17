@@ -23,7 +23,7 @@ class ProjectScanResult:
     routes_modules_dir_exists: bool
     existing_module_routes: list[str]
     modules_loader_registered: bool
-    provider_file_checked: Path | None
+    provider_files_checked: list[Path]
     warnings: list[str] = field(default_factory=list)
 
 
@@ -42,13 +42,21 @@ def scan_backend_project(backend_root: Path) -> ProjectScanResult:
 
     if bootstrap_app.exists() and "withRouting" in _read_text(bootstrap_app):
         version_hint = "L11+"
-        provider_file: Path | None = bootstrap_app
     elif route_service_provider.exists():
         version_hint = "L10-"
-        provider_file = route_service_provider
     else:
         version_hint = "desconocido"
-        provider_file = None
+
+    # Un proyecto L11+ puede seguir usando un RouteServiceProvider propio
+    # (registrado a mano en bootstrap/providers.php) en vez de abandonarlo
+    # del todo -- es justo el patrón que prescribe el estándar de rutas
+    # (ver Conexiones, Migraciones y Rutas.md#4). Revisar los dos archivos
+    # cuando ambos existen evita un falso negativo: antes, detectar L11+ por
+    # `withRouting` en bootstrap/app.php descartaba de plano
+    # RouteServiceProvider.php, aunque el loader real viviera ahí.
+    provider_files = [f for f in (bootstrap_app, route_service_provider) if f.exists()]
+
+    if not provider_files:
         warnings.append(
             "No se encontró bootstrap/app.php ni app/Providers/RouteServiceProvider.php "
             "— ¿es la raíz correcta del proyecto Laravel?"
@@ -60,17 +68,17 @@ def scan_backend_project(backend_root: Path) -> ProjectScanResult:
         sorted(p.name for p in routes_modules_dir.glob("*.php")) if routes_modules_dir_exists else []
     )
 
-    modules_loader_registered = False
-    if provider_file is not None:
-        text = _read_text(provider_file)
-        modules_loader_registered = any(marker in text for marker in _MODULES_LOADER_MARKERS)
-        if not modules_loader_registered:
-            warnings.append(
-                f"No se detectó automáticamente un loader de routes/modules/*.php en {provider_file.name} "
-                "— puede ser un falso negativo (esta detección busca texto literal, no ejecuta el proyecto). "
-                "Si las rutas de otros módulos ya funcionan en producción, probablemente no hace falta hacer "
-                "nada; si es un proyecto nuevo, agregá el snippet sugerido."
-            )
+    modules_loader_registered = any(
+        marker in _read_text(f) for f in provider_files for marker in _MODULES_LOADER_MARKERS
+    )
+    if provider_files and not modules_loader_registered:
+        checked = " y ".join(f.name for f in provider_files)
+        warnings.append(
+            f"No se detectó automáticamente un loader de routes/modules/*.php en {checked} "
+            "— puede ser un falso negativo (esta detección busca texto literal, no ejecuta el proyecto). "
+            "Si las rutas de otros módulos ya funcionan en producción, probablemente no hace falta hacer "
+            "nada; si es un proyecto nuevo, agregá el snippet sugerido."
+        )
 
     return ProjectScanResult(
         backend_root=backend_root,
@@ -78,7 +86,7 @@ def scan_backend_project(backend_root: Path) -> ProjectScanResult:
         routes_modules_dir_exists=routes_modules_dir_exists,
         existing_module_routes=existing_module_routes,
         modules_loader_registered=modules_loader_registered,
-        provider_file_checked=provider_file,
+        provider_files_checked=provider_files,
         warnings=warnings,
     )
 

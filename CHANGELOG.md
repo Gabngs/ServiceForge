@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.1.3]
+
+### Corregido
+- "Analizar proyecto" daba falso negativo del loader de `routes/modules/*.php` en proyectos Laravel 11+ que conservan un `RouteServiceProvider` propio (registrado a mano en `bootstrap/providers.php`) — justo el patrón que prescribe el estándar de rutas (`Conexiones, Migraciones y Rutas.md#4`). La detección de L11+ (por `withRouting` en `bootstrap/app.php`) descartaba `RouteServiceProvider.php` de plano, aunque el loader real viviera ahí. Ahora se revisan ambos archivos cuando los dos existen.
+
 ## [1.1.2]
 
 ### Cambiado
