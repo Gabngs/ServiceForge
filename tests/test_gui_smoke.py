@@ -15,7 +15,8 @@ import os
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from generador.gui import MainWindow, ProjectScanDialog, SettingsDialog  # noqa: E402
+from generador.gui import GenerationLogDialog, MainWindow, ProjectScanDialog, SettingsDialog  # noqa: E402
+from generador.logs import GenerationLogEntry  # noqa: E402
 from generador.project_scan import scan_backend_project  # noqa: E402
 from generador.settings import Settings  # noqa: E402
 
@@ -24,8 +25,8 @@ def test_main_window_constructs(qtbot):
     window = MainWindow()
     qtbot.addWidget(window)
     assert window.windowTitle().startswith("Service-Forge")
-    assert len(window.preview_widgets) == 10
-    assert [a.text() for a in window.menuBar().actions()] == ["&Archivo", "&Editar", "A&yuda"]
+    assert len(window.preview_widgets) == 13
+    assert [a.text() for a in window.menuBar().actions()] == ["&Archivo", "&Editar", "&Logs", "A&yuda"]
 
 
 def test_theme_toggle_applies(qtbot):
@@ -51,3 +52,28 @@ def test_project_scan_dialog_constructs(qtbot, tmp_path):
     dialog = ProjectScanDialog(result, window.colors, window)
     qtbot.addWidget(dialog)
     assert dialog.windowTitle() == "Análisis del proyecto backend"
+
+
+def test_generation_log_dialog_constructs_empty(qtbot):
+    dialog = GenerationLogDialog([])
+    qtbot.addWidget(dialog)
+    assert dialog.table.rowCount() == 0
+    assert not dialog.export_btn.isEnabled()
+
+
+def test_generation_log_dialog_constructs_with_entries(qtbot):
+    entry = GenerationLogEntry(
+        timestamp="2026-01-01T00:00:00+00:00",
+        table="siaw_usuarios",
+        fk_count=1,
+        field_count=4,
+        elapsed_seconds=90.0,
+        file_count=11,
+        line_count=250,
+        files=["model", "controller"],
+    )
+    dialog = GenerationLogDialog([entry])
+    qtbot.addWidget(dialog)
+    assert dialog.table.rowCount() == 1
+    assert dialog.table.item(0, 1).text() == "siaw_usuarios"
+    assert dialog.export_btn.isEnabled()

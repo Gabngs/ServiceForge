@@ -2,6 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.1.0]
+
+### Añadido
+- Generación de `{Modulo}Resource.php` (completo), `{Modulo}RelationResource.php` (mínimo, para `whenLoaded()` desde otro módulo) y `{Modulo}TinyResource.php` (mínimo, para `?tiny=true` del propio módulo) — ver "Resource triple" en la documentación del patrón. Reutilizan la misma selección de campos "tiny" que ya usaba `I{Modulo}Tiny` en las interfaces TypeScript, y el `{Modulo}Resource` referencia el `{FkModulo}RelationResource` correspondiente para cada FK cargada (`whenLoaded`).
+- Documentación Swagger/OpenAPI (`darkaonline/l5-swagger` / `zircote/swagger-php`): cada Resource generado lleva su propio `@OA\Schema` (`{Modulo}Schema` / `{Modulo}RelationSchema` / `{Modulo}TinySchema`), y el `{table}Controller.php` generado documenta cada método (`index`/`show`/`store`/`update`/`destroy`) con su docblock `@OA\Get|Post|Put|Delete` completo — siempre contra el envelope real de `ApiResponse` (`status`/`message`/`data`) y referenciando el schema por `$ref`, nunca una `description` suelta.
+
+- Historial de generación (`Logs → Historial de generación…` en la barra de menú): cada vez que se confirma "Generar archivos" se registra una entrada persistida en `%APPDATA%\ServiceForge\generation_log.json` con el módulo, cantidad de FKs y campos, tiempo transcurrido en esa sesión entre "Analizar" y "Generar archivos", cantidad de archivos escritos y líneas de código generadas. El diálogo lista el historial completo y permite exportarlo a CSV con el mismo shape que la tabla de medición de lead time por módulo (ver 3.2.5 del informe) — falta agregar a mano solo el tiempo del proceso manual y el % de reducción, que la herramienta no puede medir por no ejecutar ese proceso.
+
+### Corregido
+- `index()` del Controller generado usaba `{Modulo}RelationResource` para `?tiny=true` — ese Resource es para cuando OTRO módulo carga este como relación (`whenLoaded`), no para el propio selector/dropdown del módulo. Ahora usa `{Modulo}TinyResource`, que es el que corresponde según el estándar documentado.
+
 ## [1.0.1]
 
 ### Añadido

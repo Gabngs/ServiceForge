@@ -13,6 +13,7 @@ y lo que se escribe es el contenido de cada pestaña de preview en ese momento
 from __future__ import annotations
 
 import re
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -47,7 +48,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import __version__, backup, db, fk_resolver, generator, mapping, naming, project_scan, table_mapping
+from . import __version__, backup, db, fk_resolver, generator, logs, mapping, naming, project_scan, table_mapping
 from .settings import Settings
 from .theme import build_stylesheet, status_colors
 
@@ -66,6 +67,9 @@ _PREVIEW_TABS: list[tuple[str, str]] = [
     ("store_request", "Store{Modulo}Request.php"),
     ("update_request", "Update{Modulo}Request.php"),
     ("trait", "Validates{Modulo}.php"),
+    ("resource", "{Modulo}Resource.php"),
+    ("relation_resource", "{Modulo}RelationResource.php"),
+    ("tiny_resource", "{Modulo}TinyResource.php"),
     ("controller", "{table}Controller.php"),
     ("routes_module", "routes/modules/{modulo}.php"),
     ("interfaces", "{modulo}.interface.ts"),
@@ -487,6 +491,65 @@ class SettingsDialog(QDialog):
         return "dark" if self.theme_combo.currentIndex() == 0 else "light"
 
 
+_LOG_COLUMNS = ["Fecha (UTC)", "Módulo", "# FK", "# campos", "Tiempo (min)", "Archivos", "Líneas"]
+
+
+class GenerationLogDialog(QDialog):
+    """Historial de generaciones — ver logs.py. Cada fila es un módulo generado:
+    lo que la herramienta puede medir objetivamente (tiempo desde "Analizar"
+    hasta "Generar archivos", cantidad de archivos y líneas). Pensado como
+    insumo directo de la tabla de 3.2.5 del informe (falta agregar a mano el
+    tiempo manual y el % de reducción, que la herramienta no puede medir)."""
+
+    def __init__(self, entries: list[logs.GenerationLogEntry], parent=None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Historial de generación")
+        self.setMinimumSize(720, 420)
+        self._entries = list(reversed(entries))  # más reciente primero
+
+        layout = QVBoxLayout(self)
+
+        hint = QLabel(
+            "Un módulo por fila. El tiempo es el transcurrido en esta sesión entre "
+            "\"Analizar\" y confirmar \"Generar archivos\" — el tiempo del proceso "
+            "manual se sigue cronometrando aparte."
+        )
+        hint.setWordWrap(True)
+        layout.addWidget(hint)
+
+        self.table = QTableWidget(len(self._entries), len(_LOG_COLUMNS))
+        self.table.setHorizontalHeaderLabels(_LOG_COLUMNS)
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        for row, entry in enumerate(self._entries):
+            values = [
+                entry.timestamp,
+                entry.table,
+                str(entry.fk_count),
+                str(entry.field_count),
+                str(entry.elapsed_minutes),
+                str(entry.file_count),
+                str(entry.line_count),
+            ]
+            for col, value in enumerate(values):
+                self.table.setItem(row, col, QTableWidgetItem(value))
+        self.table.resizeColumnsToContents()
+        layout.addWidget(self.table, stretch=1)
+
+        if not self._entries:
+            empty = QLabel("Todavía no se generó ningún módulo en esta instalación.")
+            layout.addWidget(empty)
+
+        buttons_row = QHBoxLayout()
+        self.export_btn = QPushButton("Exportar CSV…")
+        self.export_btn.setEnabled(bool(self._entries))
+        buttons_row.addWidget(self.export_btn)
+        buttons_row.addStretch()
+        close_btn = QPushButton("Cerrar")
+        close_btn.clicked.connect(self.accept)
+        buttons_row.addWidget(close_btn)
+        layout.addLayout(buttons_row)
+
+
 class _CodeEditor(QPlainTextEdit):
     """QPlainTextEdit con autocompletado "por palabras" (sin IA / sin Copilot):
     combina una lista curada de keywords de PHP/Laravel (o TS) con las
@@ -598,6 +661,8 @@ class MainWindow(QMainWindow):
         self.backend_root: Path | None = None
         self.frontend_root: Path | None = None
 
+        self._analysis_started_at: float | None = None
+
         self.current_table: str | None = None
         self.current_columns: list[db.Column] = []
         self.current_resolutions: dict[str, fk_resolver.FkResolution] = {}
@@ -621,6 +686,11 @@ class MainWindow(QMainWindow):
         settings_action = QAction("Preferencias…", self)
         settings_action.triggered.connect(self._on_open_settings)
         edit_menu.addAction(settings_action)
+
+        logs_menu = menu_bar.addMenu("&Logs")
+        logs_action = QAction("Historial de generación…", self)
+        logs_action.triggered.connect(self._on_open_logs)
+        logs_menu.addAction(logs_action)
 
         help_menu = menu_bar.addMenu("A&yuda")
         about_action = QAction("Acerca de", self)
@@ -812,6 +882,23 @@ class MainWindow(QMainWindow):
                 self.settings.save()
                 self._apply_theme()
 
+    def _on_open_logs(self) -> None:
+        entries = logs.load_log()
+        dialog = GenerationLogDialog(entries, self)
+        dialog.export_btn.clicked.connect(lambda: self._on_export_logs(dialog._entries))
+        dialog.exec()
+
+    def _on_export_logs(self, entries: list[logs.GenerationLogEntry]) -> None:
+        path_str, _ = QFileDialog.getSaveFileName(self, "Exportar historial de generación", "servicforge-log.csv", "CSV (*.csv)")
+        if not path_str:
+            return
+        try:
+            logs.export_csv(entries, Path(path_str))
+        except OSError as exc:
+            QMessageBox.critical(self, "Error al exportar", str(exc))
+            return
+        QMessageBox.information(self, "Exportado", f"Historial exportado a:\n{path_str}")
+
     def _on_about(self) -> None:
         QMessageBox.information(
             self,
@@ -938,6 +1025,11 @@ class MainWindow(QMainWindow):
         table = self.table_combo.currentText()
         if not table:
             return
+
+        # Arranca acá el cronómetro del lead time con la herramienta para este
+        # módulo (ver logs.py / 3.2.5 del informe) — se cierra al confirmar
+        # "Generar archivos".
+        self._analysis_started_at = time.monotonic()
 
         try:
             columns = db.describe_table(self.conn, table)
@@ -1116,8 +1208,29 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error al generar archivos", str(exc))
             return
 
+        elapsed = (
+            time.monotonic() - self._analysis_started_at
+            if self._analysis_started_at is not None
+            else 0.0
+        )
+        entry = logs.build_entry(
+            table=manifest.table,
+            fk_count=len(manifest.relations),
+            field_count=len([f for f in manifest.fields if f.include]),
+            elapsed_seconds=elapsed,
+            contents_by_key={key: contents[key] for key in written if key in contents},
+        )
+        logs.append_entry(entry)
+        self._analysis_started_at = None
+
         listing = "\n".join(f"- {p}" for p in written.values())
-        QMessageBox.information(self, "Archivos generados", f"Se generaron:\n{listing}")
+        QMessageBox.information(
+            self,
+            "Archivos generados",
+            f"Se generaron {entry.file_count} archivos ({entry.line_count} líneas) en "
+            f"{entry.elapsed_minutes} min:\n{listing}\n\n"
+            "Ver Logs → Historial de generación… para el detalle completo.",
+        )
 
     def _on_backup(self) -> None:
         if not self.config:

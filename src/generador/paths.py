@@ -24,6 +24,9 @@ def backend_paths(manifest: "ModuleManifest") -> dict[str, Path]:
         "store_request": Path(f"app/Http/Requests/{prefijo}/{modulo}/Store{modulo}Request.php"),
         "update_request": Path(f"app/Http/Requests/{prefijo}/{modulo}/Update{modulo}Request.php"),
         "trait": Path(f"app/Http/Requests/{prefijo}/Traits/{modulo}/Validates{modulo}.php"),
+        "resource": Path(f"app/Http/Resources/{prefijo}/{modulo}Resource.php"),
+        "relation_resource": Path(f"app/Http/Resources/{prefijo}/{modulo}RelationResource.php"),
+        "tiny_resource": Path(f"app/Http/Resources/{prefijo}/{modulo}TinyResource.php"),
         "controller": Path(f"app/Http/Controllers/Api/{prefijo}/{manifest.model_class}Controller.php"),
         "routes_module": Path(f"routes/modules/{manifest.modulo}.php"),
     }

@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Resources\{{ manifest.prefijo_studly }};
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+// Mínimo — usado cuando OTRO módulo carga este como relación con whenLoaded().
+// Ver ApiResponse.md#Resource triple: completo, relación y tiny.
+/**
+ * @OA\Schema(
+ *     schema="{{ manifest.modulo_studly }}RelationSchema",
+ *     @OA\Property(property="id", type="string", format="uuid"){{ "," if relation_fields else "" }}
+{% for f in relation_fields %}
+ *     @OA\Property(property="{{ f.name }}", type="{{ f.oa_type() }}"{% if f.oa_format() %}, format="{{ f.oa_format() }}"{% endif %}){{ "," if not loop.last else "" }}
+{% endfor %}
+ * )
+ */
+class {{ manifest.modulo_studly }}RelationResource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        return [
+            'id' => $this->id,
+{% for f in relation_fields %}
+            '{{ f.name }}' => $this->{{ f.name }},
+{% endfor %}
+        ];
+    }
+}

@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Resources\{{ manifest.prefijo_studly }};
+
+use Illuminate\Http\Resources\Json\JsonResource;
+{% for prefijo_studly, modulo_studly in fk_imports %}
+use App\Http\Resources\{{ prefijo_studly }}\{{ modulo_studly }}RelationResource;
+{% endfor %}
+
+// Completo — respuesta directa de index (sin ?tiny=true) / show / store / update / destroy.
+// Única fuente de verdad de qué campos expone el módulo: si toArray() cambia, el
+// @OA\Schema de acá abajo cambia con él. Ver ApiResponse.md#Resource triple y
+// Documentación Swagger (OpenAPI).md#Schemas reutilizables.
+/**
+ * @OA\Schema(
+ *     schema="{{ manifest.modulo_studly }}Schema",
+ *     @OA\Property(property="id", type="string", format="uuid"),
+{% for f in fields %}
+{% if f.is_fk %}
+ *     @OA\Property(property="{{ f.relation_method }}", ref="#/components/schemas/{{ f.fk_related_modulo_studly }}RelationSchema", nullable=true),
+{% else %}
+ *     @OA\Property(property="{{ f.name }}", type="{{ f.oa_type() }}"{% if f.oa_format() %}, format="{{ f.oa_format() }}"{% endif %}{% if f.oa_max_length() %}, maxLength={{ f.oa_max_length() }}{% endif %}{% if f.nullable %}, nullable=true{% endif %}),
+{% endif %}
+{% endfor %}
+ *     @OA\Property(
+ *         property="created_by_id",
+ *         nullable=true,
+ *         @OA\Property(property="id", type="string", format="uuid"),
+ *         @OA\Property(property="nombre", type="string")
+ *     ),
+ *     @OA\Property(
+ *         property="updated_by_id",
+ *         nullable=true,
+ *         @OA\Property(property="id", type="string", format="uuid"),
+ *         @OA\Property(property="nombre", type="string")
+ *     ),
+ *     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true)
+ * )
+ */
+class {{ manifest.modulo_studly }}Resource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        return [
+            'id' => $this->id,
+{% for f in fields %}
+{% if f.is_fk %}
+            '{{ f.relation_method }}' => $this->whenLoaded('{{ f.relation_method }}', fn () => new {{ f.fk_related_modulo_studly }}RelationResource($this->{{ f.relation_method }})),
+{% elif f.cast == 'boolean' %}
+            '{{ f.name }}' => (bool) $this->{{ f.name }},
+{% else %}
+            '{{ f.name }}' => $this->{{ f.name }},
+{% endif %}
+{% endfor %}
+            // created_by/updated_by apuntan siempre a la misma tabla de usuarios
+            // (manifest.user_model_class) — se exponen inline, sin depender de un
+            // Resource de un módulo que este generador no administra.
+            'created_by_id' => $this->whenLoaded('created_by', fn () => [
+                'id' => $this->created_by->id,
+                'nombre' => $this->created_by->nombre,
+            ]),
+            'updated_by_id' => $this->whenLoaded('updated_by', fn () => [
+                'id' => $this->updated_by->id,
+                'nombre' => $this->updated_by->nombre,
+            ]),
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
+        ];
+    }
+}

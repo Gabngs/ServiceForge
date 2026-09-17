@@ -177,10 +177,57 @@ def test_render_controller_php():
     assert "class siaw_usuariosController extends Controller" in php
     assert "public function __construct(protected UsuariosService $service)" in php
     assert "$request->boolean('tiny')" in php
-    assert "UsuariosRelationResource::class" in php
+    assert "UsuariosTinyResource::class" in php  # ?tiny=true usa Tiny, no Relation (ver Controller.md)
     assert "UsuariosResource::class" in php
     assert "function show(siaw_usuarios $siaw_usuarios)" in php
     assert "function destroy(siaw_usuarios $siaw_usuarios)" in php
+
+
+def test_render_controller_php_swagger_annotations():
+    manifest = _build_test_manifest()
+    php = Renderer().render_controller_php(manifest)
+    assert '@OA\\Tag(name="Usuarios")' in php
+    assert 'path="/api/siaw_usuarios",' in php
+    assert 'path="/api/siaw_usuarios/{id}",' in php
+    assert 'security={{"bearerAuth":{}}},' in php
+    assert 'ref="#/components/schemas/UsuariosSchema"' in php
+    assert '@OA\\Property(property="nombre", type="string"' in php
+    assert 'required={ "nombre", "email", "rol_id" },' in php
+    store_block = php.split("public function store")[0].split("@OA\\Post(")[1]
+    assert '@OA\\Property(property="rol_id", type="string", format="uuid")' in store_block
+
+
+def test_render_resource_php():
+    manifest = _build_test_manifest()
+    php = Renderer().render_resource_php(manifest)
+    assert "namespace App\\Http\\Resources\\Siaw;" in php
+    assert "use App\\Http\\Resources\\Siaw\\RolesRelationResource;" in php
+    assert 'schema="UsuariosSchema"' in php
+    assert "class UsuariosResource extends JsonResource" in php
+    assert "'id' => $this->id," in php
+    assert "'rol' => $this->whenLoaded('rol', fn () => new RolesRelationResource($this->rol))," in php
+    assert "'activo' => (bool) $this->activo," in php
+    assert "'created_by_id' => $this->whenLoaded('created_by'" in php
+    assert "'pkid'" not in php
+
+
+def test_render_relation_resource_php():
+    manifest = _build_test_manifest()
+    php = Renderer().render_relation_resource_php(manifest)
+    assert "class UsuariosRelationResource extends JsonResource" in php
+    assert 'schema="UsuariosRelationSchema"' in php
+    assert "'id' => $this->id," in php
+    assert "'nombre' => $this->nombre," in php
+    assert "email" not in php  # solo campos marcados "tiny" en el manifest
+
+
+def test_render_tiny_resource_php():
+    manifest = _build_test_manifest()
+    php = Renderer().render_tiny_resource_php(manifest)
+    assert "class UsuariosTinyResource extends JsonResource" in php
+    assert 'schema="UsuariosTinySchema"' in php
+    assert "'id' => $this->id," in php
+    assert "'nombre' => $this->nombre," in php
 
 
 def test_render_routes_module_php():
@@ -221,6 +268,9 @@ def test_generate_files_writes_full_pattern_into_project_structure(tmp_path):
         "store_request": backend_root / "app/Http/Requests/Siaw/Usuarios/StoreUsuariosRequest.php",
         "update_request": backend_root / "app/Http/Requests/Siaw/Usuarios/UpdateUsuariosRequest.php",
         "trait": backend_root / "app/Http/Requests/Siaw/Traits/Usuarios/ValidatesUsuarios.php",
+        "resource": backend_root / "app/Http/Resources/Siaw/UsuariosResource.php",
+        "relation_resource": backend_root / "app/Http/Resources/Siaw/UsuariosRelationResource.php",
+        "tiny_resource": backend_root / "app/Http/Resources/Siaw/UsuariosTinyResource.php",
         "controller": backend_root / "app/Http/Controllers/Api/Siaw/siaw_usuariosController.php",
         "routes_module": backend_root / "routes/modules/usuarios.php",
         "interfaces": frontend_root / "src/app/interfaces/models/usuarios.interface.ts",

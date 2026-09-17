@@ -157,6 +157,34 @@ def is_searchable(parsed: ParsedType) -> bool:
     return _normalized_family(parsed) in ("varchar", "char", "text")
 
 
+def oa_type(parsed: ParsedType) -> str:
+    """Tipo OpenAPI (`@OA\\Property(type=...)`) equivalente, para Swagger."""
+    family = _normalized_family(parsed)
+    if family in ("varchar", "char", "text", "date", "datetime"):
+        return "string"
+    if family == "tinyint" and parsed.length == 1:
+        return "boolean"
+    if family == "int":
+        return "integer"
+    if family == "decimal":
+        return "number"
+    if family == "json":
+        return "array"
+    return "string"
+
+
+def oa_format(parsed: ParsedType) -> str | None:
+    """`format` de OpenAPI, cuando el `type` por sí solo no alcanza."""
+    family = _normalized_family(parsed)
+    if family == "date":
+        return "date"
+    if family == "datetime":
+        return "date-time"
+    if parsed.base == "decimal":
+        return "float"
+    return None
+
+
 def ts_type(parsed: ParsedType, *, is_fk: bool = False) -> str:
     """Tipo TypeScript equivalente, para las interfaces del frontend."""
     if is_fk:

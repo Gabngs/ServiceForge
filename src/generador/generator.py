@@ -1,8 +1,8 @@
 """Arma el manifiesto de un módulo a partir del análisis de columnas/relaciones
 y renderiza el patrón de servicio completo: Model, Service, Filters,
-Store/Update Request + Trait, y el set de interfaces TypeScript del frontend.
-
-Controller/Resources/routes todavía quedan fuera (ver Roadmap en README.md).
+Store/Update Request + Trait, Resource/RelationResource/TinyResource (con sus
+anotaciones @OA\\Schema), Controller (con anotaciones @OA\\... por método) +
+ruta, y el set de interfaces TypeScript del frontend.
 """
 
 from __future__ import annotations
@@ -67,6 +67,13 @@ class ManifestField:
         return prefijo
 
     @property
+    def fk_table_prefijo_studly(self) -> str | None:
+        """Namespace `App\\Http\\Resources\\{Prefijo}` de la tabla relacionada."""
+        if not self.fk_table_prefijo:
+            return None
+        return naming.studly(self.fk_table_prefijo)
+
+    @property
     def is_required_on_store(self) -> bool:
         return self.store_rule.startswith("required")
 
@@ -79,6 +86,18 @@ class ManifestField:
     def ts_type_create(self) -> str:
         """Tipo TS en Create/Update — si es FK, el UUID plano que manda el front."""
         return mapping.ts_type(self.parsed, is_fk=self.is_fk)
+
+    def oa_type(self) -> str:
+        """Tipo OpenAPI (`@OA\\Property(type=...)`) — ver Documentación Swagger (OpenAPI).md."""
+        return mapping.oa_type(self.parsed)
+
+    def oa_format(self) -> str | None:
+        return mapping.oa_format(self.parsed)
+
+    def oa_max_length(self) -> int | None:
+        if self.parsed.base in ("varchar", "char") and self.parsed.length:
+            return self.parsed.length
+        return None
 
 
 @dataclass
@@ -235,6 +254,21 @@ class Renderer:
     def _non_fk_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
         return [f for f in self._included(manifest) if not f.is_fk]
 
+    def _tiny_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
+        """Campos mínimos — comparten selección con I{Modulo}Tiny (ver interfaces.ts.j2)
+        y con {Modulo}RelationResource/{Modulo}TinyResource (ver ApiResponse.md#Resource
+        triple: completo, relación y tiny)."""
+        return [f for f in self._included(manifest) if f.tiny]
+
+    def _fk_resource_imports(self, manifest: ModuleManifest) -> list[tuple[str, str]]:
+        return sorted(
+            {
+                (f.fk_table_prefijo_studly, f.fk_related_modulo_studly)
+                for f in self._fk_fields(manifest)
+                if f.fk_table_prefijo_studly and f.fk_related_modulo_studly
+            }
+        )
+
     def render_store_request_php(self, manifest: ModuleManifest) -> str:
         non_fk = self._non_fk_fields(manifest)
         return self.env.get_template("StoreRequest.php.j2").render(
@@ -257,8 +291,29 @@ class Renderer:
             manifest=manifest, fk_fields=self._fk_fields(manifest)
         )
 
+    def render_resource_php(self, manifest: ModuleManifest) -> str:
+        included = self._included(manifest)
+        return self.env.get_template("Resource.php.j2").render(
+            manifest=manifest, fields=included, fk_imports=self._fk_resource_imports(manifest)
+        )
+
+    def render_relation_resource_php(self, manifest: ModuleManifest) -> str:
+        return self.env.get_template("RelationResource.php.j2").render(
+            manifest=manifest, relation_fields=self._tiny_fields(manifest)
+        )
+
+    def render_tiny_resource_php(self, manifest: ModuleManifest) -> str:
+        return self.env.get_template("TinyResource.php.j2").render(
+            manifest=manifest, tiny_fields=self._tiny_fields(manifest)
+        )
+
     def render_controller_php(self, manifest: ModuleManifest) -> str:
-        return self.env.get_template("Controller.php.j2").render(manifest=manifest)
+        included = self._included(manifest)
+        return self.env.get_template("Controller.php.j2").render(
+            manifest=manifest,
+            fields=included,
+            required_fields=[f for f in included if f.is_required_on_store],
+        )
 
     def render_routes_module_php(self, manifest: ModuleManifest) -> str:
         return self.env.get_template("routes_module.php.j2").render(manifest=manifest)
@@ -287,6 +342,9 @@ BACKEND_KEYS = (
     "store_request",
     "update_request",
     "trait",
+    "resource",
+    "relation_resource",
+    "tiny_resource",
     "controller",
     "routes_module",
 )
@@ -309,6 +367,9 @@ def render_all(manifest: ModuleManifest, *, renderer: Renderer | None = None) ->
         "store_request": renderer.render_store_request_php(manifest),
         "update_request": renderer.render_update_request_php(manifest),
         "trait": renderer.render_trait_php(manifest),
+        "resource": renderer.render_resource_php(manifest),
+        "relation_resource": renderer.render_relation_resource_php(manifest),
+        "tiny_resource": renderer.render_tiny_resource_php(manifest),
         "controller": renderer.render_controller_php(manifest),
         "routes_module": renderer.render_routes_module_php(manifest),
         "interfaces": renderer.render_interfaces_ts(manifest),
