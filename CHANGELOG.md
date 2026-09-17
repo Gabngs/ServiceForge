@@ -2,6 +2,13 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.2.0]
+
+### Añadido
+- Scaffolding del estándar para proyectos backend que todavía no lo siguen (fallback, sin tener que migrar el proyecto entero a mano primero): "Analizar proyecto" ahora también detecta si faltan `app/Services/AbstractModuleService.php`, `app/Services/CrudService.php`, el `Controller` base con anotaciones Swagger, `RouteServiceProvider.php`, una clase `Token` propia y la migración de auditoría `{prefijo}_procesosaudit` — y ofrece generar lo que falte, sin sobrescribir nunca un archivo que ya exista.
+- `CrudService.php` se genera siempre completo, con auditoría activa, nunca en una versión reducida: si no existe la tabla `{prefijo}_procesosaudit`, la fase de generación crea también su migración y su modelo (con las constantes `TIPO_*`/`ESTADO_*`/`ORIGEN_*`, esquema tomado 1:1 de Auditoría.md); si no se encuentra una clase `Token` propia del proyecto para resolver el usuario autenticado, el `CrudService` generado usa `Auth::user()` nativo de Laravel en su lugar (funcionalmente equivalente bajo Sanctum), con un comentario explícito señalando esa línea por si el proyecto agrega su propio helper más adelante.
+- Nuevo módulo `scaffold.py` con la detección (`detect_scaffold_status`) y la escritura no-destructiva (`write_missing_base_pieces` / `write_crud_service_with_audit`) — reutilizable independientemente de la GUI.
+
 ## [1.1.3]
 
 ### Corregido

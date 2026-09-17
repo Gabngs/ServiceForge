@@ -16,6 +16,7 @@ GUI de escritorio que genera el boilerplate repetitivo de un módulo CRUD Larave
 - El `audit-user.interface.ts` compartido es opcional (checkbox) — pensado para proyectos que ya existen y ya lo tienen.
 - Backup manual de la BD conectada (`mysqldump`).
 - `Logs → Historial de generación…`: cada módulo generado queda registrado (tabla, # de FKs, # de campos, tiempo transcurrido entre "Analizar" y "Generar archivos", archivos escritos, líneas de código) y se puede exportar a CSV — insumo directo para medir el lead time por módulo (manual vs. herramienta).
+- "Analizar proyecto" también detecta si el proyecto destino todavía no tiene las piezas de base del patrón (`AbstractModuleService.php`, `CrudService.php`, `Controller` base con Swagger, `RouteServiceProvider.php`) y ofrece generar las que falten — nunca sobrescribe un archivo que ya exista. `CrudService.php` se genera siempre completo, con auditoría activa: si no existe la tabla `{prefijo}_procesosaudit`, la crea (migración + modelo, con el esquema documentado); si no encuentra una clase `Token` propia del proyecto, usa `Auth::user()` nativo de Laravel en su lugar (equivalente bajo Sanctum), dejado explícito en el código generado.
 
 Lo que falta (service Angular completo, parser de migraciones sin ejecutar, relaciones many-to-many, auto-registro de rutas) está en el roadmap.
 
@@ -52,6 +53,7 @@ python src/main.py       # abre la GUI (requiere una BD MySQL/MariaDB accesible)
 
 - [x] `{Modulo}Resource.php` / `{Modulo}RelationResource.php` / `{Modulo}TinyResource.php`
 - [x] Documentación Swagger/OpenAPI en el Controller y los Resources generados
+- [x] Scaffolding del estándar para proyectos que todavía no lo siguen (`AbstractModuleService`, `CrudService` con auditoría, `Controller` base, `RouteServiceProvider`)
 - [ ] Auto-registro de `routes/modules/{modulo}.php` en el provider (hoy solo se detecta y sugiere, no se edita)
 - [ ] Service Angular completo
 - [ ] Parser de migraciones `.php` sin ejecutar (sin depender de conexión a BD)

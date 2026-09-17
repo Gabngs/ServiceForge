@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Models\db{{ prefijo }};
+
+use Illuminate\Database\Eloquent\Model;
+
+class {{ prefijo }}_procesosaudit extends Model
+{
+    // tipo_proceso
+    public const TIPO_INSERCION = 1;
+    public const TIPO_ACTUALIZACION = 2;
+    public const TIPO_ELIMINACION = 3;
+    public const TIPO_RESTAURACION = 4;
+
+    // estado_proceso
+    public const ESTADO_EXITO = 1;
+    public const ESTADO_ERROR = 2;
+
+    // origen
+    public const ORIGEN_MANUAL = 1;
+    public const ORIGEN_AUTOMATICO = 2;
+
+    protected $connection = 'db{{ prefijo }}';
+    protected $table = '{{ prefijo }}_procesosaudit';
+    protected $primaryKey = 'pkid';
+    public $timestamps = false; // solo created_at (append-only, sin updated_at) — lo pone la BD (useCurrent())
+
+    protected $fillable = [
+        'id',
+        'nombre_proceso',
+        'tipo_proceso',
+        'estado_proceso',
+        'origen',
+        'modelo_afectado',
+        'registro_id',
+        'input',
+        'output',
+        'error',
+        'created_by_id',
+    ];
+
+    protected $casts = [
+        'input' => 'array',
+        'output' => 'array',
+        'created_at' => 'datetime',
+    ];
+}

@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
+
+class RouteServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        // Carga automáticamente todos los *.php de routes/modules/, ya
+        // envueltos en el stack de seguridad (auth:sanctum) — ningún archivo
+        // de módulo repite este middleware. Para agregar un módulo nuevo:
+        // crear routes/modules/{nombre}.php, sin tocar este provider.
+        $files = glob(base_path('routes/modules') . DIRECTORY_SEPARATOR . '*.php') ?: [];
+
+        Route::prefix('api')
+            ->middleware(['auth:sanctum'])
+            ->group(function () use ($files) {
+                foreach ($files as $file) {
+                    require $file;
+                }
+            });
+    }
+}

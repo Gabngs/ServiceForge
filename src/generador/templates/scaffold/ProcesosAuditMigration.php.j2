@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    protected $connection = 'db{{ prefijo }}';
+
+    public function up(): void
+    {
+        Schema::connection($this->connection)->create('{{ prefijo }}_procesosaudit', function (Blueprint $table) {
+            $table->id('pkid');
+            $table->uuid('id')->unique();
+            $table->string('nombre_proceso');
+            $table->unsignedTinyInteger('tipo_proceso');
+            $table->unsignedTinyInteger('estado_proceso');
+            $table->unsignedTinyInteger('origen');
+            $table->string('modelo_afectado');
+            $table->unsignedBigInteger('registro_id')->nullable();
+            $table->json('input')->nullable();
+            $table->json('output')->nullable();
+            $table->string('error')->nullable();
+            $table->unsignedBigInteger('created_by_id')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::connection($this->connection)->dropIfExists('{{ prefijo }}_procesosaudit');
+    }
+};

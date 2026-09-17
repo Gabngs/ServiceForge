@@ -15,6 +15,9 @@ import os
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from PySide6.QtWidgets import QPushButton  # noqa: E402
+
+from generador import scaffold  # noqa: E402
 from generador.db import ConnectionConfig  # noqa: E402
 from generador.gui import ConnectionOutcome, GenerationLogDialog, MainWindow, ProjectScanDialog, SettingsDialog  # noqa: E402
 from generador.logs import GenerationLogEntry  # noqa: E402
@@ -89,6 +92,64 @@ def test_project_scan_dialog_constructs(qtbot, tmp_path):
     dialog = ProjectScanDialog(result, window.colors, window)
     qtbot.addWidget(dialog)
     assert dialog.windowTitle() == "Análisis del proyecto backend"
+
+
+def test_project_scan_dialog_shows_scaffold_section_and_generates_missing_pieces(qtbot, tmp_path, monkeypatch):
+    # QMessageBox.information(...) bloquea esperando un clic humano -- en un
+    # test offscreen eso cuelga el proceso para siempre. Se reemplaza por un
+    # no-op: lo que importa acá es el efecto en disco, no el aviso al usuario.
+    from generador import gui as gui_module
+
+    monkeypatch.setattr(gui_module.QMessageBox, "information", lambda *a, **k: None)
+
+    status = scaffold.detect_scaffold_status(tmp_path)
+    result = scan_backend_project(tmp_path)
+
+    dialog = ProjectScanDialog(
+        result,
+        status_colors_for_test(),
+        None,
+        scaffold_status=status,
+        prefijo="siaw",
+        project_name="MiProyecto",
+    )
+    qtbot.addWidget(dialog)
+
+    generate_base_btn = _find_button(dialog, "Generar piezas base faltantes…")
+    generate_crud_btn = _find_button(dialog, "Generar CrudService + auditoría…")
+    assert generate_base_btn is not None and generate_base_btn.isEnabled()
+    assert generate_crud_btn is not None and generate_crud_btn.isEnabled()
+
+    generate_base_btn.click()
+    qtbot.wait(50)  # deja que deleteLater() de los widgets viejos se procese
+    assert (tmp_path / "app" / "Services" / "AbstractModuleService.php").exists()
+    assert (tmp_path / "app" / "Providers" / "RouteServiceProvider.php").exists()
+    assert (tmp_path / "app" / "Http" / "Controllers" / "Controller.php").exists()
+
+    generate_crud_btn2 = _find_button(dialog, "Generar CrudService + auditoría…")
+    assert generate_crud_btn2 is not None and generate_crud_btn2.isEnabled()
+    generate_crud_btn2.click()
+    qtbot.wait(50)
+    crud_service_path = tmp_path / "app" / "Services" / "CrudService.php"
+    assert crud_service_path.exists()
+    assert "Auth::user()" in crud_service_path.read_text(encoding="utf-8")
+
+    # Botones ya no habilitados -- todo lo generable ya se generó.
+    assert not _find_button(dialog, "Generar piezas base faltantes…").isEnabled()
+    assert not _find_button(dialog, "Generar CrudService + auditoría…").isEnabled()
+
+
+def _find_button(dialog, text):
+    for btn in dialog.findChildren(QPushButton):
+        if btn.text() == text:
+            return btn
+    return None
+
+
+def status_colors_for_test():
+    from generador.theme import status_colors
+
+    return status_colors("dark")
 
 
 def test_generation_log_dialog_constructs_empty(qtbot):

@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Http\Controllers;
+
+/**
+ * @OA\Info(title="{{ project_name }} API", version="1.0.0", description="API generada siguiendo el estándar de desarrollo backend (patrón Service Layer).")
+ * @OA\Server(url=L5_SWAGGER_CONST_HOST, description="Servidor Principal")
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     description="Token de sesión retornado por el endpoint de login (campo data.token)."
+ * )
+ */
+abstract class Controller
+{
+    //
+}

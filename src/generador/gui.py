@@ -49,7 +49,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from . import __version__, backup, db, fk_resolver, generator, logs, mapping, naming, project_scan, table_mapping
+from . import __version__, backup, db, fk_resolver, generator, logs, mapping, naming, project_scan, scaffold, table_mapping
 from .settings import Settings
 from .theme import build_stylesheet, status_colors
 
@@ -394,14 +394,31 @@ class FkResolutionDialog(QDialog):
 
 
 class ProjectScanDialog(QDialog):
-    """Muestra el resultado de analizar el proyecto backend — solo lectura,
-    nunca edita RouteServiceProvider/bootstrap/app.php en automático."""
+    """Muestra el resultado de analizar el proyecto backend — de solo lectura
+    salvo por las piezas de scaffolding que el desarrollador pida generar
+    explícitamente (ver scaffold.py): nunca edita RouteServiceProvider/
+    bootstrap/app.php/config existentes, y nunca sobrescribe un archivo que
+    ya esté ahí."""
 
-    def __init__(self, result: project_scan.ProjectScanResult, colors: dict[str, str], parent=None) -> None:
+    def __init__(
+        self,
+        result: project_scan.ProjectScanResult,
+        colors: dict[str, str],
+        parent=None,
+        *,
+        scaffold_status: "scaffold.ScaffoldStatus | None" = None,
+        prefijo: str | None = None,
+        project_name: str = "Proyecto",
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Análisis del proyecto backend")
         self.setMinimumWidth(560)
+        self.colors = colors
+        self.scaffold_status = scaffold_status
+        self.prefijo = prefijo
+        self.project_name = project_name
         layout = QVBoxLayout(self)
+        self._layout = layout
 
         summary_lines = [
             f"Raíz analizada: {result.backend_root}",
@@ -433,9 +450,124 @@ class ProjectScanDialog(QDialog):
             snippet.setMaximumHeight(120)
             layout.addWidget(snippet)
 
+        self._scaffold_section_index = layout.count()
+        if self.scaffold_status is not None:
+            self._build_scaffold_section()
+
         buttons = QDialogButtonBox(QDialogButtonBox.Ok)
         buttons.accepted.connect(self.accept)
         layout.addWidget(buttons)
+        self._buttons = buttons
+
+    # ------------------------------------------------------- scaffolding
+    def _build_scaffold_section(self) -> None:
+        """(Re)construye la sección de piezas de base del estándar — se
+        vuelve a llamar después de generar algo, para reflejar el estado
+        actualizado sin tener que cerrar y reabrir el diálogo."""
+        status = self.scaffold_status
+        assert status is not None
+
+        # Saca los widgets viejos de esta sección (si es una reconstrucción).
+        while self._layout.count() > self._scaffold_section_index and self._layout.itemAt(self._scaffold_section_index) is not self._layout.itemAt(self._layout.count() - 1):
+            item = self._layout.takeAt(self._scaffold_section_index)
+            if item.widget():
+                item.widget().deleteLater()
+
+        box = QGroupBox("Piezas de base del estándar (AbstractModuleService, CrudService, Controller, RouteServiceProvider)")
+        box_layout = QVBoxLayout(box)
+
+        checklist = [
+            ("AbstractModuleService.php", status.abstract_module_service_exists),
+            ("CrudService.php", status.crud_service_exists),
+            ("Controller base con anotaciones Swagger", status.base_controller_exists and status.base_controller_has_swagger),
+            ("RouteServiceProvider.php", status.route_service_provider_exists),
+            ("Clase Token propia (para el usuario autenticado)", status.token_class_found),
+            ("Migración de auditoría ({prefijo}_procesosaudit)", status.procesosaudit_migration_found),
+        ]
+        lines = [f"{'✅' if ok else '⬜'} {label}" for label, ok in checklist]
+        checklist_label = QLabel("\n".join(lines))
+        checklist_label.setWordWrap(True)
+        box_layout.addWidget(checklist_label)
+
+        if not status.token_class_found:
+            note = QLabel(
+                "ⓘ No se encontró una clase Token propia — si se genera CrudService, va a usar "
+                "Auth::user() nativo de Laravel en su lugar (funcionalmente equivalente bajo Sanctum)."
+            )
+            note.setWordWrap(True)
+            note.setStyleSheet(f"color: {self.colors['busy']};")
+            box_layout.addWidget(note)
+
+        if status.base_controller_needs_swagger_snippet:
+            box_layout.addWidget(QLabel(
+                "El Controller base ya existe pero sin las anotaciones Swagger — no se edita solo "
+                "(mismo criterio que el loader de rutas). Snippet sugerido para agregar a mano:"
+            ))
+            snippet = QPlainTextEdit(
+                '/**\n'
+                ' * @OA\\Info(title="{Proyecto} API", version="1.0.0")\n'
+                ' * @OA\\Server(url=L5_SWAGGER_CONST_HOST, description="Servidor Principal")\n'
+                ' * @OA\\SecurityScheme(\n'
+                '*      securityScheme="bearerAuth", type="http", scheme="bearer"\n'
+                ' * )\n'
+                ' */\n'
+                'abstract class Controller\n'
+                '{\n'
+                '}\n'
+            )
+            snippet.setReadOnly(True)
+            font = snippet.font()
+            font.setFamily("Consolas")
+            snippet.setFont(font)
+            snippet.setMaximumHeight(120)
+            box_layout.addWidget(snippet)
+
+        buttons_row = QHBoxLayout()
+        generate_base_btn = QPushButton("Generar piezas base faltantes…")
+        generate_base_btn.setEnabled(bool(status.missing_base_pieces))
+        generate_base_btn.clicked.connect(self._on_generate_base_pieces)
+        buttons_row.addWidget(generate_base_btn)
+
+        generate_crud_btn = QPushButton("Generar CrudService + auditoría…")
+        generate_crud_btn.setEnabled(not status.crud_service_exists and self.prefijo is not None)
+        if self.prefijo is None:
+            generate_crud_btn.setToolTip(
+                "Analizá una tabla primero — CrudService necesita el prefijo de negocio del proyecto."
+            )
+        generate_crud_btn.clicked.connect(self._on_generate_crud_service)
+        buttons_row.addWidget(generate_crud_btn)
+        buttons_row.addStretch()
+        box_layout.addLayout(buttons_row)
+
+        self._layout.insertWidget(self._scaffold_section_index, box)
+
+    def _refresh_scaffold_section(self, backend_root: Path) -> None:
+        self.scaffold_status = scaffold.detect_scaffold_status(backend_root)
+        self._build_scaffold_section()
+
+    def _on_generate_base_pieces(self) -> None:
+        status = self.scaffold_status
+        if status is None:
+            return
+        written = scaffold.write_missing_base_pieces(status, project_name=self.project_name)
+        self._refresh_scaffold_section(status.backend_root)
+        if written:
+            listing = "\n".join(f"- {p}" for p in written.values())
+            QMessageBox.information(self, "Piezas generadas", f"Se generaron:\n{listing}")
+        else:
+            QMessageBox.information(self, "Nada para generar", "No faltaba ninguna pieza de base.")
+
+    def _on_generate_crud_service(self) -> None:
+        status = self.scaffold_status
+        if status is None or self.prefijo is None:
+            return
+        written = scaffold.write_crud_service_with_audit(status, self.prefijo)
+        self._refresh_scaffold_section(status.backend_root)
+        if written:
+            listing = "\n".join(f"- {p}" for p in written.values())
+            QMessageBox.information(self, "CrudService generado", f"Se generaron:\n{listing}")
+        else:
+            QMessageBox.information(self, "Nada para generar", "CrudService.php ya existía.")
 
 
 class SettingsDialog(QDialog):
@@ -1064,7 +1196,17 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Falta la raíz del backend", "Elegí primero la carpeta del proyecto backend.")
             return
         result = project_scan.scan_backend_project(self.backend_root)
-        ProjectScanDialog(result, self.colors, self).exec()
+        scaffold_status = scaffold.detect_scaffold_status(self.backend_root)
+        prefijo = self.current_manifest.prefijo if self.current_manifest else None
+        project_name = self.database_input.text().strip() or self.backend_root.name
+        ProjectScanDialog(
+            result,
+            self.colors,
+            self,
+            scaffold_status=scaffold_status,
+            prefijo=prefijo,
+            project_name=project_name,
+        ).exec()
 
     # ------------------------------------------------------------- análisis
     def _on_analyze(self) -> None:

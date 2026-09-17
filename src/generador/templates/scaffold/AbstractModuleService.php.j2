@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Database\Eloquent\Model;
+
+abstract class AbstractModuleService
+{
+    // Cada service DEBE declarar su mapping (puede ser vacío)
+    protected array $uuidMapping = [];
+
+    abstract public function index(bool $paginate = false): mixed;
+    abstract public function show(Model $model): Model;
+    abstract public function store(array $data): Model;
+    abstract public function update(Model $model, array $data): Model;
+    abstract public function destroy(Model $model): Model;
+}
