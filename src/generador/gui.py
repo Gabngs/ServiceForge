@@ -39,6 +39,7 @@ from PySide6.QtWidgets import (
     QProgressBar,
     QPushButton,
     QRadioButton,
+    QSizePolicy,
     QSplitter,
     QSpinBox,
     QTableWidget,
@@ -703,8 +704,10 @@ class MainWindow(QMainWindow):
         root = QVBoxLayout(central)
 
         top_row = QHBoxLayout()
-        top_row.addWidget(self._build_connection_box(), stretch=2)
-        top_row.addWidget(self._build_project_box(), stretch=3)
+        connection_box = self._build_connection_box()
+        project_box = self._build_project_box()
+        top_row.addWidget(connection_box, stretch=2, alignment=Qt.AlignTop)
+        top_row.addWidget(project_box, stretch=3, alignment=Qt.AlignTop)
         root.addLayout(top_row)
 
         table_row = QHBoxLayout()
@@ -788,9 +791,28 @@ class MainWindow(QMainWindow):
         self.status_label = QLabel("Sin conexión.")
         root.addWidget(self.status_label)
 
+    _CONNECTION_BOX_TITLE = "Conexión — BD objetivo"
+
     def _build_connection_box(self) -> QGroupBox:
-        box = QGroupBox("Conexión — BD objetivo")
-        form = QFormLayout(box)
+        # Colapsable: el formulario de conexión solo hace falta antes de
+        # conectar (o para cambiar de BD después) — una vez conectado, deja
+        # de usarse en el flujo normal (analizar → generar) y solo ocupa
+        # espacio vertical que le hace falta al grid/preview. Se arranca
+        # expandido (hace falta para el primer "Conectar"), con un botón
+        # para colapsarlo sin conectar ("configurar después"), y se colapsa
+        # solo al conectar con éxito.
+        box = QGroupBox(self._CONNECTION_BOX_TITLE)
+        box.setCheckable(True)
+        box.setChecked(True)
+        box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        box.setToolTip("Clic en el título para expandir/colapsar.")
+        outer = QVBoxLayout(box)
+
+        self._connection_form_widget = QWidget()
+        form = QFormLayout(self._connection_form_widget)
+        form.setContentsMargins(0, 4, 0, 0)
+        outer.addWidget(self._connection_form_widget)
+        box.toggled.connect(self._connection_form_widget.setVisible)
 
         self.host_input = QLineEdit("127.0.0.1")
         self.port_input = QSpinBox()
@@ -815,17 +837,23 @@ class MainWindow(QMainWindow):
         self.connect_btn.clicked.connect(lambda: self._start_connection("connect"))
         self.test_connection_btn = QPushButton("Probar conexión")
         self.test_connection_btn.clicked.connect(lambda: self._start_connection("test"))
+        self.configure_later_btn = QPushButton("Configurar después")
+        self.configure_later_btn.setToolTip("Colapsa esta sección sin conectar — se puede retomar más tarde.")
+        self.configure_later_btn.clicked.connect(lambda: box.setChecked(False))
         self.connection_status = QLabel("● Desconectado")
         connect_row.addWidget(self.connect_btn)
         connect_row.addWidget(self.test_connection_btn)
+        connect_row.addWidget(self.configure_later_btn)
         connect_row.addWidget(self.connection_status)
         connect_row.addStretch()
         form.addRow(connect_row)
 
+        self.connection_box = box
         return box
 
     def _build_project_box(self) -> QGroupBox:
         box = QGroupBox("Proyectos destino")
+        box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         form = QFormLayout(box)
 
         self.backend_root_input = QLineEdit()
@@ -993,6 +1021,12 @@ class MainWindow(QMainWindow):
         self.backup_btn.setEnabled(True)
         self._set_connection_status("ok", f"Conectado — {len(self.tables)} tablas")
 
+        # Ya conectado — colapsar el formulario para devolverle el espacio a
+        # la parte que se usa todo el tiempo (grid + preview). El título
+        # deja la conexión activa a la vista sin necesidad de expandir.
+        self.connection_box.setTitle(f"{self._CONNECTION_BOX_TITLE} — {config.database}@{config.host} ✓")
+        self.connection_box.setChecked(False)
+
     def _on_connection_failed(self, mode: str, message: str) -> None:
         self._set_connection_status("error", "Error de conexión")
         title = "No se pudo probar la conexión" if mode == "test" else "Error de conexión"
@@ -1082,6 +1116,10 @@ class MainWindow(QMainWindow):
         self.preview_btn.setEnabled(True)
         self.generate_btn.setEnabled(True)
         self.status_label.setText(f"Tabla '{table}' analizada — {len(business_columns)} columnas de negocio.")
+
+        # Preview no vacío desde el primer momento — antes había que acordarse
+        # de apretar "Actualizar preview" para ver algo en las pestañas.
+        self._on_update_preview()
 
     def _populate_grid(self) -> None:
         self.grid.setRowCount(len(self.current_columns))

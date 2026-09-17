@@ -2,6 +2,13 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [Unreleased]
+
+### Cambiado
+- La sección "Conexión — BD objetivo" ahora es colapsable (clic en el título o botón "Configurar después") y se colapsa sola al conectar con éxito, dejando el título con un resumen (`db@host ✓`) — antes quedaba siempre expandida y competía por espacio vertical con el grid/preview, que es lo que se usa todo el tiempo una vez conectado.
+- El cuadro "Proyectos destino" ya no se estira para igualar la altura de la caja de conexión (dejaba un área vacía grande debajo del checkbox) — ambos cuadros quedan alineados arriba, con su altura natural.
+- El preview ya no queda en blanco después de "Analizar" — se genera automáticamente, sin esperar a que el desarrollador apriete "Actualizar preview" a mano.
+
 ## [1.1.0]
 
 ### Añadido

@@ -15,7 +15,8 @@ import os
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from generador.gui import GenerationLogDialog, MainWindow, ProjectScanDialog, SettingsDialog  # noqa: E402
+from generador.db import ConnectionConfig  # noqa: E402
+from generador.gui import ConnectionOutcome, GenerationLogDialog, MainWindow, ProjectScanDialog, SettingsDialog  # noqa: E402
 from generador.logs import GenerationLogEntry  # noqa: E402
 from generador.project_scan import scan_backend_project  # noqa: E402
 from generador.settings import Settings  # noqa: E402
@@ -27,6 +28,41 @@ def test_main_window_constructs(qtbot):
     assert window.windowTitle().startswith("Service-Forge")
     assert len(window.preview_widgets) == 13
     assert [a.text() for a in window.menuBar().actions()] == ["&Archivo", "&Editar", "&Logs", "A&yuda"]
+
+
+def test_connection_box_starts_expanded_and_configure_later_collapses(qtbot):
+    window = MainWindow()
+    qtbot.addWidget(window)
+    assert window.connection_box.isChecked() is True
+    assert window._connection_form_widget.isHidden() is False
+
+    window.configure_later_btn.click()
+    assert window.connection_box.isChecked() is False
+    assert window._connection_form_widget.isHidden() is True
+
+
+def test_connection_box_collapses_on_successful_connect(qtbot):
+    window = MainWindow()
+    qtbot.addWidget(window)
+    config = ConnectionConfig(host="127.0.0.1", port=3306, user="root", password="", database="db_test")
+    outcome = ConnectionOutcome(tables=["siaw_usuarios"], connection=object())
+
+    window._on_connection_succeeded(config, "connect", outcome)
+
+    assert window.connection_box.isChecked() is False
+    assert "db_test" in window.connection_box.title()
+    assert window.analyze_btn.isEnabled()
+
+
+def test_connection_box_stays_expanded_on_test_mode(qtbot):
+    window = MainWindow()
+    qtbot.addWidget(window)
+    config = ConnectionConfig(host="127.0.0.1", port=3306, user="root", password="", database="db_test")
+    outcome = ConnectionOutcome(tables=[], connection=None)
+
+    window._on_connection_succeeded(config, "test", outcome)
+
+    assert window.connection_box.isChecked() is True
 
 
 def test_theme_toggle_applies(qtbot):
