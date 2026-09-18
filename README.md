@@ -54,11 +54,6 @@ python src/main.py       # abre la GUI (requiere una BD MySQL/MariaDB accesible)
 - [x] `{Modulo}Resource.php` / `{Modulo}RelationResource.php` / `{Modulo}TinyResource.php`
 - [x] Documentación Swagger/OpenAPI en el Controller y los Resources generados
 - [x] Scaffolding del estándar para proyectos que todavía no lo siguen (`AbstractModuleService`, `CrudService` con auditoría, `Controller` base, `RouteServiceProvider`)
-- [ ] Auto-registro de `routes/modules/{modulo}.php` en el provider (hoy solo se detecta y sugiere, no se edita)
+- [x] Auto-registro de `routes/modules/{modulo}.php` en el provider (hoy solo se detecta y sugiere, no se edita)
 - [ ] Service Angular completo
-- [ ] Parser de migraciones `.php` sin ejecutar (sin depender de conexión a BD)
-- [ ] Relaciones many-to-many (tabla pivot)
 
-## Licencia
-
-Sin licencia explícita por el momento — todos los derechos reservados por defecto.
