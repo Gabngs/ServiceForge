@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QStringListModel, QThread, Signal
-from PySide6.QtGui import QAction, QTextCursor
+from PySide6.QtGui import QAction, QColor, QSyntaxHighlighter, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -1038,6 +1038,83 @@ class StandardDocsDialog(QDialog):
         self._reload()
 
 
+class _PhpTsHighlighter(QSyntaxHighlighter):
+    """Resalta PHP/TS en el preview editable con la misma paleta que el visor
+    de estándar (ver standard_docs.SYNTAX_COLORS) — antes el preview era todo
+    un solo color, y entre tantos comentarios explicativos del estándar
+    (ver useFilters.md, etc.) costaba distinguir a simple vista qué era
+    código real y qué era comentario."""
+
+    _TOKEN_RE = re.compile(
+        r"(?P<comment>//[^\n]*|#[^\n]*)"
+        r"|(?P<string>\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*')"
+        r"|(?P<variable>\$[A-Za-z_][A-Za-z0-9_]*)"
+        r"|(?P<number>\b\d+(?:\.\d+)?\b)"
+        r"|(?P<word>[A-Za-z_][A-Za-z0-9_]*)"
+    )
+
+    def __init__(self, document, is_typescript: bool, mode: str) -> None:
+        super().__init__(document)
+        self._keywords = standard_docs.TS_KEYWORDS if is_typescript else standard_docs.PHP_KEYWORDS
+        self._formats: dict[str, QTextCharFormat] = {}
+        self.set_mode(mode)
+
+    def set_mode(self, mode: str) -> None:
+        palette = standard_docs.SYNTAX_COLORS.get(mode, standard_docs.SYNTAX_COLORS["dark"])
+        self._formats = {name: self._make_format(color) for name, color in palette.items()}
+        self.rehighlight()
+
+    @staticmethod
+    def _make_format(color: str) -> QTextCharFormat:
+        fmt = QTextCharFormat()
+        fmt.setForeground(QColor(color))
+        return fmt
+
+    def highlightBlock(self, text: str) -> None:
+        comment_ranges = self._highlight_block_comments(text)
+
+        for m in self._TOKEN_RE.finditer(text):
+            start, end = m.start(), m.end()
+            if any(start < cstart + clen and end > cstart for cstart, clen in comment_ranges):
+                continue  # ya coloreado por el bloque /* ... */
+
+            kind = m.lastgroup
+            if kind in ("comment", "string", "variable", "number"):
+                self.setFormat(start, end - start, self._formats[kind])
+            elif kind == "word":
+                token = m.group()
+                if token in self._keywords:
+                    self.setFormat(start, end - start, self._formats["keyword"])
+                elif text[end:].lstrip(" \t")[:1] == "(":
+                    self.setFormat(start, end - start, self._formats["function"])
+                elif token[:1].isupper():
+                    self.setFormat(start, end - start, self._formats["type"])
+
+    def _highlight_block_comments(self, text: str) -> list[tuple[int, int]]:
+        # /** ... */ (PHPDoc, anotaciones @OA de Swagger) puede abarcar varias
+        # líneas — QSyntaxHighlighter llama a highlightBlock() una línea a la
+        # vez, así que el estado "sigo dentro de un comentario" se guarda en
+        # el block state (patrón estándar de Qt para comentarios multilínea).
+        self.setCurrentBlockState(0)
+        ranges: list[tuple[int, int]] = []
+        start_index = 0 if self.previousBlockState() == 1 else text.find("/*")
+
+        while start_index != -1:
+            end_index = text.find("*/", start_index)
+            if end_index == -1:
+                self.setCurrentBlockState(1)
+                length = len(text) - start_index
+            else:
+                length = end_index - start_index + 2
+            self.setFormat(start_index, length, self._formats["comment"])
+            ranges.append((start_index, length))
+            if end_index == -1:
+                break
+            start_index = text.find("/*", end_index + 2)
+
+        return ranges
+
+
 class _CodeEditor(QPlainTextEdit):
     """QPlainTextEdit con autocompletado "por palabras" (sin IA / sin Copilot):
     combina una lista curada de keywords de PHP/Laravel (o TS) con las
@@ -1045,9 +1122,12 @@ class _CodeEditor(QPlainTextEdit):
     ejemplo "Custom Completer" de Qt. Se dispara solo al escribir 2+
     caracteres, o a mano con Ctrl+Espacio."""
 
-    def __init__(self, keywords: list[str], parent: QWidget | None = None) -> None:
+    def __init__(
+        self, keywords: list[str], is_typescript: bool = False, theme_mode: str = "dark", parent: QWidget | None = None
+    ) -> None:
         super().__init__(parent)
         self._static_words = set(keywords)
+        self.highlighter = _PhpTsHighlighter(self.document(), is_typescript, theme_mode)
 
         self.completer = QCompleter(self)
         self.completer.setWidget(self)
@@ -1057,6 +1137,9 @@ class _CodeEditor(QPlainTextEdit):
 
         self._refresh_completion_model()
         self.textChanged.connect(self._refresh_completion_model)
+
+    def set_theme_mode(self, mode: str) -> None:
+        self.highlighter.set_mode(mode)
 
     def _refresh_completion_model(self) -> None:
         doc_words = set(re.findall(r"[A-Za-z_\\][A-Za-z0-9_\\]{2,}", self.toPlainText()))
@@ -1210,6 +1293,7 @@ class MainWindow(QMainWindow):
         # conviene tener la raíz backend/frontend siempre a la vista mientras
         # se genera, para no escribir en la carpeta equivocada.
         root.addWidget(self._build_project_box())
+        root.addWidget(self._build_generation_config_box())
 
         table_row = QHBoxLayout()
         self.table_combo = QComboBox()
@@ -1225,15 +1309,6 @@ class MainWindow(QMainWindow):
         table_row.addWidget(self.import_migration_btn)
         table_row.addStretch()
         root.addLayout(table_row)
-
-        pagination_row = QHBoxLayout()
-        self.pagination_checkbox = QCheckBox(
-            "El Controller admite ?paginate=true (agrega meta de paginación — ver Controller.md)"
-        )
-        self.pagination_checkbox.setChecked(True)
-        pagination_row.addWidget(self.pagination_checkbox)
-        pagination_row.addStretch()
-        root.addLayout(pagination_row)
 
         # Grid (mapeo de columnas) y preview en un splitter — el preview es
         # donde se edita el código antes de generar, necesita poder crecer.
@@ -1282,10 +1357,11 @@ class MainWindow(QMainWindow):
         self.preview_layout.addWidget(self.preview_note)
 
         self.preview_tabs = QTabWidget()
-        self.preview_widgets: dict[str, QPlainTextEdit] = {}
+        self.preview_widgets: dict[str, _CodeEditor] = {}
         for key, title in _PREVIEW_TABS:
-            keywords = _TS_INTERFACE_COMPLETIONS if title.endswith(".ts") else _PHP_LARAVEL_COMPLETIONS
-            editor = _CodeEditor(keywords)
+            is_ts = title.endswith(".ts")
+            keywords = _TS_INTERFACE_COMPLETIONS if is_ts else _PHP_LARAVEL_COMPLETIONS
+            editor = _CodeEditor(keywords, is_typescript=is_ts, theme_mode=self.settings.theme)
             font = editor.font()
             font.setFamily("Consolas")
             editor.setFont(font)
@@ -1395,25 +1471,55 @@ class MainWindow(QMainWindow):
         self.user_model_input = QLineEdit(generator.DEFAULT_USER_MODEL_CLASS)
         form.addRow("Modelo de usuario (created_by/updated_by/deleted_by):", self.user_model_input)
 
+        return box
+
+    def _build_generation_config_box(self) -> QGroupBox:
+        # Agrupa los checkboxes que controlan CÓMO se genera (a diferencia de
+        # "Proyectos destino", que define DÓNDE) — antes estaban repartidos
+        # sueltos por la ventana (uno en su propia fila, dos mezclados con
+        # los campos de "Proyectos destino"), sin relación visual entre sí.
+        box = QGroupBox("Conf. de generación")
+        layout = QVBoxLayout(box)
+
+        self.pagination_checkbox = QCheckBox(
+            "El Controller admite ?paginate=true (agrega meta de paginación — ver Controller.md)"
+        )
+        self.pagination_checkbox.setChecked(True)
+        layout.addWidget(self.pagination_checkbox)
+
+        # Desmarcado, se omiten los comentarios "//" explicativos (el porqué
+        # de cada decisión, referencias a .md, notas de la sección) en los
+        # archivos generados por módulo — quedan los bloques /** */ (PHPDoc,
+        # anotaciones @OA de Swagger), que son funcionales, no ruido. Pensado
+        # para cuando ya se conoce el estándar y esos comentarios sobran.
+        self.add_comments_checkbox = QCheckBox(
+            "Añadir comentarios explicativos en el código generado"
+        )
+        self.add_comments_checkbox.setChecked(True)
+        layout.addWidget(self.add_comments_checkbox)
+
         self.write_audit_checkbox = QCheckBox(
             "Generar audit-user.interface.ts compartido (desmarcar si el proyecto ya lo tiene)"
         )
         self.write_audit_checkbox.setChecked(False)
-        form.addRow(self.write_audit_checkbox)
+        layout.addWidget(self.write_audit_checkbox)
 
         # Carpeta de salida separada — para cuando no se quiere escribir
         # directo en el proyecto real (ej. revisar el resultado antes de
         # copiarlo a mano, o generar sin tener el proyecto clonado acá). El
-        # backend/frontend de arriba siguen siendo la raíz que se ANALIZA/
-        # escanea (tablas, migraciones, resources existentes); esta carpeta es
-        # solo dónde se ESCRIBEN los archivos generados — ver _on_generate.
-        # write_files ya crea toda la subestructura de carpetas (mkdir
-        # parents=True) así que cualquier carpeta vacía sirve como destino.
+        # backend/frontend de "Proyectos destino" siguen siendo la raíz que
+        # se ANALIZA/escanea (tablas, migraciones, resources existentes);
+        # esta carpeta es solo dónde se ESCRIBEN los archivos generados — ver
+        # _on_generate. write_files ya crea toda la subestructura de carpetas
+        # (mkdir parents=True) así que cualquier carpeta vacía sirve como
+        # destino.
         self.separate_output_checkbox = QCheckBox(
             "Generar en una carpeta de salida separada (no escribir directo en el proyecto)"
         )
         self.separate_output_checkbox.toggled.connect(self._on_separate_output_toggled)
-        form.addRow(self.separate_output_checkbox)
+        layout.addWidget(self.separate_output_checkbox)
+
+        output_form = QFormLayout()
 
         self.output_backend_root: Path | None = None
         self.output_backend_input = QLineEdit()
@@ -1424,7 +1530,7 @@ class MainWindow(QMainWindow):
         output_backend_row.addWidget(self.output_backend_input)
         output_backend_row.addWidget(output_backend_browse)
         self.output_backend_label = QLabel("Salida backend:")
-        form.addRow(self.output_backend_label, output_backend_row)
+        output_form.addRow(self.output_backend_label, output_backend_row)
 
         self.output_frontend_root: Path | None = None
         self.output_frontend_input = QLineEdit()
@@ -1435,7 +1541,9 @@ class MainWindow(QMainWindow):
         output_frontend_row.addWidget(self.output_frontend_input)
         output_frontend_row.addWidget(output_frontend_browse)
         self.output_frontend_label = QLabel("Salida frontend:")
-        form.addRow(self.output_frontend_label, output_frontend_row)
+        output_form.addRow(self.output_frontend_label, output_frontend_row)
+
+        layout.addLayout(output_form)
 
         self._on_separate_output_toggled(False)
 
@@ -1473,6 +1581,8 @@ class MainWindow(QMainWindow):
         if not self.conn:
             self.connection_status.setStyleSheet(f"color: {self.colors['idle']};")
             self.connection_summary_label.setStyleSheet(f"color: {self.colors['idle']};")
+        for editor in self.preview_widgets.values():
+            editor.set_theme_mode(self.settings.theme)
 
     def _on_open_settings(self) -> None:
         dialog = SettingsDialog(self.settings, self)
@@ -1869,6 +1979,7 @@ class MainWindow(QMainWindow):
             connection_name=connection_name,
             user_model_class=user_model_class,
             supports_pagination=self.pagination_checkbox.isChecked(),
+            add_comments=self.add_comments_checkbox.isChecked(),
         )
 
     def _on_update_preview(self) -> None:

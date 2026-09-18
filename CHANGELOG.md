@@ -2,6 +2,15 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.5.1]
+
+### Añadido
+- Resaltado de sintaxis en el preview editable (Model/Service/Filters/Requests/Controller/etc.): PHP y TypeScript, misma paleta de colores que el visor de estándar.
+- Checkbox "Añadir comentarios explicativos en el código generado" (activado por defecto): desmarcado, quita los comentarios `//` de racional/referencias a .md de los archivos generados por módulo — los bloques `/** */` (PHPDoc, anotaciones `@OA` de Swagger) nunca se tocan, son funcionales.
+
+### Cambiado
+- Los checkboxes que controlan cómo se genera (paginación, audit-user.interface.ts compartido, carpeta de salida separada, comentarios) ahora viven agrupados en su propio panel "Conf. de generación", en vez de repartidos sueltos por la ventana.
+
 ## [1.5.0]
 
 ### Corregido

@@ -52,7 +52,7 @@ _CODE_TOKEN_RE = re.compile(
 
 # Un subconjunto de keywords PHP/TS -- suficiente para diferenciar visualmente
 # estructura de nombres propios, no un lexer completo del lenguaje.
-_PHP_KEYWORDS = frozenset(
+PHP_KEYWORDS = frozenset(
     """abstract and array as break callable case catch class clone const continue
     declare default do echo else elseif empty enddeclare endfor endforeach endif
     endswitch endwhile extends final finally fn for foreach function global goto
@@ -62,7 +62,7 @@ _PHP_KEYWORDS = frozenset(
     yield void int string bool float mixed null true false self parent""".split()
 )
 
-_TS_KEYWORDS = frozenset(
+TS_KEYWORDS = frozenset(
     """const let var function return if else for while do switch case default
     break continue class extends implements interface type enum import export
     from as new this super try catch finally throw typeof instanceof in of void
@@ -173,7 +173,7 @@ def wikilink_target(url: str) -> str | None:
 
 
 def _highlight_code(code: str, lang: str, colors: dict[str, str]) -> str:
-    keywords = _TS_KEYWORDS if lang in ("ts", "typescript", "js", "javascript") else _PHP_KEYWORDS
+    keywords = TS_KEYWORDS if lang in ("ts", "typescript", "js", "javascript") else PHP_KEYWORDS
     out: list[str] = []
     pos = 0
     for m in _CODE_TOKEN_RE.finditer(code):

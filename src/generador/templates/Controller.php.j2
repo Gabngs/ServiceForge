@@ -47,7 +47,8 @@ class {{ manifest.model_class }}Controller extends Controller
     {
         $paginate = $request->boolean('paginate');
 
-        $data = $this->service->index($paginate); // Collection o LengthAwarePaginator
+        // Collection o LengthAwarePaginator
+        $data = $this->service->index($paginate);
 
         // El Resource a usar (completo o tiny) es una decisión de presentación,
         // no del Service — ver Controller.md#Parámetro `tiny`.

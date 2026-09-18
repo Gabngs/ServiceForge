@@ -134,6 +134,7 @@ class ModuleManifest:
     unique_indexes: dict[str, list[str]] = field(default_factory=dict)
 
     supports_pagination: bool = True
+    add_comments: bool = True
 
     @property
     def model_class(self) -> str:
@@ -173,6 +174,7 @@ def build_manifest(
     connection_name: str = "mysql",
     user_model_class: str = DEFAULT_USER_MODEL_CLASS,
     supports_pagination: bool = True,
+    add_comments: bool = True,
 ) -> ModuleManifest:
     prefijo, modulo = naming.split_prefijo_modulo(table)
     modulo_studly = naming.studly(modulo)
@@ -260,7 +262,28 @@ def build_manifest(
         user_model_class=user_model_class,
         unique_indexes=unique_indexes,
         supports_pagination=supports_pagination,
+        add_comments=add_comments,
     )
+
+
+def strip_line_comments(text: str) -> str:
+    """Saca las líneas `//` explicativas (el porqué de cada decisión, referencias
+    a .md) de un archivo generado — no toca los bloques `/** ... */` (PHPDoc,
+    anotaciones `@OA` de Swagger), que son funcionales, no ruido. Usado cuando
+    `ModuleManifest.add_comments` es False. Colapsa el espacio en blanco que deja
+    cada línea removida para no dejar huecos de más de una línea vacía."""
+    kept: list[str] = []
+    for line in text.split("\n"):
+        if line.strip().startswith("//"):
+            continue
+        kept.append(line)
+
+    collapsed: list[str] = []
+    for line in kept:
+        if line.strip() == "" and collapsed and collapsed[-1].strip() == "":
+            continue
+        collapsed.append(line)
+    return "\n".join(collapsed)
 
 
 class Renderer:
@@ -272,6 +295,10 @@ class Renderer:
             lstrip_blocks=True,
             keep_trailing_newline=True,
         )
+
+    def _render(self, template_name: str, manifest: ModuleManifest, **context) -> str:
+        rendered = self.env.get_template(template_name).render(manifest=manifest, **context)
+        return rendered if manifest.add_comments else strip_line_comments(rendered)
 
     def _included(self, manifest: ModuleManifest) -> list[ManifestField]:
         return [f for f in manifest.fields if f.include]
@@ -287,8 +314,9 @@ class Renderer:
                 if rel.fk_table_prefijo != manifest.prefijo
             }
         )
-        return self.env.get_template("Model.php.j2").render(
-            manifest=manifest,
+        return self._render(
+            "Model.php.j2",
+            manifest,
             fields=included,
             casts=casts,
             relations=manifest.relations,
@@ -302,16 +330,16 @@ class Renderer:
         relation_imports = sorted(
             {(rel.fk_table_prefijo, rel.model_class) for rel in manifest.relations} - {own}
         )
-        return self.env.get_template("Service.php.j2").render(
-            manifest=manifest, fields=included, relations=manifest.relations, relation_imports=relation_imports
+        return self._render(
+            "Service.php.j2", manifest, fields=included, relations=manifest.relations, relation_imports=relation_imports
         )
 
     def render_filters_php(self, manifest: ModuleManifest) -> str:
         non_fk = self._non_fk_fields(manifest)
         search_fields = [f for f in non_fk if mapping.is_searchable(f.parsed)]
-        return self.env.get_template("Filters.php.j2").render(
-            manifest=manifest,
-
+        return self._render(
+            "Filters.php.j2",
+            manifest,
             fields=non_fk,
             relations=manifest.relations,
             search_fields=search_fields,
@@ -358,8 +386,9 @@ class Renderer:
 
     def render_store_request_php(self, manifest: ModuleManifest) -> str:
         non_fk = self._non_fk_fields(manifest)
-        return self.env.get_template("StoreRequest.php.j2").render(
-            manifest=manifest,
+        return self._render(
+            "StoreRequest.php.j2",
+            manifest,
             non_fk_fields=non_fk,
             required_fields=[f for f in non_fk if f.is_required_on_store],
             unique_fields=[f for f in non_fk if f.is_unique],
@@ -367,43 +396,39 @@ class Renderer:
 
     def render_update_request_php(self, manifest: ModuleManifest) -> str:
         non_fk = self._non_fk_fields(manifest)
-        return self.env.get_template("UpdateRequest.php.j2").render(
-            manifest=manifest,
+        return self._render(
+            "UpdateRequest.php.j2",
+            manifest,
             non_fk_fields=non_fk,
             unique_fields=[f for f in non_fk if f.is_unique],
         )
 
     def render_trait_php(self, manifest: ModuleManifest) -> str:
-        return self.env.get_template("ValidatesTrait.php.j2").render(
-            manifest=manifest, fk_fields=self._fk_fields(manifest)
-        )
+        return self._render("ValidatesTrait.php.j2", manifest, fk_fields=self._fk_fields(manifest))
 
     def render_resource_php(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
-        return self.env.get_template("Resource.php.j2").render(
-            manifest=manifest, fields=included, fk_imports=self._fk_resource_imports(manifest)
+        return self._render(
+            "Resource.php.j2", manifest, fields=included, fk_imports=self._fk_resource_imports(manifest)
         )
 
     def render_relation_resource_php(self, manifest: ModuleManifest) -> str:
-        return self.env.get_template("RelationResource.php.j2").render(
-            manifest=manifest, relation_fields=self._relation_fields(manifest)
-        )
+        return self._render("RelationResource.php.j2", manifest, relation_fields=self._relation_fields(manifest))
 
     def render_tiny_resource_php(self, manifest: ModuleManifest) -> str:
-        return self.env.get_template("TinyResource.php.j2").render(
-            manifest=manifest, tiny_fields=self._tiny_fields(manifest)
-        )
+        return self._render("TinyResource.php.j2", manifest, tiny_fields=self._tiny_fields(manifest))
 
     def render_controller_php(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
-        return self.env.get_template("Controller.php.j2").render(
-            manifest=manifest,
+        return self._render(
+            "Controller.php.j2",
+            manifest,
             fields=included,
             required_fields=[f for f in included if f.is_required_on_store],
         )
 
     def render_routes_module_php(self, manifest: ModuleManifest) -> str:
-        return self.env.get_template("routes_module.php.j2").render(manifest=manifest)
+        return self._render("routes_module.php.j2", manifest)
 
     def render_interfaces_ts(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
@@ -414,9 +439,7 @@ class Renderer:
                 if f.is_fk and f.fk_related_modulo_studly
             }
         )
-        return self.env.get_template("interfaces.ts.j2").render(
-            manifest=manifest, fields=included, fk_imports=fk_imports
-        )
+        return self._render("interfaces.ts.j2", manifest, fields=included, fk_imports=fk_imports)
 
     def audit_user_interface_ts(self) -> str:
         return self.env.get_template("audit-user.interface.ts.j2").render()

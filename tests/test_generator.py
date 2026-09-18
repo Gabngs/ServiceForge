@@ -1,6 +1,6 @@
 from generador.db import Column
 from generador.fk_resolver import FkResolution
-from generador.generator import Renderer, build_manifest, generate_files, render_all, write_files
+from generador.generator import Renderer, build_manifest, generate_files, render_all, strip_line_comments, write_files
 
 
 def _siaw_usuarios_columns() -> list[Column]:
@@ -337,6 +337,48 @@ def test_render_controller_php_without_pagination_support():
     assert "'meta'" not in php
     assert "$this->service->index(false)" in php
     assert "UsuariosTinyResource::class" in php
+
+
+def test_strip_line_comments_keeps_docblocks_and_collapses_blank_runs():
+    php = (
+        "<?php\n"
+        "\n"
+        "/**\n"
+        " * @OA\\Tag(name=\"Usuarios\")\n"
+        " */\n"
+        "class Foo\n"
+        "{\n"
+        "    // Explica por qué esto es así -- ver useFilters.md\n"
+        "    public $x = 1; // no se toca: comentario final de línea, no al inicio\n"
+        "\n"
+        "\n"
+        "    public $y = 2;\n"
+        "}\n"
+    )
+    stripped = strip_line_comments(php)
+    assert "@OA\\Tag" in stripped  # docblock /** */ nunca se toca
+    assert "Explica por qué esto es así" not in stripped
+    assert "public $x = 1; // no se toca" in stripped  # solo se sacan líneas que EMPIEZAN con //
+    assert "\n\n\n" not in stripped  # sin huecos de más de una línea vacía
+
+
+def test_render_model_php_without_comments():
+    """Checkbox "Añadir comentarios explicativos" desmarcado en la GUI --
+    quita los `//` de racional/referencias a .md, deja los bloques /** */
+    (PHPDoc, @OA) intactos porque son funcionales, no ruido."""
+    manifest = _build_test_manifest(add_comments=False)
+    php = Renderer().render_model_php(manifest)
+    assert "//" not in php
+    assert "class siaw_usuarios extends Model" in php
+    assert "public function rol_id" not in php  # no rompe nada del contenido real, solo saca comentarios
+
+
+def test_render_controller_php_without_comments_keeps_swagger_docblocks():
+    manifest = _build_test_manifest(add_comments=False)
+    php = Renderer().render_controller_php(manifest)
+    assert "//" not in php
+    assert '@OA\\Tag(name="Usuarios")' in php  # PHPDoc/@OA sobrevive el toggle
+    assert "class siaw_usuariosController extends Controller" in php
 
 
 def test_render_controller_php_swagger_annotations():

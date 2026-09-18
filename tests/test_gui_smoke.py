@@ -40,6 +40,20 @@ def test_main_window_constructs(qtbot):
     ]
 
 
+def test_generation_config_checkboxes_are_grouped(qtbot):
+    # Antes estaban sueltos por la ventana (paginación en su propia fila,
+    # audit/salida separada mezclados con "Proyectos destino") -- ahora viven
+    # juntos en su propio QGroupBox.
+    window = MainWindow()
+    qtbot.addWidget(window)
+    box = window.pagination_checkbox.parentWidget()
+    assert box.title() == "Conf. de generación"
+    assert window.add_comments_checkbox.parentWidget() is box
+    assert window.write_audit_checkbox.parentWidget() is box
+    assert window.separate_output_checkbox.parentWidget() is box
+    assert window.add_comments_checkbox.isChecked()
+
+
 def test_connection_lives_in_a_separate_dialog_not_the_main_window(qtbot):
     window = MainWindow()
     qtbot.addWidget(window)
