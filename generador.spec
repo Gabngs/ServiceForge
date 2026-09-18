@@ -8,7 +8,10 @@ a = Analysis(
     ["src/main.py"],
     pathex=["src"],
     binaries=[],
-    datas=[("src/generador/templates", "generador/templates")],
+    datas=[
+        ("src/generador/templates", "generador/templates"),
+        ("src/generador/standard_docs", "generador/standard_docs"),
+    ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

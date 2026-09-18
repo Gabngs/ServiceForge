@@ -45,6 +45,9 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTabWidget,
+    QTextBrowser,
+    QTreeWidget,
+    QTreeWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -61,10 +64,11 @@ from . import (
     naming,
     project_scan,
     scaffold,
+    standard_docs,
     table_mapping,
 )
 from .settings import Settings
-from .theme import build_stylesheet, status_colors
+from .theme import build_stylesheet, palette, status_colors
 
 _GRID_COLUMNS = ["Campo", "Tipo SQL", "Nullable", "Incluir", "Tiny", "Relación", "FK -> tabla"]
 
@@ -821,6 +825,219 @@ class GenerationLogDialog(QDialog):
         layout.addLayout(buttons_row)
 
 
+class StandardDocsDialog(QDialog):
+    """Visor del estándar del proyecto — ver standard_docs.py. Solo lectura:
+    el estándar se edita en el vault de Obsidian (o cualquier editor de texto)
+    y se trae acá con "Actualizar estándar…", nunca al revés — así queda un
+    solo lugar donde se edita de verdad, y acá siempre se ve lo último."""
+
+    def __init__(self, mode: str, colors: dict[str, str], parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Estándar del proyecto")
+        self.resize(1100, 720)
+        self._mode = mode
+        self._theme = colors
+        self._history: list[Path] = []
+        self._history_pos = -1
+        self._title_index: dict[str, Path] = {}
+
+        layout = QVBoxLayout(self)
+
+        top_row = QHBoxLayout()
+        self.source_label = QLabel()
+        self.source_label.setWordWrap(True)
+        top_row.addWidget(self.source_label, stretch=1)
+        self.update_btn = QPushButton("Actualizar estándar…")
+        self.update_btn.clicked.connect(self._on_update_docs)
+        top_row.addWidget(self.update_btn)
+        self.restore_btn = QPushButton("Restaurar original")
+        self.restore_btn.clicked.connect(self._on_restore_docs)
+        top_row.addWidget(self.restore_btn)
+        layout.addLayout(top_row)
+
+        nav_row = QHBoxLayout()
+        self.back_btn = QPushButton("◀")
+        self.back_btn.setFixedWidth(36)
+        self.back_btn.clicked.connect(self._on_back)
+        nav_row.addWidget(self.back_btn)
+        self.forward_btn = QPushButton("▶")
+        self.forward_btn.setFixedWidth(36)
+        self.forward_btn.clicked.connect(self._on_forward)
+        nav_row.addWidget(self.forward_btn)
+        self.breadcrumb = QLabel()
+        self.breadcrumb.setStyleSheet("font-weight: 600;")
+        nav_row.addWidget(self.breadcrumb, stretch=1)
+        layout.addLayout(nav_row)
+
+        splitter = QSplitter(Qt.Horizontal)
+        self.tree = QTreeWidget()
+        self.tree.setHeaderHidden(True)
+        self.tree.setMinimumWidth(260)
+        self.tree.setMaximumWidth(420)
+        self.tree.itemClicked.connect(self._on_tree_item_clicked)
+        splitter.addWidget(self.tree)
+
+        self.viewer = QTextBrowser()
+        self.viewer.setOpenLinks(False)
+        self.viewer.setOpenExternalLinks(False)
+        self.viewer.anchorClicked.connect(self._on_anchor_clicked)
+        splitter.addWidget(self.viewer)
+        splitter.setStretchFactor(0, 0)
+        splitter.setStretchFactor(1, 1)
+        layout.addWidget(splitter, stretch=1)
+
+        close_row = QHBoxLayout()
+        close_row.addStretch()
+        close_btn = QPushButton("Cerrar")
+        close_btn.clicked.connect(self.accept)
+        close_row.addWidget(close_btn)
+        layout.addLayout(close_row)
+
+        self._reload()
+
+    # ---------------------------------------------------------------- data
+    def _reload(self) -> None:
+        root = standard_docs.active_docs_dir()
+        self._title_index = standard_docs.index_by_title(root)
+        using_override = standard_docs.is_using_override()
+        self.source_label.setText(
+            f"Estándar actualizado manualmente ({len(self._title_index)} notas) — {standard_docs.override_docs_dir()}"
+            if using_override
+            else f"Estándar de fábrica, empaquetado con la app ({len(self._title_index)} notas)."
+        )
+        self.restore_btn.setEnabled(using_override)
+
+        self.tree.clear()
+        tree_root = standard_docs.build_tree(root)
+        for child in tree_root.children:
+            self._add_tree_node(self.tree.invisibleRootItem(), child)
+        self.tree.expandToDepth(1)
+
+        self._history = []
+        self._history_pos = -1
+        first = self._first_note(tree_root)
+        if first is not None:
+            self._navigate_to(first, record_history=True)
+        else:
+            self.viewer.setHtml("<i>No hay notas del estándar cargadas.</i>")
+            self.breadcrumb.setText("")
+            self.back_btn.setEnabled(False)
+            self.forward_btn.setEnabled(False)
+
+    def _first_note(self, node: standard_docs.DocNode) -> Path | None:
+        for child in node.children:
+            if child.is_dir:
+                found = self._first_note(child)
+                if found is not None:
+                    return found
+            else:
+                return child.path
+        return None
+
+    def _add_tree_node(self, parent_item: QTreeWidgetItem, node: standard_docs.DocNode) -> None:
+        item = QTreeWidgetItem([node.name])
+        parent_item.addChild(item)
+        if node.is_dir:
+            for child in node.children:
+                self._add_tree_node(item, child)
+        else:
+            item.setData(0, Qt.UserRole, str(node.path))
+
+    # ---------------------------------------------------------- navegación
+    def _on_tree_item_clicked(self, item: QTreeWidgetItem, _column: int) -> None:
+        path_str = item.data(0, Qt.UserRole)
+        if path_str:
+            self._navigate_to(Path(path_str), record_history=True)
+
+    def _on_anchor_clicked(self, url) -> None:
+        target = standard_docs.wikilink_target(url.toString())
+        if target is None:
+            return
+        path = self._title_index.get(target.lower())
+        if path is None:
+            QMessageBox.information(
+                self, "Nota no encontrada", f'No se encontró la nota "{target}" en el estándar cargado.'
+            )
+            return
+        self._navigate_to(path, record_history=True)
+
+    def _on_back(self) -> None:
+        if self._history_pos > 0:
+            self._history_pos -= 1
+            self._navigate_to(self._history[self._history_pos], record_history=False)
+
+    def _on_forward(self) -> None:
+        if self._history_pos < len(self._history) - 1:
+            self._history_pos += 1
+            self._navigate_to(self._history[self._history_pos], record_history=False)
+
+    def _navigate_to(self, path: Path, *, record_history: bool) -> None:
+        html = standard_docs.render_note_html(path, self._theme, self._mode)
+        self.viewer.setHtml(html)
+        self.breadcrumb.setText(path.stem)
+        self._select_in_tree(path)
+        if record_history:
+            self._history = self._history[: self._history_pos + 1]
+            self._history.append(path)
+            self._history_pos = len(self._history) - 1
+        self.back_btn.setEnabled(self._history_pos > 0)
+        self.forward_btn.setEnabled(self._history_pos < len(self._history) - 1)
+
+    def _select_in_tree(self, path: Path) -> None:
+        def _walk(item: QTreeWidgetItem) -> bool:
+            for i in range(item.childCount()):
+                child = item.child(i)
+                if child.data(0, Qt.UserRole) == str(path):
+                    self.tree.setCurrentItem(child)
+                    return True
+                if _walk(child):
+                    return True
+            return False
+
+        _walk(self.tree.invisibleRootItem())
+
+    # --------------------------------------------------------- actualizar
+    def _on_update_docs(self) -> None:
+        folder = QFileDialog.getExistingDirectory(self, "Carpeta con el estándar actualizado (.md)")
+        if not folder:
+            return
+        source = Path(folder)
+        if not any(source.rglob("*.md")):
+            QMessageBox.warning(self, "Carpeta vacía", "Esa carpeta no tiene archivos .md — no hay nada para actualizar.")
+            return
+        if (
+            QMessageBox.question(
+                self,
+                "Actualizar estándar",
+                "Esto reemplaza el estándar cargado actualmente en la app por el contenido de:\n\n"
+                f"{source}\n\n¿Continuar?",
+            )
+            != QMessageBox.Yes
+        ):
+            return
+        try:
+            count = standard_docs.replace_docs(source)
+        except OSError as exc:
+            QMessageBox.critical(self, "Error al actualizar", str(exc))
+            return
+        QMessageBox.information(self, "Estándar actualizado", f"Se cargaron {count} notas.")
+        self._reload()
+
+    def _on_restore_docs(self) -> None:
+        if (
+            QMessageBox.question(
+                self,
+                "Restaurar estándar original",
+                "Esto descarta el estándar actualizado manualmente y vuelve al que viene empaquetado con la app. "
+                "¿Continuar?",
+            )
+            != QMessageBox.Yes
+        ):
+            return
+        standard_docs.restore_bundled_docs()
+        self._reload()
+
+
 class _CodeEditor(QPlainTextEdit):
     """QPlainTextEdit con autocompletado "por palabras" (sin IA / sin Copilot):
     combina una lista curada de keywords de PHP/Laravel (o TS) con las
@@ -966,6 +1183,11 @@ class MainWindow(QMainWindow):
         logs_action = QAction("Historial de generación…", self)
         logs_action.triggered.connect(self._on_open_logs)
         logs_menu.addAction(logs_action)
+
+        standard_menu = menu_bar.addMenu("&Estándar")
+        standard_action = QAction("Ver estándar del proyecto…", self)
+        standard_action.triggered.connect(self._on_open_standard_docs)
+        standard_menu.addAction(standard_action)
 
         help_menu = menu_bar.addMenu("A&yuda")
         about_action = QAction("Acerca de", self)
@@ -1279,6 +1501,10 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error al exportar", str(exc))
             return
         QMessageBox.information(self, "Exportado", f"Historial exportado a:\n{path_str}")
+
+    def _on_open_standard_docs(self) -> None:
+        dialog = StandardDocsDialog(self.settings.theme, palette(self.settings.theme), self)
+        dialog.exec()
 
     def _on_about(self) -> None:
         QMessageBox.information(

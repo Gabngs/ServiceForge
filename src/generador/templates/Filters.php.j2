@@ -10,7 +10,9 @@ use Essa\APIToolKit\Filters\QueryFilters;
 class {{ manifest.model_class }}Filters extends QueryFilters
 {
     // Campos permitidos para búsqueda de texto libre (LIKE) — ver ?search=
-    protected array $allowedSearch = [
+    // OJO: la propiedad real de QueryFilters se llama $columnSearch, no $allowedSearch
+    // (no existe $allowedSearch en el paquete — ver useFilters.md)
+    protected array $columnSearch = [
 {% for f in search_fields %}
         '{{ f.name }}',
 {% endfor %}
@@ -59,11 +61,10 @@ class {{ manifest.model_class }}Filters extends QueryFilters
 
         $pkid = {{ f.fk_table }}::where('id', $value)->value('pkid');
 
-        if (!$pkid) {
-            return $this->builder->whereNull('{{ f.name }}');
-        }
-
-        return $this->builder->where('{{ f.name }}', $pkid);
+        // Si el UUID no resuelve a un pkid, forzar 0 para que el filtro
+        // devuelva vacío — nunca whereNull, que traería las filas con
+        // '{{ f.name }}' nulo (ver useFilters.md#FKs que guardan pkid)
+        return $this->builder->where('{{ f.name }}', $pkid ?? 0);
     }
 {% endfor %}
 }

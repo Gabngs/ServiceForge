@@ -52,6 +52,12 @@ def status_colors(mode: str = "dark") -> dict[str, str]:
     }
 
 
+def palette(mode: str = "dark") -> dict[str, str]:
+    """Paleta completa del tema (background/surface/text/accent/code_*/...) —
+    a diferencia de `status_colors()`, que solo expone los 4 colores de estado."""
+    return dict(_PALETTES.get(mode, _DARK))
+
+
 # Compatibilidad con el código existente que importa STATUS_COLORS a nivel de módulo
 # (asume tema oscuro — el que se usa como default al arrancar).
 STATUS_COLORS = status_colors("dark")
@@ -200,6 +206,23 @@ QHeaderView::section {{
     border: none;
     border-bottom: 1px solid {p['border']};
     font-weight: 600;
+}}
+
+QTreeWidget, QTextBrowser {{
+    background-color: {p['surface']};
+    border: 1px solid {p['border']};
+    border-radius: 6px;
+    selection-background-color: {p['accent']};
+    selection-color: white;
+}}
+
+QTreeWidget::item {{
+    padding: 3px 2px;
+}}
+
+QTreeWidget::item:selected {{
+    background-color: {p['accent']};
+    color: white;
 }}
 
 QSplitter::handle {{

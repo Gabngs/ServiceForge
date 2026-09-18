@@ -2,6 +2,15 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [1.5.0]
+
+### Corregido
+- `{table}Filters.php`: el método resolver de cada FK usaba `whereNull('{campo}')` cuando el UUID recibido no resolvía a ningún `pkid` — eso trae de vuelta TODAS las filas con esa FK nula (el resultado opuesto al filtro pedido) en vez de devolver vacío. Ahora fuerza `$pkid ?? 0`, tal como documenta useFilters.md#FKs que guardan pkid.
+- `{table}Filters.php`: los campos de búsqueda libre se declaraban en `$allowedSearch`, una propiedad que no existe en `QueryFilters` (el paquete la ignora en silencio — `?search=` no filtraba nada). Corregido a `$columnSearch`, el nombre real de la propiedad.
+
+### Añadido
+- Visor de estándar (menú "Estándar" → "Ver estándar del proyecto…"): las notas de `Service Patron` (Model, CrudService, useFilters, etc.) se empaquetan con la app y se muestran en una ventana de solo lectura, con navegación por `[[wikilinks]]` y resaltado de sintaxis en los bloques de código PHP/TS. "Actualizar estándar…" reemplaza el contenido mostrado por una carpeta `.md` elegida a mano (queda en `%APPDATA%/ServiceForge/standard_docs`, no pisa el paquete original) — pensado para cuando el estándar documentado cambia y eso no se refleja solo por regenerar código.
+
 ## [1.4.0]
 
 ### Añadido

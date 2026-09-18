@@ -31,7 +31,13 @@ def test_main_window_constructs(qtbot):
     qtbot.addWidget(window)
     assert window.windowTitle().startswith("Service-Forge")
     assert len(window.preview_widgets) == 13
-    assert [a.text() for a in window.menuBar().actions()] == ["&Archivo", "&Editar", "&Logs", "A&yuda"]
+    assert [a.text() for a in window.menuBar().actions()] == [
+        "&Archivo",
+        "&Editar",
+        "&Logs",
+        "&Estándar",
+        "A&yuda",
+    ]
 
 
 def test_connection_lives_in_a_separate_dialog_not_the_main_window(qtbot):

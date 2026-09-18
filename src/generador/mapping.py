@@ -153,7 +153,7 @@ def laravel_cast(parsed: ParsedType) -> str | None:
 
 
 def is_searchable(parsed: ParsedType) -> bool:
-    """Campos elegibles para `$allowedSearch` (LIKE) en la clase Filters — ver useFilters.md."""
+    """Campos elegibles para `$columnSearch` (LIKE) en la clase Filters — ver useFilters.md."""
     return _normalized_family(parsed) in ("varchar", "char", "text")
 
 

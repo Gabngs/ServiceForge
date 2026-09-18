@@ -251,7 +251,7 @@ def test_render_filters_php():
     manifest = _build_test_manifest()
     php = Renderer().render_filters_php(manifest)
     assert "class siaw_usuariosFilters extends QueryFilters" in php
-    search_block = php.split("$allowedSearch")[1].split("];")[0]
+    search_block = php.split("protected array $columnSearch = [")[1].split("];")[0]
     assert "'nombre'," in search_block
     assert "'email'," in search_block  # varchar -> texto libre, elegible para LIKE
     assert "'siaw_roles'," in php.split("$allowedIncludes")[1].split("];")[0]
@@ -279,8 +279,10 @@ def test_render_filters_php_generates_fk_resolution_method():
     assert "public function rol_id($value)" in php
     assert "\\App\\Models\\dbsiaw\\siaw_roles::where" not in php
     assert "siaw_roles::where('id', $value)->value('pkid');" in php
-    assert "return $this->builder->where('rol_id', $pkid);" in php
-    assert "return $this->builder->whereNull('rol_id');" in php
+    # Si el UUID no resuelve, forzar pkid a 0 -- nunca whereNull, que traería
+    # las filas con la FK nula (ver useFilters.md#FKs que guardan pkid)
+    assert "return $this->builder->where('rol_id', $pkid ?? 0);" in php
+    assert "whereNull('rol_id')" not in php
 
 
 def test_render_store_request_php():
