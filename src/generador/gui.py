@@ -60,7 +60,9 @@ from . import (
     generator,
     logs,
     mapping,
+    match_learner,
     migration_import,
+    model_resource_scan,
     naming,
     project_scan,
     scaffold,
@@ -70,7 +72,7 @@ from . import (
 from .settings import Settings
 from .theme import build_stylesheet, palette, status_colors
 
-_GRID_COLUMNS = ["Campo", "Tipo SQL", "Nullable", "Incluir", "Tiny", "Relación", "FK -> tabla"]
+_GRID_COLUMNS = ["Campo", "Tipo SQL", "Nullable", "Incluir", "Relación", "Tiny", "FK -> tabla"]
 
 _FK_STATUS_LABELS = {
     "auto": "auto",
@@ -417,6 +419,58 @@ class FkResolutionDialog(QDialog):
             if combo.currentIndex() > 0:
                 result[column] = combo.currentText()
         return result
+
+
+class ModelResourceMatchDialog(QDialog):
+    """Confirmar o corregir qué Resource(s) ya existentes en el proyecto
+    corresponden al Model de la tabla analizada — ver model_resource_scan.py.
+    Cada elección acá es un ejemplo de entrenamiento para el matcher
+    persistente (match_learner.py): lo tildado refuerza ese candidato, lo
+    mostrado y NO tildado lo penaliza, así el próximo parecido puntúa mejor.
+
+    Son checkboxes, no radio: un proyecto legado puede tener Resources con
+    roles distintos (completo/relación/tiny) bajo nombres que no siguen la
+    convención de esta herramienta — más de uno puede ser correcto a la vez.
+    """
+
+    def __init__(self, match: "model_resource_scan.ModelResourceMatch", parent=None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle(f"Model/Resource existentes — {match.table}")
+        self.setMinimumWidth(560)
+        self.match = match
+        self._checkboxes: list[QCheckBox] = []
+
+        layout = QVBoxLayout(self)
+
+        if match.model is not None:
+            layout.addWidget(QLabel(f"Model detectado: {match.model.class_name}  ({match.model.path})"))
+        else:
+            layout.addWidget(QLabel("No se encontró ningún Model existente para esta tabla — se generará uno nuevo."))
+
+        if match.candidates:
+            layout.addWidget(QLabel(
+                "Tildá los Resources que realmente correspondan a este Model (puede ser más de uno — "
+                "completo / de relación / tiny — o ninguno si no hay ningún Resource existente):"
+            ))
+            for candidate in match.candidates:
+                resource = candidate.resource
+                checkbox = QCheckBox(
+                    f"{resource.class_name}  [{resource.role}]  —  confianza {candidate.score:.0%}  —  {resource.path}"
+                )
+                checkbox.setChecked(candidate.score >= 0.65)
+                self._checkboxes.append(checkbox)
+                layout.addWidget(checkbox)
+        else:
+            layout.addWidget(QLabel("No se encontró ningún Resource candidato — se generará uno nuevo."))
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def confirmed_indexes(self) -> set[int]:
+        """Índices (en `match.candidates`) de los Resources tildados por el usuario."""
+        return {i for i, cb in enumerate(self._checkboxes) if cb.isChecked()}
 
 
 class MigrationImportDialog(QDialog):
@@ -1146,17 +1200,35 @@ class _CodeEditor(QPlainTextEdit):
         model = QStringListModel(sorted(self._static_words | doc_words), self.completer)
         self.completer.setModel(model)
 
+    _IDENTIFIER_CHAR_RE = re.compile(r"[A-Za-z0-9_\\]")
+
+    def _identifier_before_cursor(self) -> tuple[int, str]:
+        """Posición donde empieza el identificador que termina justo en el
+        cursor, y ese texto — a mano escaneando para atrás en vez de
+        `QTextCursor.WordUnderCursor`, que no es confiable acá: si el cursor
+        queda justo antes de un carácter que no es de identificador (ej.
+        ';', '(' — típico al autocompletar en medio de una línea, no solo al
+        final), Qt a veces asocia la selección con ESE carácter en vez de
+        con la palabra ya tipeada a la izquierda, y terminaba duplicando el
+        prefijo al confirmar (ej. "dele" + Tab -> "deledeleted" en vez de
+        "deleted")."""
+        text = self.toPlainText()
+        pos = self.textCursor().position()
+        start = pos
+        while start > 0 and self._IDENTIFIER_CHAR_RE.match(text[start - 1]):
+            start -= 1
+        return start, text[start:pos]
+
     def _text_under_cursor(self) -> str:
-        cursor = self.textCursor()
-        cursor.select(QTextCursor.WordUnderCursor)
-        return cursor.selectedText()
+        return self._identifier_before_cursor()[1]
 
     def _insert_completion(self, completion: str) -> None:
+        start, _ = self._identifier_before_cursor()
         cursor = self.textCursor()
-        extra = len(completion) - len(self.completer.completionPrefix())
-        cursor.movePosition(QTextCursor.Left)
-        cursor.movePosition(QTextCursor.EndOfWord)
-        cursor.insertText(completion[-extra:])
+        end = cursor.position()
+        cursor.setPosition(start)
+        cursor.setPosition(end, QTextCursor.KeepAnchor)
+        cursor.insertText(completion)
         self.setTextCursor(cursor)
 
     def keyPressEvent(self, event) -> None:
@@ -1229,6 +1301,18 @@ class MainWindow(QMainWindow):
         self.session_resolved_fks: dict[str, str] = {}
         self._connection_worker: ConnectionWorker | None = None
 
+        # Modelo persistente de matching Modelo↔Resource -- ver
+        # match_learner.py. Se carga una sola vez por sesión y cada
+        # confirmación/corrección del usuario (ver
+        # _on_confirm_model_resource_match) lo actualiza y lo guarda al toque.
+        self.match_learner = match_learner.MatchLearner.load()
+        self.current_model_resource_match: model_resource_scan.ModelResourceMatch | None = None
+        # tabla -> ruta del Resource ya existente que el desarrollador
+        # confirmó (aunque no siga la convención de esta herramienta) -- se
+        # usa en _on_generate para avisar antes de escribirle un Resource
+        # nuevo encima del que ya hay.
+        self.confirmed_resources: dict[str, Path] = {}
+
         self.backend_root: Path | None = None
         self.frontend_root: Path | None = None
 
@@ -1282,18 +1366,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         root = QVBoxLayout(central)
 
-        # La conexión a BD se configura una vez por sesión (o rara vez) — vive
-        # en un diálogo aparte (mismo patrón que Logs/Preferencias) en vez de
-        # ocupar espacio fijo en la ventana principal. Acá solo queda una
-        # fila de estado compacta.
+        # La conexión a BD y la "Conf. de generación" se configuran una vez
+        # por sesión (o rara vez) — viven en diálogos aparte (mismo patrón
+        # que Logs/Preferencias) en vez de ocupar espacio fijo en la ventana
+        # principal. Acá solo queda una fila de estado/accesos compacta.
         self.connection_dialog = self._build_connection_dialog()
+        self.generation_config_dialog = self._build_generation_config_dialog()
         root.addWidget(self._build_connection_status_row())
 
         # "Proyectos destino" sí se deja visible: a diferencia de la conexión,
         # conviene tener la raíz backend/frontend siempre a la vista mientras
         # se genera, para no escribir en la carpeta equivocada.
         root.addWidget(self._build_project_box())
-        root.addWidget(self._build_generation_config_box())
 
         table_row = QHBoxLayout()
         self.table_combo = QComboBox()
@@ -1310,6 +1394,20 @@ class MainWindow(QMainWindow):
         table_row.addStretch()
         root.addLayout(table_row)
 
+        # Estado del matching Modelo↔Resource para la tabla recién analizada
+        # (ver model_resource_scan.py / match_learner.py) -- soporte de
+        # análisis, no bloquea nada: se llena después de "Analizar" y el
+        # desarrollador confirma o corrige desde acá antes de generar.
+        match_row = QHBoxLayout()
+        self.model_resource_status_label = QLabel("")
+        self.model_resource_status_label.setWordWrap(True)
+        self.model_resource_confirm_btn = QPushButton("Revisar Model/Resource detectado…")
+        self.model_resource_confirm_btn.clicked.connect(self._on_review_model_resource_match)
+        self.model_resource_confirm_btn.setVisible(False)
+        match_row.addWidget(self.model_resource_status_label, stretch=1)
+        match_row.addWidget(self.model_resource_confirm_btn)
+        root.addLayout(match_row)
+
         # Grid (mapeo de columnas) y preview en un splitter — el preview es
         # donde se edita el código antes de generar, necesita poder crecer.
         splitter = QSplitter(Qt.Vertical)
@@ -1320,7 +1418,6 @@ class MainWindow(QMainWindow):
         grid_layout.addWidget(QLabel("Mapeo de columnas"))
         self.grid = QTableWidget(0, len(_GRID_COLUMNS))
         self.grid.setHorizontalHeaderLabels(_GRID_COLUMNS)
-        self.grid.horizontalHeader().setStretchLastSection(True)
         self.grid.setAlternatingRowColors(True)
         self.grid.setMinimumHeight(100)
         grid_layout.addWidget(self.grid)
@@ -1375,6 +1472,7 @@ class MainWindow(QMainWindow):
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         splitter.setSizes([200, 600])
+        self.splitter = splitter
         root.addWidget(splitter, stretch=1)
 
         self.status_label = QLabel("Sin conexión.")
@@ -1385,10 +1483,13 @@ class MainWindow(QMainWindow):
         row = QHBoxLayout(container)
         row.setContentsMargins(0, 0, 0, 0)
         self.connection_summary_label = QLabel("● Sin conexión")
+        self.generation_config_btn = QPushButton("Configuración de generación…")
+        self.generation_config_btn.clicked.connect(self._on_open_generation_config)
         self.connection_dialog_btn = QPushButton("Conexión…")
         self.connection_dialog_btn.clicked.connect(self._on_open_connection_dialog)
         row.addWidget(self.connection_summary_label)
         row.addStretch()
+        row.addWidget(self.generation_config_btn)
         row.addWidget(self.connection_dialog_btn)
         return container
 
@@ -1442,6 +1543,9 @@ class MainWindow(QMainWindow):
     def _on_open_connection_dialog(self) -> None:
         self.connection_dialog.exec()
 
+    def _on_open_generation_config(self) -> None:
+        self.generation_config_dialog.exec()
+
     def _build_project_box(self) -> QGroupBox:
         box = QGroupBox("Proyectos destino")
         box.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
@@ -1472,6 +1576,22 @@ class MainWindow(QMainWindow):
         form.addRow("Modelo de usuario (created_by/updated_by/deleted_by):", self.user_model_input)
 
         return box
+
+    def _build_generation_config_dialog(self) -> QDialog:
+        # La config de generación (checkboxes de CÓMO se genera + carpeta de
+        # salida separada) se abre desde un botón en vez de ocupar espacio
+        # fijo en la ventana principal — se toca poco, y le sacaba lugar al
+        # grid/preview (que sí se usan todo el tiempo) dejando la ventana
+        # "chata". Mismo patrón que Conexión/Preferencias/Logs.
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Configuración de generación")
+        dialog.setMinimumWidth(480)
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(self._build_generation_config_box())
+        close_btn = QPushButton("Cerrar")
+        close_btn.clicked.connect(dialog.accept)
+        layout.addWidget(close_btn, alignment=Qt.AlignRight)
+        return dialog
 
     def _build_generation_config_box(self) -> QGroupBox:
         # Agrupa los checkboxes que controlan CÓMO se genera (a diferencia de
@@ -1519,44 +1639,44 @@ class MainWindow(QMainWindow):
         self.separate_output_checkbox.toggled.connect(self._on_separate_output_toggled)
         layout.addWidget(self.separate_output_checkbox)
 
-        output_form = QFormLayout()
-
+        # Cada fila vive en su propio QWidget contenedor (no un QFormLayout
+        # compartido) para poder ocultarla entera con setVisible() — antes
+        # solo se deshabilitaba (setEnabled), y la fila (label + input +
+        # botón "Elegir…") se seguía viendo siempre, aun sin sentido cuando
+        # "carpeta de salida separada" está desmarcado.
         self.output_backend_root: Path | None = None
+        self.output_backend_row_widget = QWidget()
+        output_backend_row = QHBoxLayout(self.output_backend_row_widget)
+        output_backend_row.setContentsMargins(0, 0, 0, 0)
         self.output_backend_input = QLineEdit()
         self.output_backend_input.setReadOnly(True)
-        output_backend_row = QHBoxLayout()
         output_backend_browse = QPushButton("Elegir…")
         output_backend_browse.clicked.connect(self._on_choose_output_backend_root)
+        output_backend_row.addWidget(QLabel("Salida backend:"))
         output_backend_row.addWidget(self.output_backend_input)
         output_backend_row.addWidget(output_backend_browse)
-        self.output_backend_label = QLabel("Salida backend:")
-        output_form.addRow(self.output_backend_label, output_backend_row)
+        layout.addWidget(self.output_backend_row_widget)
 
         self.output_frontend_root: Path | None = None
+        self.output_frontend_row_widget = QWidget()
+        output_frontend_row = QHBoxLayout(self.output_frontend_row_widget)
+        output_frontend_row.setContentsMargins(0, 0, 0, 0)
         self.output_frontend_input = QLineEdit()
         self.output_frontend_input.setReadOnly(True)
-        output_frontend_row = QHBoxLayout()
         output_frontend_browse = QPushButton("Elegir…")
         output_frontend_browse.clicked.connect(self._on_choose_output_frontend_root)
+        output_frontend_row.addWidget(QLabel("Salida frontend:"))
         output_frontend_row.addWidget(self.output_frontend_input)
         output_frontend_row.addWidget(output_frontend_browse)
-        self.output_frontend_label = QLabel("Salida frontend:")
-        output_form.addRow(self.output_frontend_label, output_frontend_row)
-
-        layout.addLayout(output_form)
+        layout.addWidget(self.output_frontend_row_widget)
 
         self._on_separate_output_toggled(False)
 
         return box
 
     def _on_separate_output_toggled(self, checked: bool) -> None:
-        for widget in (
-            self.output_backend_label,
-            self.output_backend_input,
-            self.output_frontend_label,
-            self.output_frontend_input,
-        ):
-            widget.setEnabled(checked)
+        self.output_backend_row_widget.setVisible(checked)
+        self.output_frontend_row_widget.setVisible(checked)
 
     def _on_choose_output_backend_root(self) -> None:
         chosen = QFileDialog.getExistingDirectory(self, "Carpeta de salida — backend")
@@ -1830,7 +1950,7 @@ class MainWindow(QMainWindow):
         self._analysis_started_at = time.monotonic()
 
         prefijo, _ = naming.split_prefijo_modulo(table)
-        business_columns = [c for c in columns if c.name not in mapping.EXCLUDED_FIELDS]
+        business_columns = mapping.business_columns(columns)
 
         resolutions: dict[str, fk_resolver.FkResolution] = {}
         ambiguous: list[fk_resolver.FkResolution] = []
@@ -1879,6 +1999,92 @@ class MainWindow(QMainWindow):
         # de apretar "Actualizar preview" para ver algo en las pestañas.
         self._on_update_preview()
 
+        self._run_model_resource_scan()
+
+    def _run_model_resource_scan(self) -> None:
+        """Busca, en el proyecto backend elegido, si ya existe un Model y/o
+        Resource para la tabla recién analizada — aunque no sigan la
+        convención de esta herramienta (ver model_resource_scan.py). Es un
+        soporte de análisis, no decide solo: el desarrollador confirma o
+        corrige desde "Revisar Model/Resource detectado…" antes de generar."""
+        self.current_model_resource_match = None
+        if not self.backend_root or not self.current_table:
+            self.model_resource_status_label.setText("")
+            self.model_resource_confirm_btn.setVisible(False)
+            return
+
+        # Reusa la resolución de FK ya cacheada/importada/exportada (ver
+        # fk_resolver / "Mapeo de relaciones (.md)" en Preferencias) para
+        # saber qué claves de relación puede exponer un RelationResource de
+        # esta tabla ('articulo', 'created_by', ...) además de sus columnas
+        # planas — ver find_candidates.
+        relation_names = {"created_by", "updated_by", "deleted_by"}
+        for resolution in self.current_resolutions.values():
+            if resolution.table:
+                _, related_modulo = naming.split_prefijo_modulo(resolution.table)
+                relation_names.add(related_modulo)
+
+        match = model_resource_scan.find_candidates(
+            self.current_table,
+            self.current_columns,
+            self.backend_root,
+            learner=self.match_learner,
+            relation_names=relation_names,
+        )
+        self.current_model_resource_match = match
+
+        model_text = f"Model existente: {match.model.class_name}" if match.model else "No se encontró Model existente"
+        best = match.best
+        if best is not None:
+            resource_text = f"Resource candidato: {best.resource.class_name} ({best.score:.0%})"
+        elif match.candidates:
+            resource_text = f"{len(match.candidates)} candidato(s) con baja confianza"
+        else:
+            resource_text = "No se encontró Resource existente"
+
+        self.model_resource_status_label.setText(f"{model_text} · {resource_text}")
+        self.model_resource_confirm_btn.setVisible(True)
+
+    def _on_review_model_resource_match(self) -> None:
+        match = self.current_model_resource_match
+        if match is None:
+            return
+
+        dialog = ModelResourceMatchDialog(match, self)
+        if dialog.exec() != QDialog.Accepted:
+            return
+
+        self._apply_model_resource_confirmation(match, dialog.confirmed_indexes())
+
+    def _apply_model_resource_confirmation(
+        self, match: "model_resource_scan.ModelResourceMatch", confirmed: set[int]
+    ) -> None:
+        """Separado de `_on_review_model_resource_match` (que abre el diálogo
+        modal) para poder ejercitar el efecto de una confirmación sin pasar
+        por `QDialog.exec()` — ver tests. `confirmed` son índices en
+        `match.candidates`."""
+        # Cada candidato mostrado es un ejemplo: tildado = confirmado
+        # (label 1), mostrado y no tildado = descartado (label 0) — así el
+        # matcher persistente mejora con cada revisión, no solo cuando hay
+        # un match perfecto (ver match_learner.py).
+        for i, candidate in enumerate(match.candidates):
+            self.match_learner.update(candidate.features, 1.0 if i in confirmed else 0.0)
+
+        self.confirmed_resources = {
+            key: path for key, path in self.confirmed_resources.items() if key[0] != match.table
+        }
+        for i in confirmed:
+            resource = match.candidates[i].resource
+            self.confirmed_resources[(match.table, resource.role)] = resource.path
+
+        if confirmed:
+            names = ", ".join(match.candidates[i].resource.class_name for i in confirmed)
+            self.model_resource_status_label.setText(f"Resource(s) confirmado(s): {names}")
+        else:
+            self.model_resource_status_label.setText(
+                "Confirmado: no hay Resource existente para este Model — se genera uno nuevo."
+            )
+
     def _populate_grid(self) -> None:
         self.grid.setRowCount(len(self.current_columns))
         for row, column in enumerate(self.current_columns):
@@ -1892,18 +2098,20 @@ class MainWindow(QMainWindow):
             include_cb.setChecked(True)
             self.grid.setCellWidget(row, 3, include_cb)
 
-            tiny_cb = QCheckBox()
-            tiny_cb.setChecked(row < 2)  # sugerencia inicial, editable
-            self.grid.setCellWidget(row, 4, tiny_cb)
-
             # "Relación" es un checkbox propio, independiente de "Tiny" — el
             # mismo campo puede necesitar mostrarse en {Modulo}RelationResource
             # (lo carga OTRO módulo con whenLoaded()) sin necesariamente ir en
             # {Modulo}TinyResource (?tiny=true del propio módulo), o viceversa.
-            # Ver ApiResponse.md#Resource triple.
+            # Ver ApiResponse.md#Resource triple. Va antes que "Tiny" en la
+            # grilla: es la que más se usa en la práctica (casi toda FK la
+            # necesita), "Tiny" es la excepción.
             relation_cb = QCheckBox()
-            relation_cb.setChecked(row < 2)  # misma sugerencia inicial que Tiny, editable
-            self.grid.setCellWidget(row, 5, relation_cb)
+            relation_cb.setChecked(row < 2)  # sugerencia inicial, editable
+            self.grid.setCellWidget(row, 4, relation_cb)
+
+            tiny_cb = QCheckBox()
+            tiny_cb.setChecked(row < 2)  # misma sugerencia inicial que Relación, editable
+            self.grid.setCellWidget(row, 5, tiny_cb)
 
             fk_combo = QComboBox()
             fk_combo.addItem(_FK_NONE_LABEL)
@@ -1929,6 +2137,33 @@ class MainWindow(QMainWindow):
             self.grid.setCellWidget(row, 6, fk_combo)
 
         self.grid.resizeColumnsToContents()
+        # "FK -> tabla" ya no estira para llenar el ancho sobrante (se sacó
+        # setStretchLastSection): con nombres de tabla largos igual puede
+        # pedir de más, se limita a un ancho legible — el nombre completo
+        # sigue disponible al abrir el combo / en el tooltip.
+        if self.grid.columnWidth(6) > 220:
+            self.grid.setColumnWidth(6, 220)
+        self._resize_grid_pane()
+
+    def _resize_grid_pane(self) -> None:
+        # Antes el grid ocupaba lo que el splitter le diera de entrada,
+        # quedando un bloque vacío enorme debajo de las últimas filas cuando
+        # la tabla tenía pocas columnas de negocio. Acá se ajusta el tamaño
+        # inicial del panel al contenido real y el resto pasa al preview —
+        # sin fijar una altura máxima dura, así que el separador se puede
+        # seguir arrastrando a mano si hace falta más lugar.
+        self.grid.resizeRowsToContents()
+        content_height = (
+            self.grid.horizontalHeader().height()
+            + self.grid.verticalHeader().length()
+            + 2 * self.grid.frameWidth()
+            + 8
+        )
+        pane_height = max(120, min(content_height, 360))
+        total = sum(self.splitter.sizes())
+        if total <= 0:
+            total = pane_height + 500
+        self.splitter.setSizes([pane_height, max(200, total - pane_height)])
 
     def _on_fk_combo_changed(self, column_name: str, table_name: str) -> None:
         """El combo de 'FK -> tabla' es la fuente de verdad al generar (ver
@@ -1951,8 +2186,8 @@ class MainWindow(QMainWindow):
         relation: set[str] = set()
         for row, column in enumerate(self.current_columns):
             include_cb = self.grid.cellWidget(row, 3)
-            tiny_cb = self.grid.cellWidget(row, 4)
-            relation_cb = self.grid.cellWidget(row, 5)
+            relation_cb = self.grid.cellWidget(row, 4)
+            tiny_cb = self.grid.cellWidget(row, 5)
             if isinstance(include_cb, QCheckBox) and include_cb.isChecked():
                 included.add(column.name)
             if isinstance(tiny_cb, QCheckBox) and tiny_cb.isChecked():
@@ -2048,6 +2283,39 @@ class MainWindow(QMainWindow):
             self._on_update_preview()
 
         contents = {key: widget.toPlainText() for key, widget in self.preview_widgets.items()}
+
+        # Si alguno de los archivos que este módulo va a escribir ya existe
+        # en el destino (se está regenerando, o un proyecto legado que por
+        # casualidad ya usa esa misma ruta convencional) se confirma antes
+        # de pisarlo — antes se sobreescribía todo en silencio, con riesgo
+        # de perder un Model/Resource hecho a mano.
+        existing = generator.existing_target_files(manifest, write_backend_root, write_frontend_root, contents)
+
+        # Esto cubre solo la ruta convencional -- un Resource/Model legado
+        # con otro nombre/ubicación lo detecta model_resource_scan.py (ver
+        # "Revisar Model/Resource detectado…" en el análisis de la tabla).
+        # El Model detectado se suma directo (es casi siempre inequívoco:
+        # nombre literal de tabla o `$table` declarado); los Resources solo
+        # si el desarrollador los confirmó a mano, nunca por su cuenta.
+        match = self.current_model_resource_match
+        if match is not None and match.table == manifest.table:
+            if match.model is not None and "model" in contents and "model" not in existing:
+                existing["model"] = match.model.path
+            for role in ("resource", "relation_resource", "tiny_resource"):
+                path = self.confirmed_resources.get((manifest.table, role))
+                if path is not None and role in contents and role not in existing:
+                    existing[role] = path
+
+        if existing:
+            titles = dict(_PREVIEW_TABS)
+            listing = "\n".join(f"- {titles.get(key, key)}: {path}" for key, path in existing.items())
+            proceed = QMessageBox.question(
+                self,
+                "Ya existen archivos en el destino",
+                "Estos archivos ya existen y se van a sobreescribir:\n\n" + listing + "\n\n¿Continuar?",
+            )
+            if proceed != QMessageBox.Yes:
+                return
 
         try:
             written = generator.write_files(

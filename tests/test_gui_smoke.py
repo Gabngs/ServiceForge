@@ -18,10 +18,21 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtWidgets import QPushButton  # noqa: E402
 
 from generador import scaffold  # noqa: E402
-from generador.db import ConnectionConfig  # noqa: E402
+from generador.db import Column, ConnectionConfig  # noqa: E402
 from generador.fk_resolver import FkResolution  # noqa: E402
-from generador.gui import ConnectionOutcome, GenerationLogDialog, MainWindow, ProjectScanDialog, SettingsDialog  # noqa: E402
+from generador.gui import (  # noqa: E402
+    _PHP_LARAVEL_COMPLETIONS,
+    _CodeEditor,
+    ConnectionOutcome,
+    GenerationLogDialog,
+    MainWindow,
+    ModelResourceMatchDialog,
+    ProjectScanDialog,
+    SettingsDialog,
+)
 from generador.logs import GenerationLogEntry  # noqa: E402
+from generador.match_learner import MatchLearner  # noqa: E402
+from generador import match_learner as match_learner_module  # noqa: E402
 from generador.project_scan import scan_backend_project  # noqa: E402
 from generador.settings import Settings  # noqa: E402
 
@@ -237,6 +248,112 @@ def test_generation_log_dialog_constructs_empty(qtbot):
     assert not dialog.export_btn.isEnabled()
 
 
+def _write_legacy_model_and_resource(backend_root):
+    model_dir = backend_root / "app" / "Models" / "dbcatalogo"
+    model_dir.mkdir(parents=True)
+    (model_dir / "catalogo_premiaciones.php").write_text(
+        "<?php\nnamespace App\\Models\\dbcatalogo;\nclass catalogo_premiaciones extends Model {}\n",
+        encoding="utf-8",
+    )
+    resource_dir = backend_root / "app" / "Http" / "Resources" / "catalogo"
+    resource_dir.mkdir(parents=True)
+    resource_path = resource_dir / "PremiacionResource.php"
+    resource_path.write_text(
+        "<?php\nnamespace App\\Http\\Resources\\catalogo;\n"
+        "/**\n * @mixin App\\Models\\dbcatalogo\\catalogo_premiaciones\n */\n"
+        "class PremiacionResource extends JsonResource {\n"
+        "    public function toArray($request): array\n    {\n        return ['nombre' => $this->nombre];\n    }\n}\n",
+        encoding="utf-8",
+    )
+    return resource_path
+
+
+def test_model_resource_scan_finds_existing_legacy_resource_after_analyze(qtbot, tmp_path):
+    backend_root = tmp_path / "backend"
+    resource_path = _write_legacy_model_and_resource(backend_root)
+
+    window = MainWindow()
+    qtbot.addWidget(window)
+    window.show()
+    window.match_learner = MatchLearner(path=tmp_path / "learner.joblib")
+    window.backend_root = backend_root
+    window.current_table = "catalogo_premiaciones"
+    window.current_columns = [Column("nombre", "varchar(100)", nullable=False, key="", default=None, extra="")]
+
+    window._run_model_resource_scan()
+
+    match = window.current_model_resource_match
+    assert match is not None
+    assert match.model is not None and match.model.class_name == "catalogo_premiaciones"
+    assert match.best is not None and match.best.resource.path == resource_path
+    assert "PremiacionResource" in window.model_resource_status_label.text()
+    assert window.model_resource_confirm_btn.isVisible()
+
+
+def test_model_resource_scan_noop_without_backend_root(qtbot):
+    window = MainWindow()
+    qtbot.addWidget(window)
+    window.current_table = "catalogo_premiaciones"
+
+    window._run_model_resource_scan()
+
+    assert window.current_model_resource_match is None
+    assert window.model_resource_status_label.text() == ""
+    assert not window.model_resource_confirm_btn.isVisible()
+
+
+def test_confirming_resource_match_trains_learner_and_caches_path(qtbot, tmp_path, monkeypatch):
+    """El punto central del flujo: confirmar un candidato en el diálogo
+    entrena el matcher persistente (sube su score futuro) y cachea la ruta
+    del Resource legado para que _on_generate avise antes de pisarlo."""
+    # Modelo de fábrica sintético y determinístico, aislado del dataset real
+    # (scripts/build_match_dataset.py) -- ese dataset no tiene NINGÚN ejemplo
+    # con mixin_match=1 (los proyectos reales usados no declaran @mixin), así
+    # que no es representativo para este caso puntual y acoplaría este test
+    # de wiring de la GUI a datos que pueden cambiar con el dataset.
+    bundled_path = tmp_path / "bundled.joblib"
+    X = [[0.9, 0.7, 1.0, 1.0], [0.9, 0.6, 1.0, 1.0]] * 10 + [[0.1, 0.0, 0.0, 0.0], [0.05, 0.0, 0.0, 0.0]] * 10
+    y = [1] * 20 + [0] * 20
+    factory_learner = MatchLearner(path=bundled_path)
+    factory_learner.fit_batch(X, y)
+    factory_learner.save()
+    monkeypatch.setattr(match_learner_module, "bundled_pretrained_path", lambda: bundled_path)
+
+    backend_root = tmp_path / "backend"
+    resource_path = _write_legacy_model_and_resource(backend_root)
+
+    window = MainWindow()
+    qtbot.addWidget(window)
+    learner_path = tmp_path / "learner.joblib"
+    # Vía load(), no el constructor pelado: en la app real, MainWindow.__init__
+    # siempre carga por acá -- arranca del modelo de fábrica en vez de una
+    # red recién inicializada, que es justo el escenario "un solo ejemplo
+    # mueve la predicción al azar" que se quiere evitar (ver match_learner.py).
+    window.match_learner = MatchLearner.load(learner_path)
+    window.backend_root = backend_root
+    window.current_table = "catalogo_premiaciones"
+    window.current_columns = [Column("nombre", "varchar(100)", nullable=False, key="", default=None, extra="")]
+    window._run_model_resource_scan()
+
+    match = window.current_model_resource_match
+    assert match.best is not None
+    score_before = match.best.score
+
+    dialog = ModelResourceMatchDialog(match, window)
+    qtbot.addWidget(dialog)
+    assert dialog._checkboxes[0].isChecked()  # score alto (mixin) -> preseleccionado
+
+    window._apply_model_resource_confirmation(match, dialog.confirmed_indexes())
+
+    assert window.confirmed_resources[("catalogo_premiaciones", "resource")] == resource_path
+    assert "confirmado" in window.model_resource_status_label.text().lower()
+
+    reloaded_learner = MatchLearner.load(learner_path)
+    assert reloaded_learner.example_count == len(X) + 1  # los del modelo de fábrica + esta confirmación
+    rescored = reloaded_learner.score(match.best.features)
+    assert rescored >= score_before
+
+
 def test_generation_log_dialog_constructs_with_entries(qtbot):
     entry = GenerationLogEntry(
         timestamp="2026-01-01T00:00:00+00:00",
@@ -253,3 +370,32 @@ def test_generation_log_dialog_constructs_with_entries(qtbot):
     assert dialog.table.rowCount() == 1
     assert dialog.table.item(0, 1).text() == "siaw_usuarios"
     assert dialog.export_btn.isEnabled()
+
+
+def test_code_editor_completion_replaces_prefix_without_duplicating_it(qtbot):
+    """Reproduce el bug reportado: tipear "dele", elegir "deleted" del
+    popup -- antes insertaba el sufijo calculado a mano ("ted") en la
+    posición equivocada y terminaba en "deledeleted" en vez de "deleted"."""
+    editor = _CodeEditor(_PHP_LARAVEL_COMPLETIONS)
+    qtbot.addWidget(editor)
+    editor.setPlainText("dele")
+    cursor = editor.textCursor()
+    cursor.movePosition(cursor.MoveOperation.End)
+    editor.setTextCursor(cursor)
+
+    editor._insert_completion("deleted")
+
+    assert editor.toPlainText() == "deleted"
+
+
+def test_code_editor_completion_replaces_prefix_mid_word(qtbot):
+    editor = _CodeEditor(_PHP_LARAVEL_COMPLETIONS)
+    qtbot.addWidget(editor)
+    editor.setPlainText("return dele;")
+    cursor = editor.textCursor()
+    cursor.setPosition(11)  # justo después de "dele", antes de ";"
+    editor.setTextCursor(cursor)
+
+    editor._insert_completion("deleted")
+
+    assert editor.toPlainText() == "return deleted;"

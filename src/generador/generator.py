@@ -132,6 +132,10 @@ class ModuleManifest:
     relations: list[ManifestRelation]
     user_model_class: str = DEFAULT_USER_MODEL_CLASS
     unique_indexes: dict[str, list[str]] = field(default_factory=dict)
+    # None = la tabla usa `deleted_at` (default de SoftDeletes, no hace falta
+    # declarar nada); 'deleted' = tabla legada, el Model tiene que declarar
+    # `const DELETED_AT` (ver mapping.soft_delete_column / Model.php.j2).
+    soft_delete_column: str | None = None
 
     supports_pagination: bool = True
     add_comments: bool = True
@@ -185,11 +189,9 @@ def build_manifest(
 
     fields: list[ManifestField] = []
     relations: list[ManifestRelation] = []
+    soft_delete_col = mapping.soft_delete_column(columns)
 
-    for column in columns:
-        if column.name in mapping.EXCLUDED_FIELDS:
-            continue
-
+    for column in mapping.business_columns(columns):
         parsed = mapping.parse_sql_type(column.sql_type)
         resolution = fk_resolutions.get(column.name)
         is_fk = bool(resolution and resolution.table)
@@ -261,6 +263,7 @@ def build_manifest(
         relations=relations,
         user_model_class=user_model_class,
         unique_indexes=unique_indexes,
+        soft_delete_column=soft_delete_col,
         supports_pagination=supports_pagination,
         add_comments=add_comments,
     )
@@ -485,6 +488,42 @@ def render_all(manifest: ModuleManifest, *, renderer: Renderer | None = None) ->
         "interfaces": renderer.render_interfaces_ts(manifest),
         "audit_user": renderer.audit_user_interface_ts(),
     }
+
+
+def existing_target_files(
+    manifest: ModuleManifest,
+    backend_root: Path,
+    frontend_root: Path,
+    contents: dict[str, str],
+) -> dict[str, Path]:
+    """De las rutas convencionales que `write_files` está por escribir (solo
+    las presentes en `contents`), cuáles ya existen en el destino — para
+    poder avisar antes de pisarlas en vez de sobreescribir en silencio.
+
+    Cubre el caso más común de "ya hay un Model/Resource para esta tabla":
+    cuando el archivo preexistente vive justo en la ruta convencional (ej. se
+    está regenerando un módulo ya generado antes, o un proyecto legado que
+    por casualidad sigue esa misma convención). No cubre el caso de un
+    Resource/Model legado con un nombre o ubicación distinta — eso requiere
+    buscarlo por contenido, no por ruta (ver `model_resource_scan.py`).
+    """
+    backend_files = paths.backend_paths(manifest)
+    frontend_files = paths.frontend_paths(manifest)
+
+    found: dict[str, Path] = {}
+    for key in BACKEND_KEYS:
+        if key not in contents:
+            continue
+        target = backend_root / backend_files[key]
+        if target.exists():
+            found[key] = target
+
+    if "interfaces" in contents:
+        target = frontend_root / frontend_files["interfaces"]
+        if target.exists():
+            found["interfaces"] = target
+
+    return found
 
 
 def write_files(

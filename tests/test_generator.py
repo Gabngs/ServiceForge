@@ -1,6 +1,15 @@
 from generador.db import Column
 from generador.fk_resolver import FkResolution
-from generador.generator import Renderer, build_manifest, generate_files, render_all, strip_line_comments, write_files
+from generador.generator import (
+    Renderer,
+    build_manifest,
+    existing_target_files,
+    generate_files,
+    render_all,
+    strip_line_comments,
+    write_files,
+)
+from generador.paths import backend_paths
 
 
 def _siaw_usuarios_columns() -> list[Column]:
@@ -21,8 +30,8 @@ def _siaw_usuarios_columns() -> list[Column]:
     ]
 
 
-def _build_test_manifest(**overrides):
-    columns = _siaw_usuarios_columns()
+def _build_test_manifest(columns=None, **overrides):
+    columns = columns if columns is not None else _siaw_usuarios_columns()
     fk_resolutions = {
         "rol_id": FkResolution(
             column="rol_id", base_name="rol", candidates=["siaw_roles"], status="auto", table="siaw_roles"
@@ -71,6 +80,44 @@ def test_build_manifest_relation_detected():
     rol_field = next(f for f in manifest.fields if f.name == "rol_id")
     assert rol_field.relation_method == "siaw_roles"
     assert rol_field.relation_alias == "roles"  # modulo de "siaw_roles"
+
+
+def test_build_manifest_default_soft_delete_column_is_none():
+    # Caso normal: la tabla usa 'deleted_at' -- no hace falta declarar nada
+    # de más en el Model, SoftDeletes ya asume ese nombre.
+    manifest = _build_test_manifest()
+    assert manifest.soft_delete_column is None
+
+
+def test_build_manifest_detects_legacy_deleted_column():
+    """Tabla legada con 'deleted' en vez de 'deleted_at' -- sin esto, el
+    Model generado usa SoftDeletes asumiendo 'deleted_at' y rompe contra una
+    columna que no existe (ver Model.php.j2 / mapping.soft_delete_column)."""
+    columns = [c for c in _siaw_usuarios_columns() if c.name != "deleted_at"]
+    columns.append(Column("deleted", "tinyint(1)", nullable=True, key="", default="0", extra=""))
+
+    manifest = _build_test_manifest(columns=columns)
+
+    assert manifest.soft_delete_column == "deleted"
+    # 'deleted' nunca es un campo de negocio (ni fillable ni validación),
+    # igual que 'deleted_at' en el caso normal.
+    assert "deleted" not in {f.name for f in manifest.fields}
+
+
+def test_render_model_php_declares_deleted_at_const_for_legacy_column():
+    columns = [c for c in _siaw_usuarios_columns() if c.name != "deleted_at"]
+    columns.append(Column("deleted", "tinyint(1)", nullable=True, key="", default="0", extra=""))
+    manifest = _build_test_manifest(columns=columns)
+
+    php = Renderer().render_model_php(manifest)
+
+    assert "const DELETED_AT = 'deleted';" in php
+
+
+def test_render_model_php_omits_deleted_at_const_for_normal_table():
+    manifest = _build_test_manifest()
+    php = Renderer().render_model_php(manifest)
+    assert "const DELETED_AT" not in php
 
 
 def test_build_manifest_relation_method_for_manually_assigned_non_id_column():
@@ -539,3 +586,38 @@ def test_generate_files_does_not_overwrite_shared_audit_interface(tmp_path):
     written_again = generate_files(manifest, backend_root, frontend_root, write_audit_interface=True)
     assert "audit_user" not in written_again
     assert audit_path.read_text(encoding="utf-8") == "// modificado a mano"
+
+
+def test_existing_target_files_empty_on_fresh_project(tmp_path):
+    manifest = _build_test_manifest()
+    contents = render_all(manifest)
+    backend_root = tmp_path / "backend"
+    frontend_root = tmp_path / "frontend"
+
+    assert existing_target_files(manifest, backend_root, frontend_root, contents) == {}
+
+
+def test_existing_target_files_detects_preexisting_model_and_resource(tmp_path):
+    """Simula un proyecto legado que ya tiene Model/Resource en la ruta
+    convencional (ej. se está regenerando un módulo generado antes, o el
+    proyecto legado por casualidad sigue esa misma convención) -- write_files
+    los pisaría en silencio si no se avisa antes."""
+    manifest = _build_test_manifest()
+    contents = render_all(manifest)
+    backend_root = tmp_path / "backend"
+    frontend_root = tmp_path / "frontend"
+
+    backend_files = backend_paths(manifest)
+    model_path = backend_root / backend_files["model"]
+    model_path.parent.mkdir(parents=True, exist_ok=True)
+    model_path.write_text("// modelo legado hecho a mano", encoding="utf-8")
+
+    resource_path = backend_root / backend_files["resource"]
+    resource_path.parent.mkdir(parents=True, exist_ok=True)
+    resource_path.write_text("// resource legado hecho a mano", encoding="utf-8")
+
+    existing = existing_target_files(manifest, backend_root, frontend_root, contents)
+
+    assert existing == {"model": model_path, "resource": resource_path}
+    # No tocó nada -- es solo el chequeo, write_files sigue siendo quien escribe.
+    assert model_path.read_text(encoding="utf-8") == "// modelo legado hecho a mano"

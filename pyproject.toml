@@ -11,6 +11,8 @@ dependencies = [
     "PySide6>=6.7",
     "PyMySQL>=1.1",
     "Jinja2>=3.1",
+    "Markdown>=3.4",
+    "scikit-learn>=1.4",
 ]
 
 [tool.setuptools.dynamic]
