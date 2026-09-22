@@ -2,6 +2,21 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [2.0.1]
+
+### Añadido
+- Detección de Models/Resources ya existentes en el proyecto backend antes de generar (`model_resource_scan.py`): compara por convención de nombre, `@mixin`, solapamiento de campos (incluyendo claves de relación, ej. `articulo`/`created_by`, no solo columnas planas — reusa la resolución de FK ya cacheada/importada por `fk_resolver`) y namespace, aunque el proyecto no siga la convención de esta herramienta.
+- Modelo de aprendizaje persistente (`match_learner.py`, red neuronal chica de scikit-learn entrenada online) que mejora ese matching con cada confirmación del desarrollador ("Revisar Model/Resource detectado…" en el análisis de tabla) — nunca decide solo, arranca de un modelo de fábrica entrenado con proyectos Laravel reales (`scripts/build_match_dataset.py`) en vez de en frío.
+- Aviso de "ya existen archivos en el destino" antes de "Generar archivos" (ruta convencional + Resources confirmados manualmente) — confirma antes de sobreescribir un Model/Resource en vez de hacerlo en silencio.
+- Soporte para tablas con columna de soft-delete legada (`deleted` en vez de `deleted_at`): el Model generado declara `const DELETED_AT` para que el trait `SoftDeletes` no rompa contra una columna inexistente.
+- Plantilla de estándar frontend `ApiResponse Frontend.md`.
+
+### Cambiado
+- "Conf. de generación" pasó a un diálogo propio (antes ocupaba espacio fijo en la ventana principal); "Relación" ahora aparece antes que "Tiny" en el mapeo de columnas; la columna "FK -> tabla" ya no se estira a ocupar todo el ancho sobrante; el panel de mapeo se ajusta al contenido en vez de dejar un bloque vacío grande cuando la tabla tiene pocas columnas; "Salida backend"/"Salida frontend" quedan ocultas hasta marcar "Generar en una carpeta de salida separada".
+
+### Corregido
+- Autocompletado del editor de preview: confirmar una sugerencia justo antes de un carácter que no es de identificador (`;`, `(`) duplicaba el prefijo tipeado (ej. "dele" + Tab → "deledeleted") en vez de completar la palabra.
+
 ## [1.5.1]
 
 ### Añadido
