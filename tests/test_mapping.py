@@ -1,4 +1,5 @@
 from generador import mapping
+from generador.db import Column
 
 
 def test_parse_varchar():
@@ -97,3 +98,37 @@ def test_excluded_fields_frozen():
     assert "pkid" in mapping.EXCLUDED_FIELDS
     assert "created_by_id" in mapping.EXCLUDED_FIELDS
     assert "nombre" not in mapping.EXCLUDED_FIELDS
+
+
+def _column(name):
+    return Column(name=name, sql_type="varchar(50)", nullable=True, key="", default=None, extra="")
+
+
+def test_soft_delete_column_none_when_table_uses_deleted_at():
+    columns = [_column("nombre"), _column("deleted_at")]
+    assert mapping.soft_delete_column(columns) is None
+
+
+def test_soft_delete_column_detects_legacy_deleted_name():
+    columns = [_column("nombre"), _column("deleted")]
+    assert mapping.soft_delete_column(columns) == "deleted"
+
+
+def test_soft_delete_column_prefers_deleted_at_when_both_present():
+    columns = [_column("nombre"), _column("deleted"), _column("deleted_at")]
+    assert mapping.soft_delete_column(columns) is None
+
+
+def test_business_columns_excludes_legacy_deleted_marker():
+    columns = [_column("nombre"), _column("deleted"), _column("pkid")]
+    result = mapping.business_columns(columns)
+    assert [c.name for c in result] == ["nombre"]
+
+
+def test_business_columns_keeps_deleted_when_table_uses_deleted_at():
+    columns = [_column("nombre"), _column("deleted_at"), _column("deleted")]
+    result = mapping.business_columns(columns)
+    # 'deleted_at' está en EXCLUDED_FIELDS (se saca siempre); 'deleted' NO es
+    # el marcador de soft-delete acá (ya hay 'deleted_at') -- queda como
+    # columna de negocio común.
+    assert [c.name for c in result] == ["nombre", "deleted"]

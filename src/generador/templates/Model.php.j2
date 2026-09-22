@@ -16,6 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class {{ manifest.model_class }} extends Model
 {
     use SoftDeletes, Filterable;
+{% if manifest.soft_delete_column %}
+
+    // Tabla legada: la columna de soft-delete se llama '{{ manifest.soft_delete_column }}',
+    // no 'deleted_at' -- sin esto, SoftDeletes asume 'deleted_at' y rompe.
+    const DELETED_AT = '{{ manifest.soft_delete_column }}';
+{% endif %}
 
     protected $connection  = '{{ manifest.connection_name }}';
     protected $table       = '{{ manifest.table }}';

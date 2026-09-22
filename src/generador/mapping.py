@@ -10,6 +10,10 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .db import Column
 
 # Campos que nunca van en fillable de usuario ni en validación — los asigna
 # el CrudService/Laravel automáticamente.
@@ -25,6 +29,34 @@ EXCLUDED_FIELDS = frozenset(
         "deleted_by_id",
     }
 )
+
+
+def soft_delete_column(columns: list["Column"]) -> str | None:
+    """None si la tabla usa `deleted_at` (el default de SoftDeletes de
+    Laravel, no hace falta declarar nada de más) -- `'deleted'` si la tabla
+    es legada y usa ese nombre en su lugar. En ese caso el Model generado
+    tiene que declarar `const DELETED_AT = 'deleted';` (ver Model.php.j2)
+    para que el trait SoftDeletes la use en vez de asumir `deleted_at` y
+    romper en cualquier query/delete/restore contra una columna que no
+    existe. Si por algún motivo la tabla tiene las dos, gana `deleted_at`
+    (el caso real) y `deleted` se trata como columna de negocio común."""
+    names = {c.name for c in columns}
+    if "deleted" in names and "deleted_at" not in names:
+        return "deleted"
+    return None
+
+
+def business_columns(columns: list["Column"]) -> list["Column"]:
+    """Columnas de negocio: saca siempre las de EXCLUDED_FIELDS, y además la
+    columna de soft-delete legada (`deleted`) cuando la tabla la usa en vez
+    de `deleted_at` -- ver `soft_delete_column`. Único punto de esta
+    exclusión: tanto el grid de la GUI como `generator.build_manifest` la
+    usan, para no repetir la detección en los dos lugares."""
+    excluded = set(EXCLUDED_FIELDS)
+    legacy_soft_delete = soft_delete_column(columns)
+    if legacy_soft_delete:
+        excluded.add(legacy_soft_delete)
+    return [c for c in columns if c.name not in excluded]
 
 # Familias de tipos SQL que comparten regla de validación.
 _TEXT_FAMILY = {"text", "longtext", "mediumtext", "tinytext"}

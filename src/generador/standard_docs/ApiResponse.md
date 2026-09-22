@@ -236,7 +236,7 @@ class {Modulo}Resource extends JsonResource
             // ("catalogo_tienda", nombre literal de la tabla relacionada) —
             // ver [[Model#Relaciones — nombre de método vs. clave pública del Resource]].
             'tienda'      => $this->whenLoaded('catalogo_tienda', fn() =>
-                new TiendaRelationResource($this->catalogo_tienda)
+                new catalogo_tiendaRelationResource($this->catalogo_tienda)
             ),
             // created_by/updated_by son relaciones belongsTo hacia la tabla de usuarios,
             // no el pkid crudo — se cargan igual que cualquier otra relación (ver
