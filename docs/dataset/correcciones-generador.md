@@ -50,6 +50,8 @@ Aplica también a las reglas `exists` de los Requests: la columna del soft delet
 
 Frecuencia real: SIAW tiene 10 modelos con `DELETED_AT='deleted'` y SIREH 22. No es un caso raro.
 
+Como tal se lee la tabla por conexion o en su caso una migracion para lo cual una migracion ya contiene los campos que va tener , tener en cuanta ello.
+
 ---
 
 ## 2. Generación del id (PK `char(32)` sin autoincremento): **opción de generación**
@@ -283,6 +285,7 @@ export interface IPaginateMeta {
 }
 
 export interface IFiltersBase {
+    sorts?: string;
     tiny?: boolean;
     search?: string;
     activo?: boolean;
