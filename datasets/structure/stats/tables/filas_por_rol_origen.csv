@@ -1,0 +1,11 @@
+rol,real,sintetico
+filter,1345,6474
+resource,1648,6492
+relation_resource,396,6492
+base_request,333,3624
+store_request,902,6786
+update_request,885,6786
+request_trait,554,5376
+service,1658,5604
+controller,2221,7100
+route,1817,5686

@@ -399,3 +399,38 @@ def test_code_editor_completion_replaces_prefix_mid_word(qtbot):
     editor._insert_completion("deleted")
 
     assert editor.toPlainText() == "return deleted;"
+
+
+def test_model_resource_dialog_lists_other_existing_files_as_information(qtbot, tmp_path):
+    """El modelo de estructura también reconoce Filter/Requests/Service/Controller/rutas: el diálogo los
+    muestra para que el desarrollador vea qué ya existe, pero no son confirmables (solo hay checkboxes de Resources)."""
+    from generador import model_resource_scan
+    from generador.gui import ModelResourceMatchDialog
+    from generador.match_learner import StructureLearner
+
+    from test_structure_scan import _COLUMNS, _backend
+
+    match = model_resource_scan.find_candidates(
+        "inv_productos", _COLUMNS, _backend(tmp_path), learner=StructureLearner.load(tmp_path / "u.joblib")
+    )
+    dialog = ModelResourceMatchDialog(match)
+    qtbot.addWidget(dialog)
+
+    from PySide6.QtWidgets import QLabel
+
+    text = " | ".join(label.text() for label in dialog.findChildren(QLabel))
+    assert "solo informativo" in text
+    assert "ProductoService" in text and "ProductoController" in text
+    assert len(dialog.confirmed_indexes()) <= len(match.candidates)  # solo los Resources son confirmables
+
+
+def test_model_resource_dialog_without_other_files_shows_no_info_section(qtbot):
+    from generador import model_resource_scan
+    from generador.gui import ModelResourceMatchDialog
+
+    dialog = ModelResourceMatchDialog(model_resource_scan.ModelResourceMatch(table="x", model=None))
+    qtbot.addWidget(dialog)
+
+    from PySide6.QtWidgets import QLabel
+
+    assert not any("solo informativo" in label.text() for label in dialog.findChildren(QLabel))

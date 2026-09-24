@@ -1,0 +1,568 @@
+{
+  "generated_at": "23-09-2026 23:42:58",
+  "repos": [
+    "siaw-laravel-backend",
+    "sip-laravel-backend",
+    "gsp-back",
+    "AgencyWeb-Back",
+    "Peru_Lex_Back"
+  ],
+  "n_repos": 5,
+  "axes": {
+    "requests_dir": {
+      "values": {
+        "Requests": {
+          "repos": [
+            "sip-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 4,
+          "share": 0.8
+        },
+        "Request": {
+          "repos": [
+            "siaw-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "sublevel": {
+      "values": {
+        "conexion": {
+          "repos": [
+            "siaw-laravel-backend",
+            "AgencyWeb-Back"
+          ],
+          "count": 2,
+          "share": 0.4
+        },
+        "sistema": {
+          "repos": [
+            "sip-laravel-backend",
+            "gsp-back"
+          ],
+          "count": 2,
+          "share": 0.4
+        },
+        "ninguno": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "per_table_folder_requests": {
+      "values": {
+        "si": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back"
+          ],
+          "count": 4,
+          "share": 0.8
+        },
+        "no": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "per_table_folder_resources": {
+      "values": {
+        "no": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 5,
+          "share": 1.0
+        }
+      }
+    },
+    "request_traits": {
+      "values": {
+        "Traits/Validates{X} plano": {
+          "repos": [
+            "siaw-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back"
+          ],
+          "count": 3,
+          "share": 0.6
+        },
+        "Traits/{tabla}/Validates{X}": {
+          "repos": [
+            "sip-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        },
+        "ninguno": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "service_name": {
+      "values": {
+        "{ClaseModelo}": {
+          "repos": [
+            "gsp-back",
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 3,
+          "share": 0.6
+        },
+        "{tabla}": {
+          "repos": [
+            "siaw-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        },
+        "{CamelSinPrefijo}": {
+          "repos": [
+            "sip-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "request_name": {
+      "values": {
+        "accion_en_carpeta": {
+          "repos": [
+            "gsp-back",
+            "AgencyWeb-Back"
+          ],
+          "count": 2,
+          "share": 0.4
+        },
+        "{tabla}": {
+          "repos": [
+            "siaw-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        },
+        "{CamelSinPrefijo}": {
+          "repos": [
+            "sip-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        },
+        "{ClaseModelo}": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "base_request": {
+      "values": {
+        "clase Base abstracta": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back",
+            "Peru_Lex_Back"
+          ],
+          "count": 4,
+          "share": 0.8
+        },
+        "sin base": {
+          "repos": [
+            "AgencyWeb-Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "min_resource_suffix": {
+      "values": {
+        "Relation": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back"
+          ],
+          "count": 3,
+          "share": 0.6
+        },
+        "ninguno": {
+          "repos": [
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 2,
+          "share": 0.4
+        }
+      }
+    },
+    "routes_location": {
+      "values": {
+        "routes/modules/{tabla}.php": {
+          "repos": [
+            "sip-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 4,
+          "share": 0.8
+        },
+        "routes/{tabla}.php": {
+          "repos": [
+            "siaw-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "route_registration": {
+      "values": {
+        "RouteServiceProvider+bootstrap/app.php": {
+          "repos": [
+            "siaw-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back"
+          ],
+          "count": 3,
+          "share": 0.6
+        },
+        "RouteServiceProvider": {
+          "repos": [
+            "sip-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        },
+        "bootstrap/app.php+require en api.php": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "controllers_dir": {
+      "values": {
+        "Api/{sub}": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back"
+          ],
+          "count": 3,
+          "share": 0.6
+        },
+        "Api raíz": {
+          "repos": [
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 2,
+          "share": 0.4
+        }
+      }
+    },
+    "token_middleware": {
+      "values": {
+        "ValidateSessionKey": {
+          "repos": [
+            "gsp-back",
+            "AgencyWeb-Back"
+          ],
+          "count": 2,
+          "share": 0.4
+        },
+        "[ApiToken::class]": {
+          "repos": [
+            "siaw-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        },
+        "'ApiToken'": {
+          "repos": [
+            "sip-laravel-backend"
+          ],
+          "count": 1,
+          "share": 0.2
+        },
+        "auth:sanctum": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "audit_relation": {
+      "values": {
+        "created_by": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back"
+          ],
+          "count": 4,
+          "share": 0.8
+        },
+        "createdBy": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "user_model": {
+      "values": {
+        "User": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 4,
+          "share": 0.8
+        },
+        "ninguno": {
+          "repos": [
+            "gsp-back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "soft_delete": {
+      "values": {
+        "deleted_at": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back"
+          ],
+          "count": 4,
+          "share": 0.8
+        },
+        "no": {
+          "repos": [
+            "Peru_Lex_Back"
+          ],
+          "count": 1,
+          "share": 0.2
+        }
+      }
+    },
+    "pk": {
+      "values": {
+        "id uuid string": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend",
+            "gsp-back",
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 5,
+          "share": 1.0
+        }
+      }
+    },
+    "class_style": {
+      "values": {
+        "StudlyCase": {
+          "repos": [
+            "gsp-back",
+            "AgencyWeb-Back",
+            "Peru_Lex_Back"
+          ],
+          "count": 3,
+          "share": 0.6
+        },
+        "snake literal": {
+          "repos": [
+            "siaw-laravel-backend",
+            "sip-laravel-backend"
+          ],
+          "count": 2,
+          "share": 0.4
+        }
+      }
+    }
+  },
+  "per_repo": {
+    "siaw-laravel-backend": {
+      "requests_dir": "Request",
+      "sublevel": "conexion",
+      "per_table_folder_requests": "si",
+      "per_table_folder_resources": "no",
+      "request_traits": "Traits/Validates{X} plano",
+      "service_name": "{tabla}",
+      "request_name": "{tabla}",
+      "base_request": "clase Base abstracta",
+      "min_resource_suffix": "Relation",
+      "min_resource_suffix_dist": {
+        "Relation": 22,
+        "Tiny": 1,
+        "Relacion": 1
+      },
+      "routes_location": "routes/{tabla}.php",
+      "routes_location_dist": {
+        "en línea en api.php": 1,
+        "routes/{tabla}.php": 36
+      },
+      "route_registration": "RouteServiceProvider+bootstrap/app.php",
+      "controllers_dir": "Api/{sub}",
+      "token_middleware": "[ApiToken::class]",
+      "audit_relation": "created_by",
+      "user_model": "User",
+      "soft_delete": "deleted_at",
+      "pk": "id uuid string",
+      "class_style": "snake literal"
+    },
+    "sip-laravel-backend": {
+      "requests_dir": "Requests",
+      "sublevel": "sistema",
+      "per_table_folder_requests": "si",
+      "per_table_folder_resources": "no",
+      "request_traits": "Traits/{tabla}/Validates{X}",
+      "service_name": "{CamelSinPrefijo}",
+      "request_name": "{CamelSinPrefijo}",
+      "base_request": "clase Base abstracta",
+      "min_resource_suffix": "Relation",
+      "min_resource_suffix_dist": {
+        "Data": 5,
+        "Relation": 10,
+        "Relacion": 4,
+        "Tiny": 1,
+        "Show": 3,
+        "Left": 1
+      },
+      "routes_location": "routes/modules/{tabla}.php",
+      "routes_location_dist": {
+        "en línea en api.php": 1,
+        "routes/modules/{tabla}.php": 19
+      },
+      "route_registration": "RouteServiceProvider",
+      "controllers_dir": "Api/{sub}",
+      "token_middleware": "'ApiToken'",
+      "audit_relation": "created_by",
+      "user_model": "User",
+      "soft_delete": "deleted_at",
+      "pk": "id uuid string",
+      "class_style": "snake literal"
+    },
+    "gsp-back": {
+      "requests_dir": "Requests",
+      "sublevel": "sistema",
+      "per_table_folder_requests": "si",
+      "per_table_folder_resources": "no",
+      "request_traits": "Traits/Validates{X} plano",
+      "service_name": "{ClaseModelo}",
+      "request_name": "accion_en_carpeta",
+      "base_request": "clase Base abstracta",
+      "min_resource_suffix": "Relation",
+      "min_resource_suffix_dist": {
+        "Relation": 28
+      },
+      "routes_location": "routes/modules/{tabla}.php",
+      "routes_location_dist": {
+        "en línea en api.php": 1,
+        "routes/modules/{tabla}.php": 43
+      },
+      "route_registration": "RouteServiceProvider+bootstrap/app.php",
+      "controllers_dir": "Api/{sub}",
+      "token_middleware": "ValidateSessionKey",
+      "audit_relation": "created_by",
+      "user_model": "ninguno",
+      "soft_delete": "deleted_at",
+      "pk": "id uuid string",
+      "class_style": "StudlyCase"
+    },
+    "AgencyWeb-Back": {
+      "requests_dir": "Requests",
+      "sublevel": "conexion",
+      "per_table_folder_requests": "si",
+      "per_table_folder_resources": "no",
+      "request_traits": "Traits/Validates{X} plano",
+      "service_name": "{ClaseModelo}",
+      "request_name": "accion_en_carpeta",
+      "base_request": "sin base",
+      "min_resource_suffix": "ninguno",
+      "min_resource_suffix_dist": {},
+      "routes_location": "routes/modules/{tabla}.php",
+      "routes_location_dist": {
+        "en línea en api.php": 1,
+        "routes/modules/{tabla}.php": 42
+      },
+      "route_registration": "RouteServiceProvider+bootstrap/app.php",
+      "controllers_dir": "Api raíz",
+      "token_middleware": "ValidateSessionKey",
+      "audit_relation": "created_by",
+      "user_model": "User",
+      "soft_delete": "deleted_at",
+      "pk": "id uuid string",
+      "class_style": "StudlyCase"
+    },
+    "Peru_Lex_Back": {
+      "requests_dir": "Requests",
+      "sublevel": "ninguno",
+      "per_table_folder_requests": "no",
+      "per_table_folder_resources": "no",
+      "request_traits": "ninguno",
+      "service_name": "{ClaseModelo}",
+      "request_name": "{ClaseModelo}",
+      "base_request": "clase Base abstracta",
+      "min_resource_suffix": "ninguno",
+      "min_resource_suffix_dist": {},
+      "routes_location": "routes/modules/{tabla}.php",
+      "routes_location_dist": {
+        "en línea en api.php": 1,
+        "routes/modules/{tabla}.php": 25
+      },
+      "route_registration": "bootstrap/app.php+require en api.php",
+      "controllers_dir": "Api raíz",
+      "token_middleware": "auth:sanctum",
+      "audit_relation": "createdBy",
+      "user_model": "User",
+      "soft_delete": "no",
+      "pk": "id uuid string",
+      "class_style": "StudlyCase"
+    }
+  },
+  "note": "Cada repo aporta UN valor por eje (el modal). `share` = fracción de los repos reales que lo usan. El generador sintético muestrea con estas frecuencias y garantiza cobertura de todos los valores."
+}

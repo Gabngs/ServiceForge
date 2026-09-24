@@ -1,0 +1,182 @@
+{
+  "siaw-laravel-backend": {
+    "name": "siaw-laravel-backend",
+    "path": "D:\\Documentos\\Proyects\\siaw-laravel-backend",
+    "commit": "dfa8268",
+    "branch": "production",
+    "dirty_files": 0,
+    "laravel": "^12.0",
+    "php": "^8.2",
+    "connections": [
+      "sqlite",
+      "mysql",
+      "mysql_dbsiaw",
+      "mysql_dbsip",
+      "mariadb",
+      "pgsql",
+      "sqlsrv"
+    ],
+    "models": 88,
+    "scanned_at": "23-09-2026 23:41:04",
+    "prefixes": [
+      "catalogo",
+      "auth",
+      "sip",
+      "sap"
+    ],
+    "files_by_role": {
+      "filter": 39,
+      "resource": 69,
+      "relation_resource": 24,
+      "base_request": 34,
+      "store_request": 43,
+      "update_request": 34,
+      "request_trait": 5,
+      "service": 43,
+      "controller": 74,
+      "route": 37,
+      "other_request": 16
+    }
+  },
+  "sip-laravel-backend": {
+    "name": "sip-laravel-backend",
+    "path": "D:\\Documentos\\Proyects\\sip-laravel-backend",
+    "commit": "954baeef",
+    "branch": "production",
+    "dirty_files": 0,
+    "laravel": "^10.10",
+    "php": "^8.1",
+    "connections": [
+      "sqlite",
+      "mysql",
+      "mysql_dbsiaw",
+      "mysql_dbsip",
+      "pgsql",
+      "sqlsrv"
+    ],
+    "models": 122,
+    "scanned_at": "23-09-2026 23:41:23",
+    "prefixes": [
+      "actualizacion",
+      "catalogo",
+      "sip",
+      "pl"
+    ],
+    "files_by_role": {
+      "filter": 54,
+      "resource": 120,
+      "relation_resource": 24,
+      "base_request": 3,
+      "store_request": 18,
+      "update_request": 15,
+      "request_trait": 15,
+      "service": 40,
+      "controller": 130,
+      "route": 20,
+      "other_request": 13
+    }
+  },
+  "gsp-back": {
+    "name": "gsp-back",
+    "path": "D:\\Documentos\\Proyects\\gsp-back",
+    "commit": "c4de8dc",
+    "branch": "dev",
+    "dirty_files": 4,
+    "laravel": "^12.0",
+    "php": "^8.2",
+    "connections": [
+      "sqlite",
+      "mysql_dbgsp",
+      "mysql_dbgsp_siaw",
+      "mysql_dbgsp_agh",
+      "mysql_dbgsp_nexo",
+      "mysql_dbgsp_sincro"
+    ],
+    "models": 108,
+    "scanned_at": "23-09-2026 23:41:01",
+    "prefixes": [
+      "siaw",
+      "nexo",
+      "gsp",
+      "agh"
+    ],
+    "files_by_role": {
+      "filter": 54,
+      "resource": 71,
+      "relation_resource": 28,
+      "base_request": 2,
+      "store_request": 47,
+      "update_request": 50,
+      "request_trait": 37,
+      "service": 103,
+      "controller": 98,
+      "route": 44,
+      "other_request": 37
+    }
+  },
+  "AgencyWeb-Back": {
+    "name": "AgencyWeb-Back",
+    "path": "D:\\Documentos\\Proyects\\AgencyWeb-Back",
+    "commit": "e93fa23",
+    "branch": "dev",
+    "dirty_files": 0,
+    "laravel": "^12.0",
+    "php": "^8.2",
+    "connections": [
+      "dbmdt",
+      "dbsiaw",
+      "dbsincro"
+    ],
+    "models": 45,
+    "scanned_at": "23-09-2026 23:40:58",
+    "prefixes": [
+      "siaw",
+      "mdt"
+    ],
+    "files_by_role": {
+      "filter": 42,
+      "resource": 45,
+      "relation_resource": 0,
+      "base_request": 0,
+      "store_request": 43,
+      "update_request": 42,
+      "request_trait": 42,
+      "service": 43,
+      "controller": 43,
+      "route": 43,
+      "other_request": 5
+    }
+  },
+  "Peru_Lex_Back": {
+    "name": "Peru_Lex_Back",
+    "path": "D:\\Documentos\\Proyects\\Peru_Lex_Back",
+    "commit": "c165eef",
+    "branch": "dev",
+    "dirty_files": 2,
+    "laravel": "^12.0",
+    "php": "^8.2",
+    "connections": [
+      "sqlite",
+      "mysql",
+      "mariadb",
+      "pgsql",
+      "sqlsrv"
+    ],
+    "models": 26,
+    "scanned_at": "23-09-2026 23:41:25",
+    "prefixes": [],
+    "files_by_role": {
+      "filter": 22,
+      "resource": 25,
+      "relation_resource": 0,
+      "base_request": 22,
+      "store_request": 28,
+      "update_request": 19,
+      "request_trait": 0,
+      "service": 23,
+      "controller": 26,
+      "route": 26,
+      "other_request": 8
+    }
+  }
+}

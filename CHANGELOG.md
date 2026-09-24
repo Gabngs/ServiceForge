@@ -2,6 +2,19 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [2.1.1]
+
+### Añadido
+- Dataset de estructura de backends Laravel (`datasets/structure/`): 72 179 pares (modelo, archivo) de 5 repos reales y 30 sintéticos, con features y etiqueta, para reconocer el ROL de cada archivo (Filter, Resource, Resource mínimo, Requests, trait de validación, Service, Controller, rutas) aunque cada proyecto use otras carpetas, nombres y prefijos. Incluye dataset card (`README.md`) con fuentes, criterios de etiquetado, estadísticas, resultados y limitaciones.
+- Pipeline offline y reproducible en `scripts/` (`scan_backend_structure.py`, `build_variation_profile.py`, `generate_synthetic_repos.py`, `build_structure_dataset.py`, `train_structure_models.py`, `make_dataset_stats.py`, núcleo en `structure_lib.py`). Los repos sintéticos salen de código y semilla y se borran solos al terminar. Dependencias aparte en `requirements-dataset.txt`; la app y el `.exe` no las necesitan.
+- **Modelo de estructura integrado a la app** (`match_learner.StructureLearner`, `structure_scan.py`, `structure_matcher_pretrained.joblib`): al analizar una tabla, los Resources existentes se puntúan con un modelo entrenado con el dataset nuevo (25 features; en repos reales no vistos acierta el archivo correcto el 98 % de las veces frente al 90 % de la regla anterior) y el diálogo "Model/Resource existentes" muestra además, solo como información, el Filter, los Requests, el Service, el Controller y las rutas que ya existen para ese Model. Sigue aprendiendo de cada confirmación del desarrollador (se guarda en `structure_matcher.joblib`, aparte del archivo del modelo anterior). `scripts/export_structure_model.py` empaqueta el modelo con la app y `generador.spec` lo incluye en el `.exe`.
+- `scripts/build_match_dataset.py --append`: suma proyectos al dataset de fábrica en vez de reemplazarlo. El dataset de fábrica pasó de 2 a 5 proyectos (394 Models) y se reentrenó el modelo empaquetado.
+
+### Cambiado
+- Estándar: se eliminó el `ApiResponse<T>` genérico del frontend. Solo quedan las piezas base compartidas (`IModelBase`, `IFiltersBase`, `IModelBasePaginate`) y cada modelo declara sus interfaces de respuesta; `delete` devuelve `I{Modelo}SingleResponse`, como el `destroy` del backend. Se documentó que el frontend nunca declara errores de negocio: el Service los lanza con `ValidationException::withMessages()` y `HelperMessage` los muestra.
+- `find_candidates` escanea el proyecto con `structure_scan` (mismo código que el dataset, para que las features de entrenamiento y las de uso no diverjan) y conserva su firma; `ModelResourceMatch` suma `others`. El modelo anterior (`MatchLearner`, 4 features) queda en el código pero la app ya no lo usa.
+- `start.sh` detecta un intérprete de Python que funcione (`python`, `py` o `python3`), sin caer en el stub de la Microsoft Store.
+
 ## [2.0.1]
 
 ### Añadido

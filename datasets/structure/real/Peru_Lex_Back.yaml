@@ -1,0 +1,813 @@
+# Ground truth de Peru_Lex_Back -- generado por scripts/scan_backend_structure.py
+# commit c165eef (dev), 23-09-2026 23:41:25. Formato: ver docs del script.
+- model: Alumno
+  path: app/Models/Alumno.php
+  connection: null
+  table: alumnos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {user: 'belongsTo User (user_id, id)'}
+  - {matriculas: 'hasMany Matricula (alumno_id, pkid)'}
+  - {tareasEntregas: 'hasMany TareaEntrega (alumno_id, pkid)'}
+  filter: [app/Filters/AlumnoFilter.php]
+  resources: [app/Http/Resources/AlumnoResource.php]
+  requests: [app/Http/Requests/BaseAlumnoRequest.php, app/Http/Requests/StoreAlumnoRequest.php, app/Http/Requests/UpdateAlumnoRequest.php]
+  service: [app/Services/AlumnoService.php]
+  controller: [app/Http/Controllers/Api/AlumnoController.php]
+  routes: [routes/modules/alumnos.php]
+  controller_usado_en: [app/Http/Controllers/Api/BibliotecaEstructuradaController.php]
+  filter_usado_en: [app/Filters/MatriculaFilter.php]
+  resources_usado_en: [app/Http/Resources/MatriculaResource.php]
+  service_usado_en: [app/Services/MatriculaService.php, app/Services/TareaEntregaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseAlumnoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/AlumnoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/AlumnoFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/AlumnoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/alumnos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/AlumnoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreAlumnoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateAlumnoRequest.php, via: name_exact_full}
+- model: BaseModel
+  path: app/Models/BaseModel.php
+  connection: null
+  table: BaseModel
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: Biblioteca
+  path: app/Models/Biblioteca.php
+  connection: null
+  table: biblioteca
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id]
+  relaciones:
+  - {createdBy: belongsTo User (created_by_id)}
+  filter: [app/Filters/BibliotecaFilter.php]
+  resources: [app/Http/Resources/BibliotecaResource.php]
+  requests: [app/Http/Requests/BaseBibliotecaRequest.php, app/Http/Requests/StoreBibliotecaRequest.php, app/Http/Requests/UpdateBibliotecaRequest.php]
+  service: [app/Services/BibliotecaService.php]
+  controller: [app/Http/Controllers/Api/BibliotecaController.php, app/Http/Controllers/Api/BibliotecaEstructuradaController.php]
+  routes: [routes/modules/biblioteca.php, routes/modules/biblioteca_estructurada.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseBibliotecaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/BibliotecaController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/BibliotecaEstructuradaController.php, via: name_prefix_full}
+    filter:
+    - {path: app/Filters/BibliotecaFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/BibliotecaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/biblioteca.php, via: name_exact_full}
+    - {path: routes/modules/biblioteca_estructurada.php, via: name_prefix_full}
+    service:
+    - {path: app/Services/BibliotecaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreBibliotecaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateBibliotecaRequest.php, via: name_exact_full}
+- model: Certificado
+  path: app/Models/Certificado.php
+  connection: null
+  table: Certificado
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {alumno: 'belongsTo Alumno (alumno_id, pkid)'}
+  - {curso: 'belongsTo Curso (curso_id, pkid)'}
+  - {emitidoPor: belongsTo User (emitido_por_id)}
+  filter: [app/Filters/CertificadoFilter.php]
+  resources: [app/Http/Resources/CertificadoResource.php]
+  requests: [app/Http/Requests/BaseCertificadoRequest.php, app/Http/Requests/StoreCertificadoRequest.php, app/Http/Requests/UpdateCertificadoRequest.php]
+  service: [app/Services/CertificadoService.php]
+  controller: [app/Http/Controllers/Api/CertificadoController.php]
+  routes: [routes/modules/certificados.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseCertificadoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/CertificadoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/CertificadoFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/CertificadoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/certificados.php, via: name_prefix_full}
+    service:
+    - {path: app/Services/CertificadoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreCertificadoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateCertificadoRequest.php, via: name_exact_full}
+- model: Clase
+  path: app/Models/Clase.php
+  connection: null
+  table: clases
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {curso: 'belongsTo Curso (curso_id, pkid)'}
+  - {archivos: 'hasMany ClaseArchivo (clase_id, pkid)'}
+  - {tareas: 'hasMany Tarea (clase_id, pkid)'}
+  filter: [app/Filters/ClaseFilter.php]
+  resources: [app/Http/Resources/ClaseResource.php]
+  requests: [app/Http/Requests/BaseClaseRequest.php, app/Http/Requests/StoreClaseRequest.php, app/Http/Requests/UpdateClaseRequest.php]
+  service: [app/Services/ClaseService.php]
+  controller: [app/Http/Controllers/Api/ClaseController.php]
+  routes: [routes/modules/clases.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseClaseRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/ClaseController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/ClaseFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/ClaseResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/clases.php, via: name_exact_full}
+    service:
+    - {path: app/Services/ClaseService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreClaseRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateClaseRequest.php, via: name_exact_full}
+- model: ClaseArchivo
+  path: app/Models/ClaseArchivo.php
+  connection: null
+  table: clase_archivos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {clase: 'belongsTo Clase (clase_id, pkid)'}
+  filter: [app/Filters/ClaseArchivoFilter.php]
+  resources: [app/Http/Resources/ClaseArchivoResource.php]
+  requests: [app/Http/Requests/BaseClaseArchivoRequest.php, app/Http/Requests/StoreClaseArchivoRequest.php, app/Http/Requests/UpdateClaseArchivoRequest.php]
+  service: [app/Services/ClaseArchivoService.php]
+  controller: [app/Http/Controllers/Api/ClaseArchivoController.php]
+  routes: [routes/modules/clase_archivos.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseClaseArchivoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/ClaseArchivoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/ClaseArchivoFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/ClaseArchivoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/clase_archivos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/ClaseArchivoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreClaseArchivoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateClaseArchivoRequest.php, via: name_exact_full}
+- model: Curso
+  path: app/Models/Curso.php
+  connection: null
+  table: cursos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {clases: 'hasMany Clase (curso_id, pkid)'}
+  - {matriculas: 'hasMany Matricula (curso_id, pkid)'}
+  - {profesores: 'belongsToMany Profesor (curso_profesor, curso_id)'}
+  - {modulos: 'hasMany CursoModulo (curso_id, pkid)'}
+  filter: [app/Filters/CursoFilter.php]
+  resources: [app/Http/Resources/CursoResource.php]
+  requests: [app/Http/Requests/BaseCursoRequest.php, app/Http/Requests/StoreCursoRequest.php, app/Http/Requests/StoreCursosProfesorRequest.php, app/Http/Requests/UpdateCursoRequest.php]
+  service: [app/Services/CursoService.php]
+  controller: [app/Http/Controllers/Api/CursoController.php]
+  routes: [routes/modules/cursos.php]
+  controller_usado_en: [app/Http/Controllers/Api/CursoModuloController.php]
+  filter_usado_en: [app/Filters/TareaEntregaFilter.php]
+  service_usado_en: [app/Services/AlumnoService.php, app/Services/CursoProfesorService.php, app/Services/MatriculaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseCursoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/CursoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/CursoFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/CursoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/cursos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/CursoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreCursoRequest.php, via: name_exact_full}
+    - {path: app/Http/Requests/StoreCursosProfesorRequest.php, via: name_prefix_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateCursoRequest.php, via: name_exact_full}
+- model: CursoModulo
+  path: app/Models/CursoModulo.php
+  connection: null
+  table: curso_modulos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {curso: 'belongsTo Curso (curso_id, pkid)'}
+  - {secciones: 'hasMany ModuloSeccion (modulo_id, pkid)'}
+  filter: [app/Filters/CursoModuloFilter.php]
+  resources: [app/Http/Resources/CursoModuloResource.php]
+  requests: [app/Http/Requests/BaseCursoModuloRequest.php, app/Http/Requests/StoreCursoModuloRequest.php, app/Http/Requests/UpdateCursoModuloRequest.php]
+  service: [app/Services/CursoModuloService.php]
+  controller: [app/Http/Controllers/Api/CursoModuloController.php]
+  routes: [routes/modules/curso_modulos.php]
+  controller_usado_en: [app/Http/Controllers/Api/ModuloSeccionController.php]
+  service_usado_en: [app/Services/AlumnoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseCursoModuloRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/CursoModuloController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/CursoModuloFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/CursoModuloResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/curso_modulos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/CursoModuloService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreCursoModuloRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateCursoModuloRequest.php, via: name_exact_full}
+- model: CursoProfesor
+  path: app/Models/CursoProfesor.php
+  connection: null
+  table: curso_profesor
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {curso: 'belongsTo Curso (curso_id, pkid)'}
+  - {profesor: 'belongsTo Profesor (profesor_id, pkid)'}
+  filter: [app/Filters/CursoProfesorFilter.php]
+  requests: [app/Http/Requests/BaseCursoProfesorRequest.php]
+  service: [app/Services/CursoProfesorService.php]
+  controller: [app/Http/Controllers/Api/CursoProfesorController.php]
+  routes: [routes/modules/curso_profesor.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseCursoProfesorRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/CursoProfesorController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/CursoProfesorFilter.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/curso_profesor.php, via: name_exact_full}
+    service:
+    - {path: app/Services/CursoProfesorService.php, via: name_exact_full}
+- model: EplContacto
+  path: app/Models/EplContacto.php
+  connection: null
+  table: epl_contactos
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  relaciones:
+  - {user: belongsTo User}
+  resources: [app/Http/Resources/EplContactoResource.php]
+  controller: [app/Http/Controllers/Api/EplContactoController.php]
+  routes: [routes/modules/EPL_contactos.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/EplContactoController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/EplContactoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/EPL_contactos.php, via: name_exact_full}
+- model: EplContentType
+  path: app/Models/EplContentType.php
+  connection: null
+  table: content_type
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {permissions: 'hasMany Permission (content_type_id, pkid)'}
+  filter: [app/Filters/EplContentTypeFilter.php]
+  resources: [app/Http/Resources/EplContentTypeResource.php, app/Http/Resources/EplContentTypeResoure.php]
+  requests: [app/Http/Requests/BaseEplContentTypeRequest.php, app/Http/Requests/StoreEplContentTypeRequest.php, app/Http/Requests/UpdateEplContentTypeRequest.php]
+  service: [app/Services/EplContentTypeService.php]
+  controller: [app/Http/Controllers/Api/EplContentTypeController.php]
+  routes: [routes/modules/content_types.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseEplContentTypeRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/EplContentTypeController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/EplContentTypeFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/EplContentTypeResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/EplContentTypeResoure.php, via: name_prefix_full}
+    route:
+    - {path: routes/modules/content_types.php, via: name_prefix_full}
+    service:
+    - {path: app/Services/EplContentTypeService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreEplContentTypeRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateEplContentTypeRequest.php, via: name_exact_full}
+- model: Matricula
+  path: app/Models/Matricula.php
+  connection: null
+  table: matriculas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {alumno: 'belongsTo Alumno (alumno_id, pkid)'}
+  - {curso: 'belongsTo Curso (curso_id, pkid)'}
+  - {pago: 'hasOne Pago (matricula_id, pkid)'}
+  filter: [app/Filters/MatriculaFilter.php]
+  resources: [app/Http/Resources/MatriculaResource.php]
+  requests: [app/Http/Requests/BaseMatriculaRequest.php, app/Http/Requests/StoreMatriculaRequest.php, app/Http/Requests/UpdateMatriculaRequest.php]
+  service: [app/Services/MatriculaService.php]
+  controller: [app/Http/Controllers/Api/MatriculaController.php]
+  routes: [routes/modules/matriculas.php]
+  service_usado_en: [app/Services/AlumnoService.php, app/Services/ClaseService.php, app/Services/RecursoAcademicoService.php, app/Services/TareaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseMatriculaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/MatriculaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MatriculaFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/MatriculaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/matriculas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/MatriculaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreMatriculaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateMatriculaRequest.php, via: name_exact_full}
+- model: ModuloSeccion
+  path: app/Models/ModuloSeccion.php
+  connection: null
+  table: modulo_secciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {modulo: 'belongsTo CursoModulo (modulo_id, pkid)'}
+  - {recursos: 'hasMany RecursoAcademico (seccion_id, pkid)'}
+  - {tareas: 'hasMany Tarea (seccion_id, pkid)'}
+  filter: [app/Filters/ModuloSeccionFilter.php]
+  resources: [app/Http/Resources/ModuloSeccionResource.php]
+  requests: [app/Http/Requests/BaseModuloSeccionRequest.php, app/Http/Requests/StoreModuloSeccionRequest.php, app/Http/Requests/UpdateModuloSeccionRequest.php]
+  service: [app/Services/ModuloSeccionService.php]
+  controller: [app/Http/Controllers/Api/ModuloSeccionController.php]
+  routes: [routes/modules/modulo_secciones.php]
+  controller_usado_en: [app/Http/Controllers/Api/RecursoAcademicoController.php]
+  filter_usado_en: [app/Filters/TareaFilter.php]
+  service_usado_en: [app/Services/TareaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseModuloSeccionRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/ModuloSeccionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/ModuloSeccionFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/ModuloSeccionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/modulo_secciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/ModuloSeccionService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreModuloSeccionRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateModuloSeccionRequest.php, via: name_exact_full}
+- model: Notificacion
+  path: app/Models/Notificacion.php
+  connection: null
+  table: notificaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {user: belongsTo User}
+  filter: [app/Filters/NotificacionFilter.php]
+  resources: [app/Http/Resources/NotificacionResource.php]
+  requests: [app/Http/Requests/StoreNotificacionRequest.php]
+  service: [app/Services/NotificacionService.php]
+  controller: [app/Http/Controllers/Api/NotificacionController.php]
+  routes: [routes/modules/notificaciones.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/NotificacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/NotificacionFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/NotificacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/notificaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/NotificacionService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreNotificacionRequest.php, via: name_exact_full}
+- model: Pago
+  path: app/Models/Pago.php
+  connection: null
+  table: pagos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {matricula: 'belongsTo Matricula (matricula_id, pkid)'}
+  - {cuotas: 'hasMany PagoCuota (pago_id, pkid)'}
+  filter: [app/Filters/PagoFilter.php]
+  resources: [app/Http/Resources/PagoResource.php]
+  requests: [app/Http/Requests/BasePagoRequest.php, app/Http/Requests/StorePagoRequest.php, app/Http/Requests/UpdatePagoRequest.php]
+  service: [app/Services/PagoService.php]
+  controller: [app/Http/Controllers/Api/PagoController.php]
+  routes: [routes/modules/pagos.php]
+  service_usado_en: [app/Services/MatriculaService.php, app/Services/PagoCuotaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BasePagoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/PagoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/PagoFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/PagoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/pagos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PagoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StorePagoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdatePagoRequest.php, via: name_exact_full}
+- model: PagoCuota
+  path: app/Models/PagoCuota.php
+  connection: null
+  table: pagos_cuotas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {pago: 'belongsTo Pago (pago_id, pkid)'}
+  filter: [app/Filters/PagoCuotaFilter.php]
+  resources: [app/Http/Resources/PagoCuotaResource.php]
+  requests: [app/Http/Requests/BasePagoCuotaRequest.php, app/Http/Requests/StorePagoCuotaRequest.php, app/Http/Requests/UpdatePagoCuotaRequest.php]
+  service: [app/Services/PagoCuotaService.php]
+  controller: [app/Http/Controllers/Api/PagoCuotaController.php]
+  routes: [routes/modules/pagos_cuotas.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BasePagoCuotaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/PagoCuotaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/PagoCuotaFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/PagoCuotaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/pagos_cuotas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PagoCuotaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StorePagoCuotaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdatePagoCuotaRequest.php, via: name_exact_full}
+- model: Permission
+  path: app/Models/Permission.php
+  connection: null
+  table: Permission
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {roles: belongsToMany Role (permission_role)}
+  - {contentType: 'belongsTo EplContentType (content_type_id, pkid)'}
+  - {createdBy: belongsTo User (created_by_id)}
+  - {updatedBy: belongsTo User (updated_by_id)}
+  filter: [app/Filters/PermissionRoleFilter.php]
+  resources: [app/Http/Resources/PermissionResource.php]
+  requests: [app/Http/Requests/BasePermissionRoleRequest.php, app/Http/Requests/StorePermissionRoleRequest.php]
+  service: [app/Services/PermissionRoleService.php]
+  controller: [app/Http/Controllers/Api/PermissionRoleController.php]
+  routes: [routes/modules/permission_roles.php]
+  controller_usado_en: [app/Http/Controllers/Api/PermisoController.php]
+  service_usado_en: [app/Services/PermisoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BasePermissionRoleRequest.php, via: name_prefix_full}
+    controller:
+    - {path: app/Http/Controllers/Api/PermissionRoleController.php, via: name_prefix_full}
+    filter:
+    - {path: app/Filters/PermissionRoleFilter.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/PermissionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/permission_roles.php, via: name_prefix_full}
+    service:
+    - {path: app/Services/PermissionRoleService.php, via: name_prefix_full}
+    store_request:
+    - {path: app/Http/Requests/StorePermissionRoleRequest.php, via: name_prefix_full}
+- model: Profesor
+  path: app/Models/Profesor.php
+  connection: null
+  table: profesores
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {user: 'belongsTo User (user_id, id)'}
+  - {cursos: 'belongsToMany Curso (curso_profesor, profesor_id)'}
+  filter: [app/Filters/ProfesorFilter.php]
+  resources: [app/Http/Resources/ProfesorResource.php]
+  requests: [app/Http/Requests/BaseProfesorRequest.php, app/Http/Requests/StoreProfesorRequest.php, app/Http/Requests/UpdateProfesorRequest.php]
+  service: [app/Services/ProfesorService.php]
+  controller: [app/Http/Controllers/Api/ProfesorController.php]
+  routes: [routes/modules/profesores.php]
+  controller_usado_en: [app/Http/Controllers/Api/BibliotecaEstructuradaController.php]
+  service_usado_en: [app/Services/CursoProfesorService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseProfesorRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/ProfesorController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/ProfesorFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/ProfesorResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/profesores.php, via: name_exact_full}
+    service:
+    - {path: app/Services/ProfesorService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreProfesorRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateProfesorRequest.php, via: name_exact_full}
+- model: Publicacion
+  path: app/Models/Publicacion.php
+  connection: null
+  table: publicaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {user: belongsTo User}
+  - {reacciones: 'hasMany PublicacionReaccion (publicacion_id, pkid)'}
+  - {comentarios: 'hasMany PublicacionComentario (publicacion_id, pkid)'}
+  filter: [app/Filters/PublicacionFilter.php]
+  resources: [app/Http/Resources/PublicacionResource.php]
+  requests: [app/Http/Requests/BasePublicacionRequest.php, app/Http/Requests/StorePublicacionRequest.php, app/Http/Requests/UpdatePublicacionRequest.php]
+  service: [app/Services/PublicacionService.php]
+  controller: [app/Http/Controllers/Api/PublicacionController.php]
+  routes: [routes/modules/publicaciones.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BasePublicacionRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/PublicacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/PublicacionFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/PublicacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/publicaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PublicacionService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StorePublicacionRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdatePublicacionRequest.php, via: name_exact_full}
+- model: PublicacionComentario
+  path: app/Models/PublicacionComentario.php
+  connection: null
+  table: publicacion_comentarios
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {publicacion: 'belongsTo Publicacion (publicacion_id, pkid)'}
+  - {user: belongsTo User}
+  resources: [app/Http/Resources/PublicacionComentarioResource.php]
+  controller_usado_en: [app/Http/Controllers/Api/PublicacionController.php]
+  service_usado_en: [app/Services/PublicacionService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/PublicacionComentarioResource.php, via: name_exact_full}
+- model: PublicacionReaccion
+  path: app/Models/PublicacionReaccion.php
+  connection: null
+  table: publicacion_reacciones
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {publicacion: 'belongsTo Publicacion (publicacion_id, pkid)'}
+  - {user: belongsTo User}
+  resources: [app/Http/Resources/PublicacionReaccionResource.php]
+  service_usado_en: [app/Services/PublicacionService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/PublicacionReaccionResource.php, via: name_exact_full}
+- model: RecursoAcademico
+  path: app/Models/RecursoAcademico.php
+  connection: null
+  table: recursos_academicos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {seccion: 'belongsTo ModuloSeccion (seccion_id, pkid)'}
+  filter: [app/Filters/RecursoAcademicoFilter.php]
+  resources: [app/Http/Resources/RecursoAcademicoResource.php]
+  requests: [app/Http/Requests/BaseRecursoAcademicoRequest.php, app/Http/Requests/StoreRecursoAcademicoRequest.php, app/Http/Requests/UpdateRecursoAcademicoRequest.php]
+  service: [app/Services/RecursoAcademicoService.php]
+  controller: [app/Http/Controllers/Api/RecursoAcademicoController.php]
+  routes: [routes/modules/recursos_academicos.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseRecursoAcademicoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/RecursoAcademicoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/RecursoAcademicoFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/RecursoAcademicoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/recursos_academicos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/RecursoAcademicoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreRecursoAcademicoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateRecursoAcademicoRequest.php, via: name_exact_full}
+- model: Role
+  path: app/Models/Role.php
+  connection: null
+  table: Role
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {users: belongsToMany User (role_user)}
+  - {permissions: belongsToMany Permission (permission_role)}
+  - {createdBy: belongsTo User (created_by_id)}
+  - {updatedBy: belongsTo User (updated_by_id)}
+  service_usado_en: [app/Services/PermisoService.php, app/Services/PermissionRoleService.php]
+  roles: {}
+- model: Tarea
+  path: app/Models/Tarea.php
+  connection: null
+  table: tareas
+  pk: {name: pkid, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {seccion: 'belongsTo ModuloSeccion (seccion_id, pkid)'}
+  - {entregas: 'hasMany TareaEntrega (tarea_id, pkid)'}
+  filter: [app/Filters/TareaFilter.php]
+  resources: [app/Http/Resources/TareaResource.php]
+  requests: [app/Http/Requests/BaseTareaRequest.php, app/Http/Requests/StoreTareaRequest.php, app/Http/Requests/UpdateTareaRequest.php]
+  service: [app/Services/TareaService.php]
+  controller: [app/Http/Controllers/Api/TareaController.php]
+  routes: [routes/modules/tareas.php]
+  service_usado_en: [app/Services/TareaEntregaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseTareaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/TareaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/TareaFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/TareaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/tareas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/TareaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreTareaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateTareaRequest.php, via: name_exact_full}
+- model: TareaEntrega
+  path: app/Models/TareaEntrega.php
+  connection: null
+  table: tareas_entregas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {tarea: 'belongsTo Tarea (tarea_id, pkid)'}
+  - {alumno: 'belongsTo Alumno (alumno_id, pkid)'}
+  filter: [app/Filters/TareaEntregaFilter.php]
+  resources: [app/Http/Resources/TareaEntregaResource.php]
+  requests: [app/Http/Requests/BaseTareaEntregaRequest.php, app/Http/Requests/StoreTareaEntregaRequest.php, app/Http/Requests/UpdateTareaEntregaRequest.php]
+  service: [app/Services/TareaEntregaService.php]
+  controller: [app/Http/Controllers/Api/TareaEntregaController.php]
+  routes: [routes/modules/tareas_entregas.php]
+  service_usado_en: [app/Services/AlumnoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseTareaEntregaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/TareaEntregaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/TareaEntregaFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/TareaEntregaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/tareas_entregas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/TareaEntregaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreTareaEntregaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateTareaEntregaRequest.php, via: name_exact_full}
+- model: User
+  path: app/Models/User.php
+  connection: null
+  table: User
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  relaciones:
+  - {role: belongsTo Role (rol_id)}
+  - {roles: belongsToMany Role (role_user)}
+  - {permissions: belongsToMany Permission (user_permission)}
+  - {alumno: hasOne Alumno}
+  - {profesor: hasOne Profesor}
+  filter: [app/Filters/UserFilter.php]
+  resources: [app/Http/Resources/UserResource.php]
+  requests: [app/Http/Requests/BaseUserRequest.php, app/Http/Requests/StoreUserRequest.php, app/Http/Requests/UpdateUserRequest.php]
+  service: [app/Services/UserService.php]
+  controller: [app/Http/Controllers/Api/UserController.php]
+  routes: [routes/modules/users.php]
+  controller_usado_en: [app/Http/Controllers/Api/AuthController.php, app/Http/Controllers/Api/PermisoController.php]
+  service_usado_en: [app/Services/AlumnoService.php, app/Services/CursoService.php, app/Services/PermisoService.php, app/Services/ProfesorService.php, app/Services/PublicacionService.php, app/Services/UserPermissionService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/BaseUserRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/UserController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/UserFilter.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/UserResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/users.php, via: name_stem}
+    service:
+    - {path: app/Services/UserService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/StoreUserRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/UpdateUserRequest.php, via: name_exact_full}

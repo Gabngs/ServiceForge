@@ -463,6 +463,17 @@ class ModelResourceMatchDialog(QDialog):
         else:
             layout.addWidget(QLabel("No se encontró ningún Resource candidato — se generará uno nuevo."))
 
+        # Los demás roles (Filter, Requests, Service, Controller, rutas...): el modelo de
+        # estructura también los reconoce, pero la generación todavía no los usa -- se muestran
+        # solo para que el desarrollador vea qué ya existe en su proyecto antes de generar.
+        others = {role: found[0] for role, found in match.others.items() if found and found[0].score >= 0.5}
+        if others:
+            info = QLabel("Otros archivos ya existentes que parecen de este Model (solo informativo, no se confirman):")
+            info.setWordWrap(True)
+            layout.addWidget(info)
+            for role, best in others.items():
+                layout.addWidget(QLabel(f"  {role}: {best.file.class_name}  —  confianza {best.score:.0%}  —  {best.file.path}"))
+
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
@@ -1301,11 +1312,11 @@ class MainWindow(QMainWindow):
         self.session_resolved_fks: dict[str, str] = {}
         self._connection_worker: ConnectionWorker | None = None
 
-        # Modelo persistente de matching Modelo↔Resource -- ver
-        # match_learner.py. Se carga una sola vez por sesión y cada
-        # confirmación/corrección del usuario (ver
-        # _on_confirm_model_resource_match) lo actualiza y lo guarda al toque.
-        self.match_learner = match_learner.MatchLearner.load()
+        # Modelo persistente de estructura (Model ↔ Resource y los demás roles de un
+        # backend Laravel) -- ver match_learner.StructureLearner y datasets/structure/.
+        # Se carga una sola vez por sesión y cada confirmación/corrección del usuario
+        # (ver _apply_model_resource_confirmation) lo actualiza y lo guarda al toque.
+        self.match_learner = match_learner.StructureLearner.load()
         self.current_model_resource_match: model_resource_scan.ModelResourceMatch | None = None
         # tabla -> ruta del Resource ya existente que el desarrollador
         # confirmó (aunque no siga la convención de esta herramienta) -- se

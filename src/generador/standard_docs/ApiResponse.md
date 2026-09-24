@@ -97,6 +97,8 @@ Cuando un FormRequest falla, Laravel retorna automáticamente:
 
 No hay que llamar nada en el controller — el FormRequest lo maneja solo.
 
+La **misma respuesta** se obtiene cuando un [[Service del Módulo]] lanza `ValidationException::withMessages([...])` por una regla de negocio (ver [[Service del Módulo#Errores de negocio — el Service los lanza, el frontend solo los muestra]]): el Controller no cambia. Por eso los errores de negocio no pasan por `responseBadRequest`/`responseError` en el Controller — esos métodos quedan para casos puntuales de infraestructura, no para reglas de negocio.
+
 ---
 
 ## Con Resource — transformación de datos

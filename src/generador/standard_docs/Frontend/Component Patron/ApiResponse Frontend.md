@@ -22,6 +22,7 @@ import { IAuditUser } from './audit-user.interface';
 export interface IModelBase {
   id?:             string;
   activo?:         boolean;
+  estado?:  number | string; 
   created_by_id?:  IAuditUser | null;
   updated_by_id?:  IAuditUser | null;
   deleted_by_id?:  IAuditUser | null;
@@ -32,6 +33,7 @@ export interface IModelBase {
 
 // Query params que ACEPTA cualquier endpoint de listado con useFilters()
 export interface IFiltersBase {
+  sorts?: string;
   page?:      number;
   per_page?:  number;
   paginate?:  boolean;   // true → el backend llama dynamicPaginate()
@@ -81,16 +83,7 @@ export interface IMenuSingleResponse {
 
 Todo módulo — listado o registro único — tiene su propia `I{Modelo}Response`/`I{Modelo}SingleResponse`, nunca un tipo genérico compartido: cada modelo ya tiene su interfaz (ver [[Interfaz de Modulo]]), así que no hay ningún caso real sin una propia. Ver la plantilla completa en [[Interfaz de Modulo]].
 
-**Errores de validación (422):** no traen `data`, traen `errors` por campo — esta sí es una forma genuinamente compartida entre módulos (el shape de un error 422 no depende del modelo):
-
-```typescript
-// models/api-response.model.ts
-export interface ApiValidationErrorResponse {
-  status:  number;
-  message: string;
-  errors:  Record<string, string[]>;
-}
-```
+**Los errores no se tipan.** Una respuesta de error (422 de validación, 400, 401, 404...) no trae `data`: trae `message` y, en el 422, `errors` por campo. El frontend **no declara ninguna interfaz para eso** — no hay `ApiErrorResponse` ni equivalente. El único que lee el cuerpo de un error es [[Helper de Mensajes]] (`notifyHttpError`), de forma dinámica, sin asumir una forma fija. Regla completa en [[Helper de Mensajes#Regla — el frontend nunca declara errores]].
 
 ---
 
@@ -100,6 +93,12 @@ export interface ApiValidationErrorResponse {
 // Un solo registro — I{Modelo}SingleResponse propio, no un genérico compartido
 show(id: string): Observable<IContentModelSingleResponse> {
   return this.http.get<IContentModelSingleResponse>(`${this.url}/${id}`);
+}
+
+// create / update / delete — el backend responde con el Resource del registro
+// (en delete, el registro eliminado), así que es el mismo I{Modelo}SingleResponse
+delete(id: string): Observable<IContentModelSingleResponse> {
+  return this.http.delete<IContentModelSingleResponse>(`${this.url}/${id}`);
 }
 
 // Colección, forma estándar — filters SIEMPRE tipado con la I{Entidad}Filtros del

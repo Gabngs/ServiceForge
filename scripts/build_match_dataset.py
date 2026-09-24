@@ -5,7 +5,13 @@ hay proyectos nuevos para sumar al dataset -- no en cada build ni desde la
 app en uso.
 
 Uso:
-    python scripts/build_match_dataset.py <raiz_backend_1> [<raiz_backend_2> ...]
+    python scripts/build_match_dataset.py [--append] <raiz_backend_1> [<raiz_backend_2> ...]
+
+--append: suma los proyectos nuevos al dataset ya guardado en _match_dataset.json
+en vez de reemplazarlo -- para cuando se quiere ampliar el dataset con
+proyectos nuevos sin volver a escanear los que ya están (o que ya no están
+disponibles en disco). Sin este flag, el comportamiento es el de siempre:
+reemplaza el dataset completo con SOLO los proyectos pasados por argv.
 
 Ground truth: no hay un dataset etiquetado a mano, así que se infiere con
 reglas ESTRICTAS (no la heurística difusa de puntaje continuo que usa la
@@ -114,11 +120,16 @@ def build_dataset(project_roots: list[Path]) -> tuple[list[list[float]], list[in
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) < 2:
-        print("Uso: python scripts/build_match_dataset.py <raiz_backend_1> [<raiz_backend_2> ...]")
+    args = argv[1:]
+    append = "--append" in args
+    if append:
+        args = [a for a in args if a != "--append"]
+
+    if not args:
+        print("Uso: python scripts/build_match_dataset.py [--append] <raiz_backend_1> [<raiz_backend_2> ...]")
         return 1
 
-    roots = [Path(p) for p in argv[1:]]
+    roots = [Path(p) for p in args]
     for root in roots:
         if not root.is_dir():
             print(f"No existe o no es una carpeta: {root}")
@@ -126,7 +137,7 @@ def main(argv: list[str]) -> int:
 
     X, y, stats = build_dataset(roots)
     print(
-        f"Dataset: {len(X)} ejemplos ({stats['positives']} positivos, {stats['hard_negatives']} negativos duros) "
+        f"Dataset nuevo: {len(X)} ejemplos ({stats['positives']} positivos, {stats['hard_negatives']} negativos duros) "
         f"de {stats['models']} Models en {stats['projects']} proyecto(s)."
     )
     if not X:
@@ -134,11 +145,27 @@ def main(argv: list[str]) -> int:
         return 1
 
     dataset_path = Path(__file__).resolve().parent.parent / "src" / "generador" / "_match_dataset.json"
+    if append and dataset_path.exists():
+        previous = json.loads(dataset_path.read_text(encoding="utf-8"))
+        if list(previous.get("feature_names", [])) != list(FEATURE_NAMES):
+            print(f"El dataset existente en {dataset_path} usa otro esquema de features -- no se puede hacer --append.")
+            return 1
+        X = previous["X"] + X
+        y = previous["y"] + y
+        prev_stats = previous.get("stats", {})
+        stats = {
+            "projects": prev_stats.get("projects", 0) + stats["projects"],
+            "models": prev_stats.get("models", 0) + stats["models"],
+            "positives": prev_stats.get("positives", 0) + stats["positives"],
+            "hard_negatives": prev_stats.get("hard_negatives", 0) + stats["hard_negatives"],
+        }
+        print(f"Sumado al dataset existente -- total acumulado: {len(X)} ejemplos de {stats['projects']} proyecto(s).")
+
     dataset_path.write_text(
         json.dumps({"X": X, "y": y, "feature_names": list(FEATURE_NAMES), "stats": stats}, indent=2),
         encoding="utf-8",
     )
-    print(f"Dataset guardado en {dataset_path} (append manual la próxima vez que se sumen proyectos).")
+    print(f"Dataset guardado en {dataset_path}.")
 
     learner = MatchLearner()
     learner.fit_batch(X, y)

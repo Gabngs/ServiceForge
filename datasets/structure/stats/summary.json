@@ -1,0 +1,252 @@
+{
+  "generated_at": "24-09-2026 00:10:31",
+  "rows": 72179,
+  "positives": 12074,
+  "negatives": 60105,
+  "by_origin": {
+    "sintetico": 60420,
+    "real": 11759
+  },
+  "by_role": {
+    "controller": 9321,
+    "resource": 8140,
+    "filter": 7819,
+    "store_request": 7688,
+    "update_request": 7671,
+    "route": 7503,
+    "service": 7262,
+    "relation_resource": 6888,
+    "request_trait": 5930,
+    "base_request": 3957
+  },
+  "by_split": {
+    "synthetic_train": 47657,
+    "synthetic_val": 12763,
+    "real": 11759
+  },
+  "by_negative_kind": {
+    "duro": 47018,
+    "facil": 11601,
+    "usado_en": 1486
+  },
+  "by_via": {
+    "manifest": 10149,
+    "name_exact_full": 1263,
+    "declared": 183,
+    "route_controller": 167,
+    "name_prefix_full": 148,
+    "name_exact": 101,
+    "name_stem": 21,
+    "name_prefix": 20,
+    "folder": 11,
+    "import_single": 11
+  },
+  "repos": {
+    "siaw-laravel-backend": {
+      "origen": "real",
+      "models": 88,
+      "rows": 2433
+    },
+    "sip-laravel-backend": {
+      "origen": "real",
+      "models": 122,
+      "rows": 2851
+    },
+    "gsp-back": {
+      "origen": "real",
+      "models": 108,
+      "rows": 3311
+    },
+    "AgencyWeb-Back": {
+      "origen": "real",
+      "models": 45,
+      "rows": 2135
+    },
+    "Peru_Lex_Back": {
+      "origen": "real",
+      "models": 26,
+      "rows": 1029
+    },
+    "repo_01": {
+      "origen": "sintetico",
+      "models": 41,
+      "rows": 2335
+    },
+    "repo_02": {
+      "origen": "sintetico",
+      "models": 39,
+      "rows": 1998
+    },
+    "repo_03": {
+      "origen": "sintetico",
+      "models": 39,
+      "rows": 2229
+    },
+    "repo_04": {
+      "origen": "sintetico",
+      "models": 49,
+      "rows": 2242
+    },
+    "repo_05": {
+      "origen": "sintetico",
+      "models": 26,
+      "rows": 1460
+    },
+    "repo_06": {
+      "origen": "sintetico",
+      "models": 19,
+      "rows": 905
+    },
+    "repo_07": {
+      "origen": "sintetico",
+      "models": 47,
+      "rows": 2389
+    },
+    "repo_08": {
+      "origen": "sintetico",
+      "models": 41,
+      "rows": 2337
+    },
+    "repo_09": {
+      "origen": "sintetico",
+      "models": 16,
+      "rows": 868
+    },
+    "repo_10": {
+      "origen": "sintetico",
+      "models": 40,
+      "rows": 2237
+    },
+    "repo_11": {
+      "origen": "sintetico",
+      "models": 29,
+      "rows": 1490
+    },
+    "repo_12": {
+      "origen": "sintetico",
+      "models": 24,
+      "rows": 1210
+    },
+    "repo_13": {
+      "origen": "sintetico",
+      "models": 59,
+      "rows": 3337
+    },
+    "repo_14": {
+      "origen": "sintetico",
+      "models": 45,
+      "rows": 2277
+    },
+    "repo_15": {
+      "origen": "sintetico",
+      "models": 59,
+      "rows": 2990
+    },
+    "repo_16": {
+      "origen": "sintetico",
+      "models": 27,
+      "rows": 1303
+    },
+    "repo_17": {
+      "origen": "sintetico",
+      "models": 32,
+      "rows": 1309
+    },
+    "repo_18": {
+      "origen": "sintetico",
+      "models": 56,
+      "rows": 3018
+    },
+    "repo_19": {
+      "origen": "sintetico",
+      "models": 40,
+      "rows": 2043
+    },
+    "repo_20": {
+      "origen": "sintetico",
+      "models": 43,
+      "rows": 2485
+    },
+    "repo_21": {
+      "origen": "sintetico",
+      "models": 19,
+      "rows": 865
+    },
+    "repo_22": {
+      "origen": "sintetico",
+      "models": 44,
+      "rows": 2523
+    },
+    "repo_23": {
+      "origen": "sintetico",
+      "models": 60,
+      "rows": 3460
+    },
+    "repo_24": {
+      "origen": "sintetico",
+      "models": 61,
+      "rows": 2660
+    },
+    "repo_25": {
+      "origen": "sintetico",
+      "models": 19,
+      "rows": 833
+    },
+    "repo_26": {
+      "origen": "sintetico",
+      "models": 45,
+      "rows": 2540
+    },
+    "repo_27": {
+      "origen": "sintetico",
+      "models": 32,
+      "rows": 1615
+    },
+    "repo_28": {
+      "origen": "sintetico",
+      "models": 21,
+      "rows": 1023
+    },
+    "repo_29": {
+      "origen": "sintetico",
+      "models": 30,
+      "rows": 1375
+    },
+    "repo_30": {
+      "origen": "sintetico",
+      "models": 59,
+      "rows": 3064
+    }
+  },
+  "features": [
+    "name_similarity",
+    "field_jaccard",
+    "mixin_match",
+    "same_namespace",
+    "name_sim_norm",
+    "name_contains",
+    "path_segment_match",
+    "imports_model",
+    "declared_by_model",
+    "route_names_controller",
+    "dominant_root",
+    "subfolder_share",
+    "has_columns",
+    "has_keys",
+    "import_breadth",
+    "role_filter",
+    "role_resource",
+    "role_relation_resource",
+    "role_base_request",
+    "role_store_request",
+    "role_update_request",
+    "role_request_trait",
+    "role_service",
+    "role_controller",
+    "role_route"
+  ],
+  "synthetic_role_consistency": {
+    "files": 10149,
+    "mismatched": 0
+  }
+}
