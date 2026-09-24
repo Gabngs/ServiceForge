@@ -1,0 +1,2784 @@
+# Ground truth de sip-laravel-backend -- generado por scripts/scan_backend_structure.py
+# commit 954baeef (production), 23-09-2026 23:41:23. Formato: ver docs del script.
+- model: actualizacion_archivos
+  path: app/Models/dbsiaw/actualizacion_archivos.php
+  connection: mysql_dbsiaw
+  table: actualizacion_archivos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Siaw/actualizacionSunController.php]
+  roles: {}
+- model: actualizacion_terminales
+  path: app/Models/dbsiaw/actualizacion_terminales.php
+  connection: mysql_dbsiaw
+  table: actualizacion_terminales
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Siaw/actualizacionSunController.php]
+  roles: {}
+- model: actualizacion_tiendas
+  path: app/Models/dbsiaw/actualizacion_tiendas.php
+  connection: mysql_dbsiaw
+  table: actualizacion_tiendas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller: [app/Http/Controllers/Api/Reports/sip_tiendasreportsController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Siaw/actualizacionSunController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Reports/sip_tiendasreportsController.php, via: name_prefix}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: actualizacion_transacciones
+  path: app/Models/dbsiaw/actualizacion_transacciones.php
+  connection: mysql_dbsiaw
+  table: actualizacion_transacciones
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Siaw/actualizacionSunController.php]
+  roles: {}
+- model: auditlog_logentry
+  path: app/Models/dbsiaw/auditlog_logentry.php
+  connection: mysql_dbsiaw
+  table: auditlog_logentry
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php]
+  roles: {}
+- model: auth_permission
+  path: app/Models/dbsiaw/auth_permission.php
+  connection: mysql_dbsiaw
+  table: auth_permission
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_tipolegajosController.php]
+  roles: {}
+- model: bitacora_procesos_sip
+  path: app/Models/dbsincro/bitacora_procesos_sip.php
+  connection: mysql
+  table: bitacora_procesos_sip
+  pk: {name: pkid, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  default_filters: bitacora_procesos_sipFilters
+  filter: [app/Filters/dbsincro/bitacora_procesos_sipFilters.php]
+  resources: [app/Http/Resources/Sincro_sip/bitacora_procesos_sipResource.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/bitacora_procesos_sipController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/bitacora_procesos_sipController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsincro/bitacora_procesos_sipFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sincro_sip/bitacora_procesos_sipResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: bitacora_sincronizacion
+  path: app/Models/dbsincro/bitacora_sincronizacion.php
+  connection: mysql
+  table: bitacora_sincronizacion
+  pk: {name: pkid, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  default_filters: bitacora_sincronizacionFilters
+  filter: [app/Filters/dbsincro/bitacora_sincronizacionFilters.php]
+  resources: [app/Http/Resources/Sincro_sip/bitacora_sincronizacionResource.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/bitacora_sincronizacionController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/bitacora_sincronizacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsincro/bitacora_sincronizacionFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sincro_sip/bitacora_sincronizacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_articulos
+  path: app/Models/dbsiaw/catalogo_articulos.php
+  connection: mysql_dbsiaw
+  table: catalogo_articulos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_articulosFilters
+  filter: [app/Filters/dbsiaw/catalogo_articulosFilters.php]
+  controller: [app/Http/Controllers/Api/SempiTerno/consulta_articulosController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SempiTerno/consulta_articulosController.php, via: import_single}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_articulosFilters.php, via: declared}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_empresa
+  path: app/Models/dbsiaw/catalogo_empresa.php
+  connection: mysql_dbsiaw
+  table: catalogo_empresa
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: []
+  relaciones:
+  - {catalogo_tienda: belongsToMany catalogo_tienda}
+  resources: [app/Http/Resources/Sempiterno/sip_empresasDataResource.php, app/Http/Resources/Siaw/catalogo_empresaRelationResource.php, app/Http/Resources/Siaw/catalogo_empresaResource.php, app/Http/Resources/Sip/sip_empresaResource.php]
+  controller: [app/Http/Controllers/Api/Reports/sip_empresasreportsController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personallegajosreportsController.php, app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/SempiTerno/consulta_personalController.php,
+    app/Http/Controllers/Api/SempiTerno/consulta_tiendasController.php, app/Http/Controllers/Api/Siaw/catalogo_tiendaController.php, app/Http/Controllers/Api/Sip/PlanillaFinanzasMacroExportController.php,
+    app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php, app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php, app/Http/Controllers/Api/Sip/sip_periodocontableController.php,
+    app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientolegajosdetController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php, app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php,
+    app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_periodovacacionalFilters.php, app/Filters/dbsip/sip_personalmovimientovacacionesFilters.php]
+  requests_usado_en: [app/Http/Requests/Sip/sip_personalboletavacaciones/GenerarMacroPlanillaRequest.php]
+  service_usado_en: [app/Services/PeriodoVacacionalService.php, app/Services/SolicitudVacacionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Reports/sip_empresasreportsController.php, via: name_prefix}
+    relation_resource:
+    - {path: app/Http/Resources/Sempiterno/sip_empresasDataResource.php, via: name_stem}
+    - {path: app/Http/Resources/Siaw/catalogo_empresaRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_empresaResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_empresaResource.php, via: name_exact}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_empresatienda
+  path: app/Models/dbsiaw/catalogo_empresatienda.php
+  connection: mysql_dbsiaw
+  table: catalogo_empresatienda
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: []
+  service: [app/Services/CatalogoEmpresaTiendaService.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_empresasreportsController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Reports/sip_tiendasreportsController.php, app/Http/Controllers/Api/Siaw/catalogo_tiendaController.php, app/Http/Controllers/Api/Sip/PlanillaFinanzasMacroExportController.php,
+    app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_personalboletavacacionesFilters.php]
+  service_usado_en: [app/Services/PersonalBoletaVacacionesService.php, app/Services/SolicitudVacacionesService.php]
+  roles:
+    service:
+    - {path: app/Services/CatalogoEmpresaTiendaService.php, via: name_exact_full}
+- model: catalogo_parametrosistema
+  path: app/Models/dbsiaw/catalogo_parametrosistema.php
+  connection: mysql_dbsiaw
+  table: catalogo_parametrosistema
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_parametrosistemaFilters
+  relaciones:
+  - {user_created: 'hasOne User (pkid, created_by_id)'}
+  - {user_updated: 'hasOne User (pkid, updated_by_id)'}
+  - {tipo_sistema: 'hasOne catalogo_tiposistema (pkid, tipo_sistema_id)'}
+  filter: [app/Filters/dbsiaw/catalogo_parametrosistemaFilters.php]
+  resources: [app/Http/Resources/Siaw/catalogo_parametrosistemaResource.php]
+  service: [app/Services/CatalogoParametroSistemaService.php]
+  controller: [app/Http/Controllers/Api/Siaw/catalogo_parametrosistemaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personalplanillareportsController.php, app/Http/Controllers/Api/Sig/sip_tiemposasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  service_usado_en: [app/Services/AsignacionFamiliarService.php, app/Services/PersonalmovimientosconsumoService.php, app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/catalogo_parametrosistemaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_parametrosistemaFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_parametrosistemaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/CatalogoParametroSistemaService.php, via: name_exact_full}
+- model: catalogo_tienda
+  path: app/Models/dbsiaw/catalogo_tienda.php
+  connection: mysql_dbsiaw
+  table: catalogo_tienda
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: []
+  relaciones:
+  - {catalogo_empresa: belongsToMany catalogo_empresa}
+  resources: [app/Http/Resources/Sempiterno/sip_tiendaDataResource.php, app/Http/Resources/Siaw/catalogo_tiendaRelacionResource.php, app/Http/Resources/Siaw/catalogo_tiendaResource.php]
+  service: [app/Services/CatalogoTiendaService.php]
+  controller: [app/Http/Controllers/Api/Siaw/catalogo_tiendaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php, app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php, app/Http/Controllers/Api/Reports/sip_personalplanillareportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php, app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_tiendasreportsController.php, app/Http/Controllers/Api/SempiTerno/consulta_personalController.php, app/Http/Controllers/Api/SempiTerno/consulta_tiendasController.php,
+    app/Http/Controllers/Api/Siaw/actualizacionSunController.php, app/Http/Controllers/Api/Siaw/catalogo_tienda_dnsController.php, app/Http/Controllers/Api/Sig/BajaBoletaPagoController.php, app/Http/Controllers/Api/Sig/SubirMovimientosController.php,
+    app/Http/Controllers/Api/Sig/sip_tiemposasistenciaController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/PlanillaFinanzasMacroExportController.php,
+    app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php, app/Http/Controllers/Api/Sip/sip_biotimeController.php, app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php,
+    app/Http/Controllers/Api/Sip/sip_maestroslectoresController.php, app/Http/Controllers/Api/Sip/sip_motivospremiacionController.php, app/Http/Controllers/Api/Sip/sip_nivel_salarial_cabController.php,
+    app/Http/Controllers/Api/Sip/sip_nivel_salarial_tiendasController.php, app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalbloqueoasistenciaController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalcargosController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientocargoPController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientohorarioController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php, app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php,
+    app/Http/Controllers/Api/Sip/sip_reportesasistenciaController.php, app/Http/Controllers/Api/Sip/sip_tiendacargoController.php, app/Http/Controllers/Api/Sip/sip_tiendaoperacionesController.php, app/Http/Controllers/Api/Sip/sip_tipoplanillatiendasController.php,
+    app/Http/Controllers/Api/Sip/sip_zonalmovimientozonaController.php, app/Http/Controllers/Api/Sun/sun_consultaasistenciaController.php, app/Http/Controllers/Api/Sun/sun_consultaboletaController.php,
+    app/Http/Controllers/Api/Sun/sun_consultatiemposController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_auditorasFilters.php, app/Filters/dbsip/sip_auditoras_tiendasFilters.php, app/Filters/dbsip/sip_motivospremiacionFilters.php, app/Filters/dbsip/sip_personal_segurosFilters.php,
+    app/Filters/dbsip/sip_personalboletavacacionesFilters.php, app/Filters/dbsip/sip_personalmovimientosconsumoFilters.php, app/Filters/dbsip/sip_personalmovimientovacacionesFilters.php, app/Filters/dbsip/sip_personalventavacacionesFilters.php,
+    app/Filters/dbsip/sip_solicitudvacacionesFilters.php]
+  requests_usado_en: [app/Http/Requests/Sip/StoreAuditorasTiendasRequest.php, app/Http/Requests/Sip/sip_personalboletavacaciones/GenerarMacroPlanillaRequest.php]
+  resources_usado_en: [app/Http/Resources/Sip/sip_personalAsistenciaResource.php, app/Http/Resources/Sip/sip_personalRelacionResource.php]
+  service_usado_en: [app/Services/AuditorasService.php, app/Services/AuditorasTiendasService.php, app/Services/EstandarPersonalService.php, app/Services/PersonalBoletaVacacionesService.php, app/Services/PersonalMovimientoHorarioDetService.php,
+    app/Services/PersonalMovimientoTiendaService.php, app/Services/PersonalMovimientoVacacionesService.php, app/Services/PersonalPivotService.php, app/Services/PersonalSegurosService.php, app/Services/PersonalVentaVacacionesService.php,
+    app/Services/PersonalmovimientosconsumoService.php, app/Services/Reportes/PersonalDescuentosReportService.php, app/Services/SolicitudVacacionesService.php, app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/catalogo_tiendaController.php, via: name_exact_full}
+    relation_resource:
+    - {path: app/Http/Resources/Sempiterno/sip_tiendaDataResource.php, via: name_exact}
+    - {path: app/Http/Resources/Siaw/catalogo_tiendaRelacionResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_tiendaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/CatalogoTiendaService.php, via: name_exact_full}
+- model: catalogo_tienda_dns
+  path: app/Models/dbsiaw/catalogo_tienda_dns.php
+  connection: mysql_dbsiaw
+  table: catalogo_tienda_dns
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: []
+  default_filters: Catalogo_tienda_dnsFilters
+  filter: [app/Filters/dbsiaw/catalogo_tienda_dnsFilters.php]
+  resources: [app/Http/Resources/Siaw/catalogo_tienda_dnsResource.php]
+  controller: [app/Http/Controllers/Api/Siaw/catalogo_tienda_dnsController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sincro_sip/bitacora_sincronizacionController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/catalogo_tienda_dnsController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_tienda_dnsFilters.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_tienda_dnsResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_tiendaturnos
+  path: app/Models/dbsiaw/catalogo_tiendaturnos.php
+  connection: mysql_dbsiaw
+  table: catalogo_tiendaturnos
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/Siaw/catalogo_tiendaturnosResource.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_tiendacargoController.php]
+  service_usado_en: [app/Services/EstandarPersonalService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_tiendaturnosResource.php, via: name_exact_full}
+- model: catalogo_tiendazona
+  path: app/Models/dbsiaw/catalogo_tiendazona.php
+  connection: mysql_dbsiaw
+  table: catalogo_tiendazona
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  controller_usado_en: [app/Http/Controllers/Api/SempiTerno/consulta_personalController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php]
+  service_usado_en: [app/Services/PersonalmovimientosconsumoService.php]
+  roles: {}
+- model: catalogo_tiposistema
+  path: app/Models/dbsiaw/catalogo_tiposistema.php
+  connection: mysql_dbsiaw
+  table: catalogo_tiposistema
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Siaw/catalogo_parametrosistemaController.php]
+  roles: {}
+- model: catalogo_turnos
+  path: app/Models/dbsiaw/catalogo_turnos.php
+  connection: mysql_dbsiaw
+  table: catalogo_turnos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  roles: {}
+- model: catalogo_ubigeo
+  path: app/Models/dbsiaw/catalogo_ubigeo.php
+  connection: mysql_dbsiaw
+  table: catalogo_ubigeo
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/Siaw/catalogo_ubigeoResource.php, app/Http/Resources/Siaw/catalogo_ubigeofromparentResource.php]
+  controller: [app/Http/Controllers/Api/Siaw/catalogo_ubigeoController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/migrationController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/catalogo_ubigeoController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_ubigeoResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Siaw/catalogo_ubigeofromparentResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_zona
+  path: app/Models/dbsiaw/catalogo_zona.php
+  connection: mysql_dbsiaw
+  table: catalogo_zona
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Siaw/catalogo_zonaResource.php]
+  controller_usado_en: [app/Http/Controllers/Api/SempiTerno/consulta_personalController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalcentralController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalzonalController.php, app/Http/Controllers/Api/Sip/sip_zonalmovimientozonaController.php]
+  service_usado_en: [app/Services/PersonalmovimientosconsumoService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_zonaResource.php, via: name_exact_full}
+- model: django_content_type
+  path: app/Models/dbsiaw/django_content_type.php
+  connection: mysql_dbsiaw
+  table: django_content_type
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php]
+  roles: {}
+- model: int_motivoscese
+  path: app/Models/dbsincro/int_motivoscese.php
+  connection: mysql
+  table: int_motivoscese
+  pk: {name: codper, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  roles: {}
+- model: pl_cargos
+  path: app/Models/dbsincro/pl_cargos.php
+  connection: mysql
+  table: pl_cargos
+  pk: {name: codper, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  roles: {}
+- model: pl_descuentos
+  path: app/Models/dbsincro/pl_descuentos.php
+  connection: mysql
+  table: pl_descuentos
+  pk: {name: iddescuentos, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  roles: {}
+- model: pl_movimientos
+  path: app/Models/dbsincro/pl_movimientos.php
+  connection: mysql
+  table: pl_movimientos
+  pk: {name: idmovimientos, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/Sip/sip_movimientosueldosResource.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sip/sip_movimientosueldosResource.php, via: name_prefix}
+- model: pl_personal
+  path: app/Models/dbsincro/pl_personal.php
+  connection: mysql
+  table: pl_personal
+  pk: {name: codper, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/Sip/personalVacacionesResource.php]
+  service: [app/Services/PersonalService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sip/personalVacacionesResource.php, via: name_prefix}
+    service:
+    - {path: app/Services/PersonalService.php, via: name_exact}
+- model: pl_tiendas
+  path: app/Models/dbsincro/pl_tiendas.php
+  connection: mysql
+  table: pl_tiendas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller: [app/Http/Controllers/Api/Reports/sip_tiendasreportsController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Reports/sip_tiendasreportsController.php, via: name_prefix}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_anios
+  path: app/Models/dbsip/sip_anios.php
+  connection: mysql_dbsip
+  table: sip_anios
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_aniosFilters
+  filter: [app/Filters/dbsip/sip_aniosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_aniosResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_aniosController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Siaw/catalogo_parametrosistemaController.php, app/Http/Controllers/Api/Sip/sip_feriadosController.php, app/Http/Controllers/Api/Sip/sip_personalbaseplanilladetalleController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_aniosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_aniosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_aniosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_aportespensionarios
+  path: app/Models/dbsip/sip_aportespensionarios.php
+  connection: mysql_dbsip
+  table: sip_aportespensionarios
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_aportespensionariosFilters
+  relaciones:
+  - {user_deleted: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_aportespensionariosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_aportespensionariosResource.php]
+  requests: [app/Http/Requests/Sip/Traits/sip_aportespensionarios/ValidatesAportesPensionarios.php, app/Http/Requests/Sip/sip_aportespensionarios/StoreAportesPensionariosRequest.php, app/Http/Requests/Sip/sip_aportespensionarios/UpdateAportesPensionariosRequest.php]
+  service: [app/Services/AportesPensionariosService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_aportespensionariosController.php]
+  routes: [routes/modules/sip_aportespensionarios.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_aportespensionariosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_aportespensionariosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/sip_aportespensionarios/ValidatesAportesPensionarios.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_aportespensionariosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_aportespensionarios.php, via: name_exact_full}
+    service:
+    - {path: app/Services/AportesPensionariosService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/sip_aportespensionarios/StoreAportesPensionariosRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/sip_aportespensionarios/UpdateAportesPensionariosRequest.php, via: name_exact}
+- model: sip_auditoras
+  path: app/Models/dbsip/sip_auditoras.php
+  connection: mysql_dbsip
+  table: sip_auditoras
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_auditorasFilters
+  relaciones:
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {catalogo_tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {sip_auditoras_tiendas: 'hasMany sip_auditoras_tiendas (auditora_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_auditorasFilters.php]
+  resources: [app/Http/Resources/Sip/sip_auditorasRelationResource.php, app/Http/Resources/Sip/sip_auditorasResource.php]
+  requests: [app/Http/Requests/Sip/StoreAuditorasRequest.php, app/Http/Requests/Sip/Traits/ValidatesAuditoras.php, app/Http/Requests/Sip/UpdateAuditorasRequest.php]
+  service: [app/Services/AuditorasService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_auditorasController.php]
+  routes: [routes/modules/sip_auditoras.php]
+  service_usado_en: [app/Services/AuditorasTiendasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_auditorasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_auditorasFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_auditorasRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/ValidatesAuditoras.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_auditorasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_auditoras.php, via: name_exact_full}
+    service:
+    - {path: app/Services/AuditorasService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StoreAuditorasRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdateAuditorasRequest.php, via: name_exact}
+- model: sip_auditoras_tiendas
+  path: app/Models/dbsip/sip_auditoras_tiendas.php
+  connection: mysql_dbsip
+  table: sip_auditoras_tiendas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_auditoras_tiendasFilters
+  relaciones:
+  - {sip_auditoras: 'belongsTo sip_auditoras (auditora_id, pkid)'}
+  - {catalogo_tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_auditoras_tiendasFilters.php]
+  resources: [app/Http/Resources/Sip/sip_auditorasTiendasResource.php]
+  requests: [app/Http/Requests/Sip/StoreAuditorasTiendasRequest.php, app/Http/Requests/Sip/Traits/ValidatesAuditorasTiendas.php, app/Http/Requests/Sip/UpdateAuditorasTiendasRequest.php]
+  service: [app/Services/AuditorasTiendasService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_auditoras_tiendasController.php]
+  routes: [routes/modules/sip_auditoras.php]
+  service_usado_en: [app/Services/AuditorasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_auditoras_tiendasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_auditoras_tiendasFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/ValidatesAuditorasTiendas.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_auditorasTiendasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_auditoras.php, via: route_controller}
+    service:
+    - {path: app/Services/AuditorasTiendasService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StoreAuditorasTiendasRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdateAuditorasTiendasRequest.php, via: name_exact}
+- model: sip_auditoriadesctotardanzas
+  path: app/Models/dbsip/sip_auditoriadesctotardanzas.php
+  connection: mysql_dbsip
+  table: sip_auditoriadesctotardanzas
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {sip_personalmovimiento: 'belongsTo sip_personalmovimientos (personalmovimiento_id, pkid)'}
+  - {catalogo_usuario: 'belongsTo usuarios (usuario_id, pkid)'}
+  service_usado_en: [app/Services/TardanzasService.php]
+  roles: {}
+- model: sip_baseplanillacontable
+  path: app/Models/dbsip/sip_baseplanillacontable.php
+  connection: mysql_dbsip
+  table: sip_baseplanillacontable
+  pk: {name: pkid, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_baseplanillacontableFilters
+  filter: [app/Filters/dbsip/sip_baseplanillacontableFilters.php]
+  resources: [app/Http/Resources/Sip/sip_baseplanillacontableResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_baseplanillacontableFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_baseplanillacontableResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_cargamasivajobs
+  path: app/Models/dbsip/sip_cargamasivajobs.php
+  connection: mysql_dbsip
+  table: sip_cargamasivajobs
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id]
+  controller: [app/Http/Controllers/Api/Sip/sip_cargamasivajobsController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalgratificacionesController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_cargamasivajobsController.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_categoriaocupacionaltrabajador
+  path: app/Models/dbsip/sip_categoriaocupacionaltrabajador.php
+  connection: mysql_dbsip
+  table: sip_categoriaocupacionaltrabajador
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/Sip/sip_categoriaocupacionaltrabajadorResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_categoriaocupacionalController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_categoriaocupacionalController.php, via: import_single}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_categoriaocupacionaltrabajadorResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_confighorariosjornada
+  path: app/Models/dbsip/sip_confighorariosjornada.php
+  connection: mysql_dbsip
+  table: sip_confighorariosjornada
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  roles: {}
+- model: sip_descansosmedicospendientes
+  path: app/Models/dbsip/sip_descansosmedicospendientes.php
+  connection: mysql_dbsip
+  table: sip_descansosmedicospendientes
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_descansosmedicospendientesRelationResource.php, app/Http/Resources/Sip/sip_descansosmedicospendientesResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php, via: name_exact_full}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_descansosmedicospendientesRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_descansosmedicospendientesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_estandarpersonal
+  path: app/Models/dbsip/sip_estandarpersonal.php
+  connection: mysql_dbsip
+  table: sip_estandarpersonal
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_estandarpersonalFilters
+  relaciones:
+  - {sip_periodoestandar: 'belongsTo sip_periodoestandar (periodo_id, pkid)'}
+  - {sip_tiendacargo: 'belongsTo sip_tiendacargo (tiendacargo_id, pkid)'}
+  - {catalogo_tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {catalogo_tiendaturnos: 'belongsTo catalogo_tiendaturnos (tiendaturno_id, pkid)'}
+  - {usuario_creacion: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {usuario_actualizacion: 'belongsTo usuarios (updated_by_id, pkid)'}
+  - {usuario_eliminacion: 'belongsTo usuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_estandarpersonalFilters.php]
+  resources: [app/Http/Resources/Sip/sip_estandarpersonalResource.php]
+  requests: [app/Http/Requests/Sip/StoreEstandarPersonalRequest.php, app/Http/Requests/Sip/Traits/ValidatesEstandarPersonal.php, app/Http/Requests/Sip/UpdateEstandarPersonalRequest.php]
+  service: [app/Services/EstandarPersonalService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_estandarpersonalController.php]
+  routes: [routes/modules/sip_estandarpersonal.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_estandarpersonalController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_estandarpersonalFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/ValidatesEstandarPersonal.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_estandarpersonalResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_estandarpersonal.php, via: name_exact_full}
+    service:
+    - {path: app/Services/EstandarPersonalService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StoreEstandarPersonalRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdateEstandarPersonalRequest.php, via: name_exact}
+- model: sip_feriados
+  path: app/Models/dbsip/sip_feriados.php
+  connection: mysql_dbsip
+  table: sip_feriados
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_feriadosFilters
+  relaciones:
+  - {anio: 'hasOne sip_anios (pkid, anio_id)'}
+  filter: [app/Filters/dbsip/sip_feriadosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_feriadosResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_feriadosController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Siaw/catalogo_parametrosistemaController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  service_usado_en: [app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_feriadosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_feriadosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_feriadosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_lugares
+  path: app/Models/dbsip/sip_lugares.php
+  connection: mysql_dbsip
+  table: sip_lugares
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php]
+  roles: {}
+- model: sip_motivoasistencia
+  path: app/Models/dbsip/sip_motivoasistencia.php
+  connection: mysql_dbsip
+  table: sip_motivoasistencia
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_motivoasistenciaFilters
+  filter: [app/Filters/dbsip/sip_motivoasistenciaFilters.php]
+  resources: [app/Http/Resources/Sip/sip_motivoasistenciaRelationResource.php, app/Http/Resources/Sip/sip_motivoasistenciaResource.php]
+  service: [app/Services/MotivoAsistenciaService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_motivoasistenciaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  resources_usado_en: [app/Http/Resources/Sip/sip_personalAsistenciaResource.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_motivoasistenciaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_motivoasistenciaFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_motivoasistenciaRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_motivoasistenciaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/MotivoAsistenciaService.php, via: name_exact}
+- model: sip_motivospremiacion
+  path: app/Models/dbsip/sip_motivospremiacion.php
+  connection: mysql_dbsip
+  table: sip_motivospremiacion
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_motivospremiacionFilters
+  filter: [app/Filters/dbsip/sip_motivospremiacionFilters.php]
+  resources: [app/Http/Resources/Sip/sip_motivospremiacionRelationResource.php, app/Http/Resources/Sip/sip_motivospremiacionResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_motivospremiacionController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_motivospremiacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_motivospremiacionFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_motivospremiacionRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_motivospremiacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_multitabla
+  path: app/Models/dbsip/sip_multitabla.php
+  connection: mysql_dbsip
+  table: sip_multitabla
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_multitablaFilters
+  resources: [app/Http/Resources/Sip/sip_multitablaResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_multitablaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Sip/planillaMasivacusppController.php, app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php,
+    app/Http/Controllers/Api/Sip/sip_multitabladetalleController.php, app/Http/Controllers/Api/Sip/sip_periodocontableController.php, app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php, app/Http/Controllers/Api/Sip/sip_reportebajaspersonalController.php,
+    app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_multitabladetalleFilters.php]
+  service_usado_en: [app/Services/MultiTablaDetalleService.php, app/Services/PersonalSegurosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_multitablaController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_multitablaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_multitabladetalle
+  path: app/Models/dbsip/sip_multitabladetalle.php
+  connection: mysql_dbsip
+  table: sip_multitabladetalle
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_multitabladetalleFilters
+  relaciones:
+  - {sip_multitabla_parent: 'belongsTo sip_multitabla (parent_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_multitabladetalleFilters.php]
+  resources: [app/Http/Resources/Sip/sip_multitabladetalleItemResource.php, app/Http/Resources/Sip/sip_multitabladetalleResource.php, app/Http/Resources/Sip/sip_multitabladetalleTinyResource.php]
+  requests: [app/Http/Requests/Sip/BaseMultiTablaDetalleRequest.php, app/Http/Requests/Sip/StoreMultiTablaDetalle.php, app/Http/Requests/Sip/Traits/ValidatesMultiTablaDetalle.php, app/Http/Requests/Sip/UpdateMultiTablaDetalle.php]
+  service: [app/Services/MultiTablaDetalleService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_multitabladetalleController.php]
+  routes: [routes/api.php, routes/modules/sip_multitabladetalle.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personalplanillareportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php, app/Http/Controllers/Api/SempiTerno/consulta_maestrosController.php,
+    app/Http/Controllers/Api/Sip/PlanillaFinanzasMacroExportController.php, app/Http/Controllers/Api/Sip/planillaMasivacusppController.php, app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php,
+    app/Http/Controllers/Api/Sip/sip_motivospremiacionController.php, app/Http/Controllers/Api/Sip/sip_multitablaController.php, app/Http/Controllers/Api/Sip/sip_nivel_salarial_cabController.php, app/Http/Controllers/Api/Sip/sip_nivel_salarial_tiendasController.php,
+    app/Http/Controllers/Api/Sip/sip_periodocontableController.php, app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalcargosController.php,
+    app/Http/Controllers/Api/Sip/sip_personalcesadoController.php, app/Http/Controllers/Api/Sip/sip_personalgratificacionesController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientohorarioController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientosueldocontabledetController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php, app/Http/Controllers/Api/Sip/sip_procesos_jobsController.php, app/Http/Controllers/Api/Sip/sip_reportebajaspersonalController.php,
+    app/Http/Controllers/Api/Sip/sip_tiendaoperacionesController.php, app/Http/Controllers/Api/Sip/sip_tipolegajosController.php, app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php, app/Http/Controllers/Api/Sip/sip_tipoplanillatiendasController.php]
+  requests_usado_en: [app/Http/Requests/Sip/Traits/ValidatesPersonalSeguros.php, app/Http/Requests/Sip/sip_personalboletavacaciones/GenerarMacroPlanillaRequest.php]
+  service_usado_en: [app/Services/AportesPensionariosService.php, app/Services/PersonalBoletaVacacionesService.php, app/Services/PersonalSegurosService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/Sip/BaseMultiTablaDetalleRequest.php, via: name_exact}
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_multitabladetalleController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_multitabladetalleFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_multitabladetalleTinyResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/ValidatesMultiTablaDetalle.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_multitabladetalleItemResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_multitabladetalleResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    - {path: routes/modules/sip_multitabladetalle.php, via: name_exact_full}
+    service:
+    - {path: app/Services/MultiTablaDetalleService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StoreMultiTablaDetalle.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdateMultiTablaDetalle.php, via: name_exact}
+- model: sip_nivel_salarial_cab
+  path: app/Models/dbsip/sip_nivel_salarial_cab.php
+  connection: mysql_dbsip
+  table: sip_nivel_salarial_cab
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_nivel_salarial_cabFilters
+  filter: [app/Filters/dbsip/sip_nivel_salarial_cabFilters.php]
+  resources: [app/Http/Resources/Sip/sip_nivel_salarial_cabResource.php, app/Http/Resources/Sip/sip_nivel_salarial_cab_collectionResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_nivel_salarial_cabController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_nivel_salarial_cabController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_nivel_salarial_cabFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_nivel_salarial_cabResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_nivel_salarial_cab_collectionResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_nivel_salarial_det
+  path: app/Models/dbsip/sip_nivel_salarial_det.php
+  connection: mysql_dbsip
+  table: sip_nivel_salarial_det
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_nivel_salarial_detResource.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_nivel_salarial_cabController.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sip/sip_nivel_salarial_detResource.php, via: name_exact_full}
+- model: sip_nivel_salarial_tiendas
+  path: app/Models/dbsip/sip_nivel_salarial_tiendas.php
+  connection: mysql_dbsip
+  table: sip_nivel_salarial_tiendas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_nivel_salarial_tiendasFilters
+  filter: [app/Filters/dbsip/sip_nivel_salarial_tiendasFilters.php]
+  resources: [app/Http/Resources/Sip/sip_nivel_salarial_tiendasResource.php, app/Http/Resources/Sip/sip_nivel_salarial_tiendas_collectionResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_nivel_salarial_tiendasController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_nivel_salarial_tiendasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_nivel_salarial_tiendasFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_nivel_salarial_tiendasResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_nivel_salarial_tiendas_collectionResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_periodocontable
+  path: app/Models/dbsip/sip_periodocontable.php
+  connection: mysql_dbsip
+  table: sip_periodocontable
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_periodocontableFilters
+  filter: [app/Filters/dbsip/sip_periodocontableFilters.php]
+  resources: [app/Http/Resources/Sip/sip_periodocontableResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_periodocontableController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_periodocontableController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_periodocontableFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_periodocontableResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_periodoestandar
+  path: app/Models/dbsip/sip_periodoestandar.php
+  connection: mysql_dbsip
+  table: sip_periodoestandar
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_periodoestandarFilters
+  filter: [app/Filters/dbsip/sip_periodoestandarFilters.php]
+  resources: [app/Http/Resources/Sip/sip_periodoestandarResource.php]
+  requests: [app/Http/Requests/Sip/BasePeriodoEstandarRequest.php, app/Http/Requests/Sip/StorePeriodoEstandarRequest.php, app/Http/Requests/Sip/UpdatePeriodoEstandarRequest.php]
+  service: [app/Services/PeriodoEstandarService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_periodoestandarController.php]
+  routes: [routes/modules/sip_periodoestandar.php]
+  service_usado_en: [app/Services/EstandarPersonalService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/Sip/BasePeriodoEstandarRequest.php, via: name_exact}
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_periodoestandarController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_periodoestandarFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_periodoestandarResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_periodoestandar.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PeriodoEstandarService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StorePeriodoEstandarRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdatePeriodoEstandarRequest.php, via: name_exact}
+- model: sip_periodovacacional
+  path: app/Models/dbsip/sip_periodovacacional.php
+  connection: mysql_dbsip
+  table: sip_periodovacacional
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_periodovacacionalFilters
+  relaciones:
+  - {createdBy: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {updatedBy: 'belongsTo usuarios (updated_by_id, pkid)'}
+  - {deletedBy: 'belongsTo usuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_periodovacacionalFilters.php]
+  resources: [app/Http/Resources/Sip/sip_periodovacacionalRelacionResource.php, app/Http/Resources/Sip/sip_periodovacacionalResource.php]
+  requests: [app/Http/Requests/Sip/sip_periodovacacional/StorePeriodoVacacionalRequest.php, app/Http/Requests/Sip/sip_periodovacacional/UpdatePeriodoVacacionalRequest.php]
+  service: [app/Services/PeriodoVacacionalService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_periodovacacionalController.php]
+  routes: [routes/modules/sip_periodovacacional.php]
+  filter_usado_en: [app/Filters/dbsip/sip_personalmovimientovacacionesFilters.php, app/Filters/dbsip/sip_personalventavacacionesFilters.php, app/Filters/dbsip/sip_solicitudvacacionesFilters.php]
+  service_usado_en: [app/Services/PersonalMovimientoVacacionesService.php, app/Services/PersonalVacacionesTruncasService.php, app/Services/PersonalVentaVacacionesService.php, app/Services/SolicitudVacacionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_periodovacacionalController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_periodovacacionalFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_periodovacacionalRelacionResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_periodovacacionalResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_periodovacacional.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PeriodoVacacionalService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/sip_periodovacacional/StorePeriodoVacacionalRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/sip_periodovacacional/UpdatePeriodoVacacionalRequest.php, via: name_exact}
+- model: sip_personal
+  path: app/Models/dbsip/sip_personal.php
+  connection: mysql_dbsip
+  table: sip_personal
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id]
+  default_filters: Sip_personalFilters
+  relaciones:
+  - {sueldoEnRango: 'hasOne sip_personalmovimientosueldo (personal_id, id)'}
+  filter: [app/Filters/dbsip/sip_personalFilters.php]
+  resources: [app/Http/Resources/Sempiterno/sip_personalDataCargoResource.php, app/Http/Resources/Sempiterno/sip_personalDataResource.php, app/Http/Resources/Sip/personalVacacionesResource.php, app/Http/Resources/Sip/sip_personalHorarioConsolidadoResource.php,
+    app/Http/Resources/Sip/sip_personalIndexResource.php, app/Http/Resources/Sip/sip_personalRelacionResource.php, app/Http/Resources/Sip/sip_personalResource.php, app/Http/Resources/Sip/sip_personalShowResource.php,
+    app/Http/Resources/Sip/sip_personalTinyRelacionResource.php, app/Http/Resources/Sip/sip_personalautorizacionResource.php, app/Http/Resources/Sip/sip_personalbasicResource.php, app/Http/Resources/Sip/sip_personalingresoscesesResource.php,
+    app/Http/Resources/Sip/sip_personalmovcargosResource.php, app/Http/Resources/Sip/sip_personaltiendasResource.php, app/Http/Resources/Sip/sip_personalturnosResource.php, app/Http/Resources/sip_personal/sip_personalResource.php]
+  service: [app/Services/PersonalService.php]
+  controller: [app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php, app/Http/Controllers/Api/Reports/sip_personallegajosreportsController.php, app/Http/Controllers/Api/Reports/sip_personalreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php, app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalController.php,
+    app/Http/Controllers/Api/Sip/sip_personalController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php, app/Http/Controllers/Api/SempiTerno/consulta_personalController.php, app/Http/Controllers/Api/Sig/SubirMovimientosController.php,
+    app/Http/Controllers/Api/Sig/sip_tiemposasistenciaController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php,
+    app/Http/Controllers/Api/Sip/planillaMasivacusppController.php, app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php, app/Http/Controllers/Api/Sip/sip_biotimeController.php, app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php,
+    app/Http/Controllers/Api/Sip/sip_periodocontableController.php, app/Http/Controllers/Api/Sip/sip_personal_segurosController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalcentralController.php, app/Http/Controllers/Api/Sip/sip_personalcesadoController.php, app/Http/Controllers/Api/Sip/sip_personalgratificacionesController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientohorarioController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientolegajosdetController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalzonalController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php, app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php,
+    app/Http/Controllers/Api/Sip/sip_reportebajaspersonalController.php, app/Http/Controllers/Api/Sip/sip_reportesasistenciaController.php, app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php,
+    app/Http/Controllers/Api/Sun/sun_consultaasistenciaController.php, app/Http/Controllers/Api/Sun/sun_consultaboletaController.php, app/Http/Controllers/Api/Sun/sun_consultatiemposController.php, app/Http/Controllers/Api/testController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_periodovacacionalFilters.php, app/Filters/dbsip/sip_personalboletavacacionesFilters.php, app/Filters/dbsip/sip_personalmovimientosconsumoFilters.php, app/Filters/dbsip/sip_personalmovimientovacacionesFilters.php,
+    app/Filters/dbsip/sip_personalventavacacionesFilters.php, app/Filters/dbsip/sip_solicitudvacacionesFilters.php]
+  requests_usado_en: [app/Http/Requests/Sip/sip_personalmovimientohorariodet/ReplicarHorarioDetRequest.php]
+  service_usado_en: [app/Services/AsignacionFamiliarService.php, app/Services/AuditorasService.php, app/Services/PeriodoVacacionalService.php, app/Services/PersonalMovimientoHorarioDetService.php, app/Services/PersonalMovimientoTiendaService.php,
+    app/Services/PersonalMovimientoVacacionesService.php, app/Services/PersonalMovimientosService.php, app/Services/PersonalPivotService.php, app/Services/PersonalSegurosService.php, app/Services/PersonalVentaVacacionesService.php,
+    app/Services/PersonalmovimientosconsumoService.php, app/Services/SolicitudVacacionesService.php, app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php, via: name_prefix_full}
+    - {path: app/Http/Controllers/Api/Reports/sip_personallegajosreportsController.php, via: name_prefix_full}
+    - {path: app/Http/Controllers/Api/Reports/sip_personalreportsController.php, via: name_prefix_full}
+    - {path: app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php, via: name_prefix_full}
+    - {path: app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php, via: name_prefix_full}
+    - {path: app/Http/Controllers/Api/Sincro_sip/sip_personalController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/Sip/sip_personalController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalFilters.php, via: name_exact_full}
+    relation_resource:
+    - {path: app/Http/Resources/Sempiterno/sip_personalDataResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_personalRelacionResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_personalShowResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_personalTinyRelacionResource.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Sempiterno/sip_personalDataCargoResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/personalVacacionesResource.php, via: name_prefix}
+    - {path: app/Http/Resources/Sip/sip_personalHorarioConsolidadoResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalIndexResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_personalautorizacionResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalbasicResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalingresoscesesResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalmovcargosResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personaltiendasResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalturnosResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/sip_personal/sip_personalResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalService.php, via: name_exact}
+- model: sip_personal_seguros
+  path: app/Models/dbsip/sip_personal_seguros.php
+  connection: mysql_dbsip
+  table: sip_personal_seguros
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_personal_segurosFilters
+  relaciones:
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {tipo_seguro: 'belongsTo sip_multitabladetalle (tipo_seguro_id, pkid)'}
+  - {aseguradora_empresa: 'belongsTo sip_multitabladetalle (aseguradora_empresa_id, pkid)'}
+  - {created_by: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo usuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo usuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personal_segurosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personal_segurosRelationResource.php, app/Http/Resources/Sip/sip_personal_segurosResource.php]
+  requests: [app/Http/Requests/Sip/StorePersonalSegurosBulkRequest.php, app/Http/Requests/Sip/StorePersonalSegurosRequest.php, app/Http/Requests/Sip/Traits/ValidatesPersonalSeguros.php, app/Http/Requests/Sip/UpdatePersonalSegurosRequest.php]
+  service: [app/Services/PersonalSegurosService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personal_segurosController.php]
+  routes: [routes/modules/sip_personal_seguros.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personal_segurosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personal_segurosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_personal_segurosRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/ValidatesPersonalSeguros.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personal_segurosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_personal_seguros.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PersonalSegurosService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StorePersonalSegurosBulkRequest.php, via: name_prefix}
+    - {path: app/Http/Requests/Sip/StorePersonalSegurosRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdatePersonalSegurosRequest.php, via: name_exact}
+- model: sip_personalasistencia
+  path: app/Models/dbsip/sip_personalasistencia.php
+  connection: mysql_dbsip
+  table: sip_personalasistencia
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/Sip/sip_personalAsistenciaResource.php]
+  controller: [app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Sig/sip_tiemposasistenciaController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php]
+  service_usado_en: [app/Services/PersonalTiemposAsistenciaService.php, app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalAsistenciaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalautorizacionpa
+  path: app/Models/dbsip/sip_personalautorizacionpa.php
+  connection: mysql_dbsip
+  table: sip_personalautorizacionpa
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalautorizacionpaRelationResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php, via: name_exact_full}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_personalautorizacionpaRelationResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalbaseplanilladetalle
+  path: app/Models/dbsip/sip_personalbaseplanilladetalle.php
+  connection: mysql_dbsip
+  table: sip_personalbaseplanilladetalle
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalbaseplanilladetalleFilters
+  filter: [app/Filters/dbsip/sip_personalbaseplanilladetalleFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalbaseplanilladetalleResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalbaseplanilladetalleController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalbaseplanilladetalleController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalbaseplanilladetalleFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalbaseplanilladetalleResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalbloqueoasistencia
+  path: app/Models/dbsip/sip_personalbloqueoasistencia.php
+  connection: mysql_dbsip
+  table: sip_personalbloqueoasistencia
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalbloqueoasistenciaResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalbloqueoasistenciaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalplanillaController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalbloqueoasistenciaController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalbloqueoasistenciaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalboletapago
+  path: app/Models/dbsip/sip_personalboletapago.php
+  connection: mysql_dbsip
+  table: sip_personalboletapago
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalboletapagoFilters
+  filter: [app/Filters/dbsip/sip_personalboletapagoFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalboletapagoInconsistenciaDiasResource.php, app/Http/Resources/Sip/sip_personalboletapagoInconsistenciaNegativosResource.php, app/Http/Resources/Sip/sip_personalboletapagoListResource.php,
+    app/Http/Resources/Sip/sip_personalboletapagoResource.php, app/Http/Resources/Sip/sip_personalboletapagoShowResource.php]
+  service: [app/Services/PersonalBoletaPagoService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php, app/Http/Controllers/Api/Sig/BajaBoletaPagoController.php, app/Http/Controllers/Api/Sip/PlanillaFinanzasMacroExportController.php,
+    app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php,
+    app/Http/Controllers/Api/Sun/sun_consultaboletaController.php]
+  resources_usado_en: [app/Http/Resources/Sip/sip_personaldescuentosResource.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalboletapagoFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_personalboletapagoShowResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalboletapagoInconsistenciaDiasResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalboletapagoInconsistenciaNegativosResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalboletapagoListResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalboletapagoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalBoletaPagoService.php, via: name_exact}
+- model: sip_personalboletapagodet
+  path: app/Models/dbsip/sip_personalboletapagodet.php
+  connection: mysql_dbsip
+  table: sip_personalboletapagodet
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalboletapagodetResource.php]
+  service: [app/Services/PersonalBoletaPagoDetService.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalboletapagodetResource.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PersonalBoletaPagoDetService.php, via: name_exact}
+- model: sip_personalboletavacaciones
+  path: app/Models/dbsip/sip_personalboletavacaciones.php
+  connection: mysql_dbsip
+  table: sip_personalboletavacaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalboletavacacionesFilters
+  relaciones:
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {paidBy: 'belongsTo User (paid_by, pkid)'}
+  - {sip_personal: 'hasOne sip_personal (pkid, personal_id)'}
+  - {sip_personalmovimientosueldo: 'hasOne sip_personalmovimientosueldo (pkid, sueldo_id)'}
+  - {sip_solicitudvacaciones: 'hasOne sip_solicitudvacaciones (pkid, solicitud_vacaciones_id)'}
+  - {sip_personalboletavacacionesdet: 'hasMany sip_personalboletavacacionesdet (boletavacaciones_id, pkid)'}
+  - {sip_personalplanilla: 'belongsTo sip_personalplanilla (personalplanilla_id, pkid)'}
+  - {sip_personalplanillatda: 'belongsTo sip_personalplanillatda (personalplanillatda_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalboletavacacionesFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalboletavacacionesShowResource.php]
+  requests: [app/Http/Requests/Sip/Traits/sip_personalboletavacaciones/ValidatesBoletaVacaciones.php, app/Http/Requests/Sip/sip_personalboletavacaciones/CambiarEstadoBoletaVacacionesRequest.php, app/Http/Requests/Sip/sip_personalboletavacaciones/CerrarLoteRequest.php,
+    app/Http/Requests/Sip/sip_personalboletavacaciones/GenerarMacroPlanillaRequest.php, app/Http/Requests/Sip/sip_personalboletavacaciones/ProcesarVentaBoletaRequest.php]
+  service: [app/Services/PersonalBoletaVacacionesService.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles:
+    filter:
+    - {path: app/Filters/dbsip/sip_personalboletavacacionesFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Sip/sip_personalboletavacaciones/CambiarEstadoBoletaVacacionesRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalboletavacaciones/CerrarLoteRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalboletavacaciones/GenerarMacroPlanillaRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalboletavacaciones/ProcesarVentaBoletaRequest.php, via: folder}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_personalboletavacacionesShowResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/sip_personalboletavacaciones/ValidatesBoletaVacaciones.php, via: folder}
+    service:
+    - {path: app/Services/PersonalBoletaVacacionesService.php, via: name_exact}
+- model: sip_personalboletavacacionesdet
+  path: app/Models/dbsip/sip_personalboletavacacionesdet.php
+  connection: mysql_dbsip
+  table: sip_personalboletavacacionesdet
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {sip_personalboletavacaciones: 'belongsTo sip_personalboletavacaciones (boletavacaciones_id, pkid)'}
+  - {sip_tipomovimiento: 'belongsTo sip_tipomovimiento (tipomov_id, pkid)'}
+  - {sip_personaldescuentos: 'belongsTo sip_personaldescuentos (descuento_id, pkid)'}
+  resources: [app/Http/Resources/Sip/sip_personalboletavacacionesdetResource.php]
+  service_usado_en: [app/Services/PersonalBoletaVacacionesService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalboletavacacionesdetResource.php, via: name_exact_full}
+- model: sip_personalcargos
+  path: app/Models/dbsip/sip_personalcargos.php
+  connection: mysql_dbsip
+  table: sip_personalcargos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalcargosFilters
+  filter: [app/Filters/dbsip/sip_personalcargosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalcargosResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalcargosController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Sip/sip_nivel_salarial_cabController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientohorarioController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php, app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php,
+    app/Http/Controllers/Api/Sip/sip_tiendacargoController.php]
+  service_usado_en: [app/Services/PersonalPivotService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalcargosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalcargosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalcargosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalcentral
+  path: app/Models/dbsip/sip_personalcentral.php
+  connection: mysql_dbsip
+  table: sip_personalcentral
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalcentralResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalcentralController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/SempiTerno/consulta_personalController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_personalzonalController.php, app/Http/Controllers/Api/Sip/sip_zonalmovimientozonaController.php]
+  service_usado_en: [app/Services/PersonalmovimientosconsumoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalcentralController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalcentralResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalcesado
+  path: app/Models/dbsip/sip_personalcesado.php
+  connection: mysql_dbsip
+  table: sip_personalcesado
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_personalcesadoFilters
+  relaciones:
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalcesadoFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalcesadoResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalcesadoController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php]
+  service_usado_en: [app/Services/PersonalSegurosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalcesadoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalcesadoFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalcesadoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personaldescuentos
+  path: app/Models/dbsip/sip_personaldescuentos.php
+  connection: mysql_dbsip
+  table: sip_personaldescuentos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {user_created: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {user_updated: 'belongsTo usuarios (updated_by_id, pkid)'}
+  resources: [app/Http/Resources/Sip/sip_personaldescuentosResource.php]
+  service: [app/Services/PersonalDescuentosService.php, app/Services/Reportes/PersonalDescuentosReportService.php]
+  controller: [app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sig/SubirMovimientosController.php, app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php]
+  service_usado_en: [app/Services/PersonalBoletaVacacionesService.php, app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personaldescuentosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalDescuentosService.php, via: name_exact}
+    - {path: app/Services/Reportes/PersonalDescuentosReportService.php, via: name_prefix}
+- model: sip_personalgratificaciones
+  path: app/Models/dbsip/sip_personalgratificaciones.php
+  connection: mysql_dbsip
+  table: sip_personalgratificaciones
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalgratificacionesController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalgratificacionesController.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalliquidacion
+  path: app/Models/dbsip/sip_personalliquidacion.php
+  connection: mysql_dbsip
+  table: sip_personalliquidacion
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalliquidacionResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalliquidacionController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalliquidacionController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalliquidacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalmodificacionsolicitud
+  path: app/Models/dbsip/sip_personalmodificacionsolicitud.php
+  connection: mysql_dbsip
+  table: sip_personalmodificacionsolicitud
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalmodificacionsolicitudResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmodificacionsolicitudResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalmodificacionsolicituddet
+  path: app/Models/dbsip/sip_personalmodificacionsolicituddet.php
+  connection: mysql_dbsip
+  table: sip_personalmodificacionsolicituddet
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php]
+  roles: {}
+- model: sip_personalmovimientocargo
+  path: app/Models/dbsip/sip_personalmovimientocargo.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientocargo
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientocargosResource.php, app/Http/Resources/sip_personalmovimientocargo/sip_personalmovimientocargoResource.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientocargoController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientocargoPController.php]
+  routes: [routes/api.php, routes/modules/sip_personalmovimientocargo.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  service_usado_en: [app/Services/PersonalPivotService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientocargoController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientocargoPController.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientocargosResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/sip_personalmovimientocargo/sip_personalmovimientocargoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    - {path: routes/modules/sip_personalmovimientocargo.php, via: name_exact_full}
+- model: sip_personalmovimientocontable
+  path: app/Models/dbsip/sip_personalmovimientocontable.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientocontable
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalreportsController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalmovimientoderechohabiente
+  path: app/Models/dbsip/sip_personalmovimientoderechohabiente.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientoderechohabiente
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {sip_personal: 'hasOne sip_personal (pkid, personal_id)'}
+  - {sip_personalmovimientotienda: 'hasOne sip_personalmovimientotienda (personal_id, personal_id)'}
+  - {sip_personalmovimientoempresa: 'hasOne sip_personalmovimientoempresa (personal_id, personal_id)'}
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalreportsController.php]
+  roles: {}
+- model: sip_personalmovimientoempresa
+  path: app/Models/dbsip/sip_personalmovimientoempresa.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientoempresa
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalmovimientoempresaFilters
+  filter: [app/Filters/dbsip/sip_personalmovimientoempresaFilters.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_reportebajaspersonalController.php]
+  roles:
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientoempresaFilters.php, via: declared}
+- model: sip_personalmovimientohorario
+  path: app/Models/dbsip/sip_personalmovimientohorario.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientohorario
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {sip_personal: 'hasOne sip_personal (pkid, personal_id)'}
+  - {sip_personalmovimientohorariodet: 'hasMany sip_personalmovimientohorariodet (horario_id, pkid)'}
+  resources: [app/Http/Resources/Sip/sip_personalmovimientohorarioItemResource.php, app/Http/Resources/Sip/sip_personalmovimientohorarioResource.php, app/Http/Resources/Sip/sip_personalmovimientohorariosResource.php]
+  service: [app/Services/PersonalMovimientoHorarioService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientohorarioController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Sip/ReporteHorariosAuditController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sun/sun_consultaasistenciaController.php,
+    app/Http/Controllers/Api/Sun/sun_consultatiemposController.php]
+  requests_usado_en: [app/Http/Requests/Sip/sip_personalmovimientohorariodet/ReplicarHorarioDetRequest.php]
+  service_usado_en: [app/Services/PersonalMovimientoHorarioDetService.php, app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientohorarioController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientohorarioItemResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalmovimientohorarioResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_personalmovimientohorariosResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalMovimientoHorarioService.php, via: name_exact}
+- model: sip_personalmovimientohorariodet
+  path: app/Models/dbsip/sip_personalmovimientohorariodet.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientohorariodet
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_personalmovimientohorariodetFilters
+  relaciones:
+  - {created_by: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo usuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo usuarios (deleted_by_id, pkid)'}
+  - {sip_personalmovimientohorario: 'belongsTo sip_personalmovimientohorario (horario_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalmovimientohorariodetFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientohorariodetResource.php]
+  requests: [app/Http/Requests/Sip/Traits/sip_personalmovimientohorariodet/ValidatesHorarioDet.php, app/Http/Requests/Sip/sip_personalmovimientohorariodet/BulkUpdateHorarioDetRequest.php, app/Http/Requests/Sip/sip_personalmovimientohorariodet/ReplicarHorarioDetRequest.php,
+    app/Http/Requests/Sip/sip_personalmovimientohorariodet/StoreDefaultHorarioDetRequest.php, app/Http/Requests/Sip/sip_personalmovimientohorariodet/StoreHorarioDetRequest.php, app/Http/Requests/Sip/sip_personalmovimientohorariodet/UpdateHorarioDetRequest.php]
+  service: [app/Services/PersonalMovimientoHorarioDetService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientohorariodetController.php]
+  routes: [routes/modules/sip_personalmovimientohorariodet.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientohorariodetController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientohorariodetFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientohorariodet/BulkUpdateHorarioDetRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalmovimientohorariodet/ReplicarHorarioDetRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/sip_personalmovimientohorariodet/ValidatesHorarioDet.php, via: folder}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientohorariodetResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_personalmovimientohorariodet.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PersonalMovimientoHorarioDetService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientohorariodet/StoreDefaultHorarioDetRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalmovimientohorariodet/StoreHorarioDetRequest.php, via: folder}
+    update_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientohorariodet/UpdateHorarioDetRequest.php, via: folder}
+- model: sip_personalmovimientoingresocese
+  path: app/Models/dbsip/sip_personalmovimientoingresocese.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientoingresocese
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientoingresoceseResource.php, app/Http/Resources/sip_personalmovimientoingresocese/sip_personalmovimientoingresoceseResource.php]
+  service: [app/Services/PersonalMovimientoIngresoCeseService.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientoingresoceseController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php,
+    app/Http/Controllers/Api/Sip/sip_biotimeController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php,
+    app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientoingresoceseController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientoingresoceseResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/sip_personalmovimientoingresocese/sip_personalmovimientoingresoceseResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalMovimientoIngresoCeseService.php, via: name_exact}
+- model: sip_personalmovimientolegajos
+  path: app/Models/dbsip/sip_personalmovimientolegajos.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientolegajos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalmovimientolegajosFilters
+  filter: [app/Filters/dbsip/sip_personalmovimientolegajosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientolegajosResource.php]
+  roles:
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientolegajosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientolegajosResource.php, via: name_exact_full}
+- model: sip_personalmovimientolegajosdet
+  path: app/Models/dbsip/sip_personalmovimientolegajosdet.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientolegajosdet
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalmovimientolegajosdetFilters
+  filter: [app/Filters/dbsip/sip_personalmovimientolegajosdetFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientolegajosdetLeftResource.php, app/Http/Resources/Sip/sip_personalmovimientolegajosdetResource.php]
+  service: [app/Services/PersonalMovimientoLegajosDetService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientolegajosdetController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personallegajosreportsController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_solicitudvacacionesFilters.php]
+  resources_usado_en: [app/Http/Resources/Sip/sip_personalautorizacionResource.php]
+  service_usado_en: [app/Services/SolicitudVacacionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientolegajosdetController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientolegajosdetFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientolegajosdetLeftResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientolegajosdetResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalMovimientoLegajosDetService.php, via: name_exact}
+- model: sip_personalmovimientos
+  path: app/Models/dbsip/sip_personalmovimientos.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalmovimientosFilters
+  filter: [app/Filters/dbsip/sip_personalmovimientosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientosAbonosResource.php, app/Http/Resources/Sip/sip_personalmovimientosPendientesResource.php, app/Http/Resources/Sip/sip_personalmovimientosResource.php]
+  service: [app/Services/PersonalMovimientosService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php, app/Http/Controllers/Api/Sig/SubirMovimientosController.php, app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php,
+    app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php]
+  resources_usado_en: [app/Http/Resources/Sip/sip_personalboletapagodetResource.php]
+  service_usado_en: [app/Services/PersonalDescuentosService.php, app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientosAbonosResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalmovimientosPendientesResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalmovimientosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalMovimientosService.php, via: name_exact}
+- model: sip_personalmovimientosconsumo
+  path: app/Models/dbsip/sip_personalmovimientosconsumo.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientosconsumo
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_personalmovimientosconsumoFilters
+  relaciones:
+  - {personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {cajero: 'belongsTo sip_personal (cajero_id, pkid)'}
+  - {tienda_consumo_rel: 'belongsTo catalogo_tienda (tienda_consumo, pkid)'}
+  - {tienda_personal_rel: 'belongsTo catalogo_tienda (tienda_personal, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalmovimientosconsumoFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientosconsumoResource.php]
+  requests: [app/Http/Requests/Sip/Traits/sip_personalmovimientosconsumo/ValidatesConsumoExternal.php, app/Http/Requests/Sip/Traits/sip_personalmovimientosconsumo/ValidatesPersonalmovimientosconsumo.php,
+    app/Http/Requests/Sip/sip_personalmovimientosconsumo/ConsultarConsumoExternalRequest.php, app/Http/Requests/Sip/sip_personalmovimientosconsumo/ConsultarConsumoHistoricoRequest.php, app/Http/Requests/Sip/sip_personalmovimientosconsumo/ExportPersonalmovimientosconsumoRequest.php,
+    app/Http/Requests/Sip/sip_personalmovimientosconsumo/StoreConsumoExternalRequest.php, app/Http/Requests/Sip/sip_personalmovimientosconsumo/StorePersonalmovimientosconsumoRequest.php, app/Http/Requests/Sip/sip_personalmovimientosconsumo/UpdatePersonalmovimientosconsumoRequest.php]
+  service: [app/Services/PersonalmovimientosconsumoService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientosconsumoController.php, app/Http/Controllers/Api/api_externa/sip_personalmovimientosconsumoExternalController.php]
+  routes: [routes/modules/sip_personalmovimientosconsumo.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientosconsumoController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/api_externa/sip_personalmovimientosconsumoExternalController.php, via: name_prefix_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientosconsumoFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientosconsumo/ConsultarConsumoExternalRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalmovimientosconsumo/ConsultarConsumoHistoricoRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalmovimientosconsumo/ExportPersonalmovimientosconsumoRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/sip_personalmovimientosconsumo/ValidatesConsumoExternal.php, via: folder}
+    - {path: app/Http/Requests/Sip/Traits/sip_personalmovimientosconsumo/ValidatesPersonalmovimientosconsumo.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientosconsumoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_personalmovimientosconsumo.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PersonalmovimientosconsumoService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientosconsumo/StoreConsumoExternalRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_personalmovimientosconsumo/StorePersonalmovimientosconsumoRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientosconsumo/UpdatePersonalmovimientosconsumoRequest.php, via: name_exact}
+- model: sip_personalmovimientosueldo
+  path: app/Models/dbsip/sip_personalmovimientosueldo.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientosueldo
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientosueldosdetallesResource.php, app/Http/Resources/sip_personalmovimientosueldo/sip_personalmovimientosueldoResource.php]
+  service: [app/Services/PersonalMovimientoSueldoDetalle.php, app/Services/PersonalMovimientoSueldoService.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientosueldoController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientosueldoController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php, app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php, app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php,
+    app/Http/Controllers/Api/Sip/sip_periodocontableController.php, app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientosueldoController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientosueldoController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientosueldosdetallesResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/sip_personalmovimientosueldo/sip_personalmovimientosueldoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalMovimientoSueldoDetalle.php, via: name_exact}
+    - {path: app/Services/PersonalMovimientoSueldoService.php, via: name_exact}
+- model: sip_personalmovimientosueldocontable
+  path: app/Models/dbsip/sip_personalmovimientosueldocontable.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientosueldocontable
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalmovimientosueldocontableFilters
+  filter: [app/Filters/dbsip/sip_personalmovimientosueldocontableFilters.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalmovimientosueldocontabledetController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles:
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientosueldocontableFilters.php, via: declared}
+- model: sip_personalmovimientosueldocontabledet
+  path: app/Models/dbsip/sip_personalmovimientosueldocontabledet.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientosueldocontabledet
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalmovimientosueldocontabledetFilters
+  relaciones:
+  - {tipoMovimientoSueldoContable: 'belongsTo sip_multitabladetalle (tipo_mov_sueldocont_id, pkid)'}
+  - {sueldocontable: 'belongsTo SipPersonalmovimientosueldocontable (sueldocontable_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalmovimientosueldocontabledetFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientosueldocontabledetResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientosueldocontabledetController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientosueldocontabledetController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientosueldocontabledetFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientosueldocontabledetResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalmovimientosueldodetalle
+  path: app/Models/dbsip/sip_personalmovimientosueldodetalle.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientosueldodetalle
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php, app/Http/Controllers/Api/Sip/sip_personalController.php,
+    app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  service_usado_en: [app/Services/TardanzasService.php]
+  roles: {}
+- model: sip_personalmovimientotienda
+  path: app/Models/dbsip/sip_personalmovimientotienda.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientotienda
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientotiendaResource.php, app/Http/Resources/sip_personalmovimientotienda/sip_personalmovimientotiendaResource.php]
+  service: [app/Services/PersonalMovimientoTiendaService.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php, app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php, app/Http/Controllers/Api/Reports/sip_personalreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php, app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientohorarioController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_reportebajaspersonalController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_personal_segurosFilters.php]
+  resources_usado_en: [app/Http/Resources/Sempiterno/sip_personalDataResource.php]
+  service_usado_en: [app/Services/PersonalMovimientoHorarioDetService.php, app/Services/PersonalSegurosService.php, app/Services/PersonalmovimientosconsumoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientotiendaResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/sip_personalmovimientotienda/sip_personalmovimientotiendaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalMovimientoTiendaService.php, via: name_exact}
+- model: sip_personalmovimientoturno
+  path: app/Models/dbsip/sip_personalmovimientoturno.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientoturno
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientoturnoResource.php, app/Http/Resources/sip_personalmovimientoturno/sip_personalmovimientoturnoResource.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientoturnoController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientoturnoController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientoturnoResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/sip_personalmovimientoturno/sip_personalmovimientoturnoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalmovimientovacaciones
+  path: app/Models/dbsip/sip_personalmovimientovacaciones.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientovacaciones
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_personalmovimientovacacionesFilters
+  relaciones:
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {sip_periodovacacional: 'belongsTo sip_periodovacacional (periodovacacional_id, pkid)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {created_by: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo usuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo usuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalmovimientovacacionesFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalmovimientovacaciones.php, app/Http/Resources/Sip/sip_personalmovimientovacacionesResumenResource.php]
+  requests: [app/Http/Requests/Sip/Traits/sip_personalmovimientovacaciones/ValidatesPersonalmovimientovacaciones.php, app/Http/Requests/Sip/sip_personalmovimientovacaciones/ExportPersonalmovimientovacacionesRequest.php,
+    app/Http/Requests/Sip/sip_personalmovimientovacaciones/StorePersonalmovimientovacacionesRequest.php, app/Http/Requests/Sip/sip_personalmovimientovacaciones/UpdatePersonalmovimientovacacionesRequest.php]
+  service: [app/Services/PersonalMovimientoVacacionesService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalmovimientovacacionesController.php]
+  routes: [routes/modules/sip_personalmovimientovacaciones.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalmovimientovacacionesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalmovimientovacacionesFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientovacaciones/ExportPersonalmovimientovacacionesRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/sip_personalmovimientovacaciones/ValidatesPersonalmovimientovacaciones.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalmovimientovacaciones.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_personalmovimientovacacionesResumenResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/modules/sip_personalmovimientovacaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PersonalMovimientoVacacionesService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientovacaciones/StorePersonalmovimientovacacionesRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/sip_personalmovimientovacaciones/UpdatePersonalmovimientovacacionesRequest.php, via: name_exact}
+- model: sip_personalpivot
+  path: app/Models/dbsip/sip_personalpivot.php
+  connection: mysql_dbsip
+  table: sip_personalpivot
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_personalpivotFilters
+  relaciones:
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {catalogo_tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {sip_personalcargos: 'belongsTo sip_personalcargos (cargo_id, pkid)'}
+  - {created_by: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo usuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo usuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalpivotFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalpivotResource.php]
+  requests: [app/Http/Requests/Sip/BasePersonalPivotRequest.php, app/Http/Requests/Sip/StorePersonalPivotRequest.php, app/Http/Requests/Sip/UpdatePersonalPivotRequest.php]
+  service: [app/Services/PersonalPivotService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalpivotController.php, app/Http/Controllers/Api/Sip/sip_personalpivotExternalController.php]
+  routes: [routes/modules/sip_personalpivot.php]
+  roles:
+    base_request:
+    - {path: app/Http/Requests/Sip/BasePersonalPivotRequest.php, via: name_exact}
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalpivotController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/Sip/sip_personalpivotExternalController.php, via: name_prefix_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalpivotFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalpivotResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_personalpivot.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PersonalPivotService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StorePersonalPivotRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdatePersonalPivotRequest.php, via: name_exact}
+- model: sip_personalplanilla
+  path: app/Models/dbsip/sip_personalplanilla.php
+  connection: mysql_dbsip
+  table: sip_personalplanilla
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalplanillaFilters
+  filter: [app/Filters/dbsip/sip_personalplanillaFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalplanillaDetResource.php, app/Http/Resources/Sip/sip_personalplanillaRelationResource.php, app/Http/Resources/Sip/sip_personalplanillaResource.php]
+  controller: [app/Http/Controllers/Api/Reports/sip_personalplanillareportsController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_empresasreportsController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personaldescuentosreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php, app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php, app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php,
+    app/Http/Controllers/Api/Sip/PlanillaFinanzasMacroExportController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php, app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php,
+    app/Http/Controllers/Api/Sip/sip_personalbloqueoasistenciaController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalmodificacionsolicitudController.php,
+    app/Http/Controllers/Api/Sip/sip_personalprocesosauditController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_reportesasistenciaController.php,
+    app/Http/Controllers/Api/Sun/sun_consultaasistenciaController.php, app/Http/Controllers/Api/Sun/sun_consultaboletaController.php, app/Http/Controllers/Api/Sun/sun_consultatiemposController.php]
+  filter_usado_en: [app/Filters/dbsip/sip_personalboletavacacionesFilters.php]
+  requests_usado_en: [app/Http/Requests/Sip/sip_personalboletavacaciones/CerrarLoteRequest.php, app/Http/Requests/Sip/sip_personalboletavacaciones/GenerarMacroPlanillaRequest.php]
+  service_usado_en: [app/Services/PersonalBoletaVacacionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Reports/sip_personalplanillareportsController.php, via: name_prefix_full}
+    - {path: app/Http/Controllers/Api/Sip/sip_personalplanillaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalplanillaFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_personalplanillaRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalplanillaDetResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalplanillaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalplanillatda
+  path: app/Models/dbsip/sip_personalplanillatda.php
+  connection: mysql_dbsip
+  table: sip_personalplanillatda
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalplanillatdaBoletaResource.php, app/Http/Resources/Sip/sip_personalplanillatdaResource.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_empresasreportsController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personalhorarioreportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personalplanillareportsController.php, app/Http/Controllers/Api/Reports/sip_personalsueldoreportsController.php, app/Http/Controllers/Api/Reports/sip_tiendasreportsController.php,
+    app/Http/Controllers/Api/Sip/sip_personalbloqueoasistenciaController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sun/sun_consultaboletaController.php]
+  service_usado_en: [app/Services/PersonalBoletaVacacionesService.php, app/Services/SolicitudVacacionesService.php, app/Services/TardanzasService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalplanillatdaBoletaResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalplanillatdaResource.php, via: name_exact_full}
+- model: sip_personalprocesoadministrativo
+  path: app/Models/dbsip/sip_personalprocesoadministrativo.php
+  connection: mysql_dbsip
+  table: sip_personalprocesoadministrativo
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/sip_personalprocesoadministrativo/sip_personalprocesoadministrativoResource.php]
+  controller: [app/Http/Controllers/Api/Sincro_sip/sip_personalprocesoadministrativoController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sincro_sip/sip_personalprocesoadministrativoController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/sip_personalprocesoadministrativo/sip_personalprocesoadministrativoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalprocesosaudit
+  path: app/Models/dbsip/sip_personalprocesosaudit.php
+  connection: mysql_dbsip
+  table: sip_personalprocesosaudit
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalprocesosauditController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_cargamasivajobsController.php, app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php]
+  service_usado_en: [app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalprocesosauditController.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalrelacion
+  path: app/Models/dbsip/sip_personalrelacion.php
+  connection: mysql_dbsip
+  table: sip_personalrelacion
+  pk: {name: pkid, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php]
+  roles: {}
+- model: sip_personalsolicitudespremiacion
+  path: app/Models/dbsip/sip_personalsolicitudespremiacion.php
+  connection: mysql_dbsip
+  table: sip_personalsolicitudespremiacion
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalsolicitudespremiacionFilters
+  filter: [app/Filters/dbsip/sip_personalsolicitudespremiacion.php]
+  resources: [app/Http/Resources/Sip/sip_personalsolicitudespremiacionListResource.php, app/Http/Resources/Sip/sip_personalsolicitudespremiacionRelationResource.php, app/Http/Resources/Sip/sip_personalsolicitudespremiacionResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_motivospremiacionController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalsolicitudespremiacion.php, via: name_exact_full}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_personalsolicitudespremiacionRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalsolicitudespremiacionListResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personalsolicitudespremiacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalsolicitudLiquidaciones
+  path: app/Models/dbsip/sip_personalsolicitudLiquidaciones.php
+  connection: mysql_dbsip
+  table: sip_personalsolicitudLiquidaciones
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalsolicitudLiquidacionesResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalsolicitudLiquidacionesController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalsolicitudLiquidacionesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personaltiempos
+  path: app/Models/dbsip/sip_personaltiempos.php
+  connection: mysql_dbsip
+  table: sip_personaltiempos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Sig/sip_tiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles: {}
+- model: sip_personaltiemposasistencia
+  path: app/Models/dbsip/sip_personaltiemposasistencia.php
+  connection: mysql_dbsip
+  table: sip_personaltiemposasistencia
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personaltiemposasistenciaFilters
+  filter: [app/Filters/dbsip/sip_personaltiemposasistenciaFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personaltiemposasistencia2Resource.php, app/Http/Resources/Sip/sip_personaltiemposasistenciaResource.php]
+  service: [app/Services/PersonalTiemposAsistenciaService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php,
+    app/Http/Controllers/Api/Sun/sun_consultaasistenciaController.php, app/Http/Controllers/Api/Sun/sun_consultatiemposController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personaltiemposasistenciaFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personaltiemposasistencia2Resource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_personaltiemposasistenciaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/PersonalTiemposAsistenciaService.php, via: name_exact}
+- model: sip_personalvacacionestruncas
+  path: app/Models/dbsip/sip_personalvacacionestruncas.php
+  connection: mysql_dbsip
+  table: sip_personalvacacionestruncas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {sip_personal: belongsTo sip_personal (personal_id)}
+  - {sip_periodovacacional: belongsTo sip_periodovacacional (periodovacacional_id)}
+  service: [app/Services/PersonalVacacionesTruncasService.php]
+  roles:
+    service:
+    - {path: app/Services/PersonalVacacionesTruncasService.php, via: name_exact}
+- model: sip_personalvacacionesylicencias
+  path: app/Models/dbsip/sip_personalvacacionesylicencias.php
+  connection: mysql_dbsip
+  table: sip_personalvacacionesylicencias
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalvacacionesylicenciasFilters
+  filter: [app/Filters/dbsip/sip_personalvacacionesylicenciasFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalvacacionesylicenciasResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalvacacionesylicenciasController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalvacacionesylicenciasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalvacacionesylicenciasFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalvacacionesylicenciasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_personalventavacaciones
+  path: app/Models/dbsip/sip_personalventavacaciones.php
+  connection: mysql_dbsip
+  table: sip_personalventavacaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_personalventavacacionesFilters
+  relaciones:
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {sip_periodovacacional: 'belongsTo sip_periodovacacional (periodovacacional_id, pkid)'}
+  - {catalogo_tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_personalventavacacionesFilters.php]
+  resources: [app/Http/Resources/Sip/sip_personalventavacacionesResource.php]
+  service: [app/Services/PersonalVentaVacacionesService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalventavacacionesController.php]
+  routes: [routes/modules/sip_personalventavacaciones.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalventavacacionesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_personalventavacacionesFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalventavacacionesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_personalventavacaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/PersonalVentaVacacionesService.php, via: name_exact}
+- model: sip_personalzonal
+  path: app/Models/dbsip/sip_personalzonal.php
+  connection: mysql_dbsip
+  table: sip_personalzonal
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_personalzonalResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_personalzonalController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/SempiTerno/consulta_personalController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php,
+    app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_zonalmovimientozonaController.php]
+  service_usado_en: [app/Services/PersonalmovimientosconsumoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_personalzonalController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_personalzonalResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_planillacontable
+  path: app/Models/dbsip/sip_planillacontable.php
+  connection: mysql_dbsip
+  table: sip_planillacontable
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_planillacontableFilters
+  filter: [app/Filters/dbsip/sip_planillacontableFilters.php]
+  resources: [app/Http/Resources/Sip/sip_planillacontableResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php, app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_planillacontableController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_planillacontableFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_planillacontableResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_planillacontableper_det
+  path: app/Models/dbsip/sip_planillacontableper_det.php
+  connection: mysql_dbsip
+  table: sip_planillacontableper_det
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_planillacontableper_detFilters
+  relaciones:
+  - {sip_planillacontablepersonal: 'belongsTo sip_planillacontablepersonal (planillacontablepersonal_id, pkid)'}
+  - {tipoMovimientoPlanilla: 'belongsTo sip_tipomovimientoplanilla (tipomovimientoplanilla_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_planillacontableper_detFilters.php]
+  resources: [app/Http/Resources/Sip/sip_planillacontableper_detResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_planillacontableper_detFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_planillacontableper_detResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_planillacontablepersonal
+  path: app/Models/dbsip/sip_planillacontablepersonal.php
+  connection: mysql_dbsip
+  table: sip_planillacontablepersonal
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_planillacontablepersonalFilters
+  relaciones:
+  - {sip_planillacontable: 'belongsTo sip_planillacontable (planillacontable_id, pkid)'}
+  - {sip_personal: 'hasOne sip_personal (pkid, personal_id)'}
+  filter: [app/Filters/dbsip/sip_planillacontablepersonalFilters.php]
+  resources: [app/Http/Resources/Sip/sip_planillacontablepersonalResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalmovimientocontableController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_planillacontablepersonalFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_planillacontablepersonalResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_procesos_jobs
+  path: app/Models/dbsip/sip_procesos_jobs.php
+  connection: mysql_dbsip
+  table: sip_procesos_jobs
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_procesos_jobsFilters
+  filter: [app/Filters/dbsip/sip_procesos_jobsFilters.php]
+  resources: [app/Http/Resources/Sip/sip_procesos_jobResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_procesos_jobsController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalplanillaController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_procesos_jobsController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_procesos_jobsFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_procesos_jobResource.php, via: name_stem}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_procesosaudit
+  path: app/Models/dbsip/sip_procesosaudit.php
+  connection: mysql_dbsip
+  table: sip_procesosaudit
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id]
+  default_filters: sip_procesosauditFilters
+  relaciones:
+  - {created_by: 'belongsTo usuarios (created_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_procesosauditFilters.php]
+  resources: [app/Http/Resources/Sip/sip_procesosauditResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_procesosauditController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/ReporteHorariosAuditController.php]
+  service_usado_en: [app/Services/PersonalSegurosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_procesosauditController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_procesosauditFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_procesosauditResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_regimenlaboral
+  path: app/Models/dbsip/sip_regimenlaboral.php
+  connection: mysql_dbsip
+  table: sip_regimenlaboral
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  controller: [app/Http/Controllers/Api/Sip/sip_regimenlaboralController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_regimenlaboralController.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_solicitudvacaciones
+  path: app/Models/dbsip/sip_solicitudvacaciones.php
+  connection: mysql_dbsip
+  table: sip_solicitudvacaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: sip_solicitudvacacionesFilters
+  relaciones:
+  - {legajo: 'belongsTo sip_personalmovimientolegajosdet (legajo_id, pkid)'}
+  - {sip_periodovacacional: 'belongsTo sip_periodovacacional (periodovacacional_id, pkid)'}
+  - {sip_personal: 'belongsTo sip_personal (personal_id, pkid)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {sip_personalboletapago: 'hasMany sip_personalboletapago (solicitud_vacaciones_id, pkid)'}
+  - {sip_personalboletavacaciones: 'hasMany sip_personalboletavacaciones (solicitud_vacaciones_id, pkid)'}
+  - {createdBy: 'belongsTo usuarios (created_by_id, pkid)'}
+  - {updatedBy: 'belongsTo usuarios (updated_by_id, pkid)'}
+  - {deletedBy: 'belongsTo usuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsip/sip_solicitudvacacionesFilters.php]
+  resources: [app/Http/Resources/Sip/sip_solicitudvacacionesPendientesResource.php, app/Http/Resources/Sip/sip_solicitudvacacionesRelationResource.php, app/Http/Resources/Sip/sip_solicitudvacacionesResource.php]
+  requests: [app/Http/Requests/Sip/Traits/sip_solicitudvacaciones/ValidatesSolicitudVacaciones.php, app/Http/Requests/Sip/sip_solicitudvacaciones/AutorizarSolicitudVacacionesRequest.php, app/Http/Requests/Sip/sip_solicitudvacaciones/BulkSolicitudVacacionesRequest.php,
+    app/Http/Requests/Sip/sip_solicitudvacaciones/StoreSolicitudVacacionesRequest.php, app/Http/Requests/Sip/sip_solicitudvacaciones/UpdateEstadoSolicitudVacacionesRequest.php, app/Http/Requests/Sip/sip_solicitudvacaciones/UpdateSolicitudVacacionesRequest.php]
+  service: [app/Services/SolicitudVacacionesService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_solicitudvacacionesController.php]
+  routes: [routes/modules/sip_solicitudvacaciones.php]
+  filter_usado_en: [app/Filters/dbsip/sip_personalboletavacacionesFilters.php]
+  service_usado_en: [app/Services/PersonalBoletaVacacionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_solicitudvacacionesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_solicitudvacacionesFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Sip/sip_solicitudvacaciones/AutorizarSolicitudVacacionesRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_solicitudvacaciones/BulkSolicitudVacacionesRequest.php, via: name_exact}
+    relation_resource:
+    - {path: app/Http/Resources/Sip/sip_solicitudvacacionesRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/sip_solicitudvacaciones/ValidatesSolicitudVacaciones.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_solicitudvacacionesPendientesResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Sip/sip_solicitudvacacionesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/sip_solicitudvacaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/SolicitudVacacionesService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/sip_solicitudvacaciones/StoreSolicitudVacacionesRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/sip_solicitudvacaciones/UpdateEstadoSolicitudVacacionesRequest.php, via: folder}
+    - {path: app/Http/Requests/Sip/sip_solicitudvacaciones/UpdateSolicitudVacacionesRequest.php, via: name_exact}
+- model: sip_temp_tiempos
+  path: app/Models/dbsip/sip_temp_tiempos.php
+  connection: mysql_dbsip
+  table: sip_temp_tiempos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  relaciones:
+  - {sip_personal: 'hasOne sip_personal (codigo, codper)'}
+  controller_usado_en: [app/Http/Controllers/Api/Sig/sip_tiemposasistenciaController.php]
+  roles: {}
+- model: sip_terminales_biometricos
+  path: app/Models/dbsip/sip_terminales_biometricos.php
+  connection: mysql_dbsip
+  table: sip_terminales_biometricos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [updated_by_id]
+  relaciones:
+  - {tienda_by_codigo: 'belongsTo catalogo_tienda (idtienda, codigo)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  resources: [app/Http/Resources/Sip/sip_terminales_biometricosResource.php]
+  routes: [routes/modules/terminalesbiometricos.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_maestroslectoresController.php, app/Http/Controllers/Api/Sun/sun_consultaboletaController.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sip/sip_terminales_biometricosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/terminalesbiometricos.php, via: name_exact}
+- model: sip_tiempos_configuracion
+  path: app/Models/dbsip/sip_tiempos_configuracion.php
+  connection: mysql_dbsip
+  table: sip_tiempos_configuracion
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sig/sip_tiemposasistenciaController.php]
+  roles: {}
+- model: sip_tiendacargo
+  path: app/Models/dbsip/sip_tiendacargo.php
+  connection: mysql_dbsip
+  table: sip_tiendacargo
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_tiendacargoFilter
+  relaciones:
+  - {catalogo_tienda: 'hasOne catalogo_tienda (pkid, tienda_id)'}
+  filter: [app/Filters/dbsip/sip_tiendacargoFilter.php]
+  resources: [app/Http/Resources/Sip/sip_tiendacargoResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_tiendacargoController.php]
+  routes: [routes/modules/tiendacargo.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalcargosController.php]
+  service_usado_en: [app/Services/EstandarPersonalService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_tiendacargoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_tiendacargoFilter.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_tiendacargoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/tiendacargo.php, via: name_exact}
+- model: sip_tiendaoperaciones
+  path: app/Models/dbsip/sip_tiendaoperaciones.php
+  connection: mysql_dbsip
+  table: sip_tiendaoperaciones
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: []
+  controller: [app/Http/Controllers/Api/Sip/sip_tiendaoperacionesController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_biotimeController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_tiendaoperacionesController.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_tipodocumentoidentidad
+  path: app/Models/dbsip/sip_tipodocumentoidentidad.php
+  connection: mysql_dbsip
+  table: sip_tipodocumentoidentidad
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller: [app/Http/Controllers/Api/Sip/sip_tiposdocumentosController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Sip/sip_multitablaController.php, app/Http/Controllers/Api/Sip/sip_personalController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_tiposdocumentosController.php, via: import_single}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_tipolegajos
+  path: app/Models/dbsip/sip_tipolegajos.php
+  connection: mysql_dbsip
+  table: sip_tipolegajos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_tipolegajosFilters
+  filter: [app/Filters/dbsip/sip_tipolegajosFilters.php]
+  resources: [app/Http/Resources/Sip/sip_tipolegajosResource.php]
+  service: [app/Services/TipoLegajoService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_tipolegajosController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personallegajosreportsController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientolegajosdetController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_tipolegajosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_tipolegajosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_tipolegajosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/TipoLegajoService.php, via: name_stem}
+- model: sip_tipomovimiento
+  path: app/Models/dbsip/sip_tipomovimiento.php
+  connection: mysql_dbsip
+  table: sip_tipomovimiento
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  filter: [app/Filters/dbsip/sip_tipomovimientoFilters.php]
+  resources: [app/Http/Resources/Sip/sip_tipomovimientoResource.php, app/Http/Resources/Sip/sip_tipomovimientodataResource.php]
+  requests: [app/Http/Requests/Sip/StoreTipoMovimientoRequest.php, app/Http/Requests/Sip/Traits/ValidatesTipoMovimiento.php, app/Http/Requests/Sip/UpdateTipoMovimientoRequest.php]
+  service: [app/Services/TipoMovimientoService.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_tipomovimientoController.php]
+  routes: [routes/modules/sip_tipomovimiento.php]
+  controller_usado_en: [app/Http/Controllers/Api/Reports/sip_personalasistenciareportsController.php, app/Http/Controllers/Api/Reports/sip_personalreportsController.php, app/Http/Controllers/Api/Sig/SubirMovimientosController.php,
+    app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php, app/Http/Controllers/Api/Sip/sip_motivoasistenciaController.php, app/Http/Controllers/Api/Sip/sip_personalController.php, app/Http/Controllers/Api/Sip/sip_personalautorizacionpaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalboletapagoController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php, app/Http/Controllers/Api/Sip/sip_personalplanillaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php]
+  service_usado_en: [app/Services/TardanzasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_tipomovimientoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_tipomovimientoFilters.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Sip/Traits/ValidatesTipoMovimiento.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_tipomovimientoResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/Sip/sip_tipomovimientodataResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/modules/sip_tipomovimiento.php, via: name_exact_full}
+    service:
+    - {path: app/Services/TipoMovimientoService.php, via: name_exact}
+    store_request:
+    - {path: app/Http/Requests/Sip/StoreTipoMovimientoRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Sip/UpdateTipoMovimientoRequest.php, via: name_exact}
+- model: sip_tipomovimientoplanilla
+  path: app/Models/dbsip/sip_tipomovimientoplanilla.php
+  connection: mysql_dbsip
+  table: sip_tipomovimientoplanilla
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_tipomovimientoplanillaFilters
+  relaciones:
+  - {sip_planillacontableper_det: 'belongsTo sip_planillacontableper_det (pkid, tipomovimientoplanilla_id)'}
+  filter: [app/Filters/dbsip/sip_tipomovimientoplanillaFilters.php]
+  resources: [app/Http/Resources/Sip/sip_tipomovimientoplanillaResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_planillacontableController.php, app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_tipomovimientoplanillaFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_tipomovimientoplanillaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_tipoplanillatiendas
+  path: app/Models/dbsip/sip_tipoplanillatiendas.php
+  connection: mysql_dbsip
+  table: sip_tipoplanillatiendas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: sip_tipoplanillatiendasFilters
+  filter: [app/Filters/dbsip/sip_tipoplanillatiendasFilters.php]
+  resources: [app/Http/Resources/Sip/sip_tipoplanillatiendasResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_tipoplanillatiendasController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sip/sip_personalplanillaController.php, app/Http/Controllers/Api/Sun/sun_consultaasistenciaController.php, app/Http/Controllers/Api/Sun/sun_consultatiemposController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_tipoplanillatiendasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsip/sip_tipoplanillatiendasFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_tipoplanillatiendasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: sip_usuariosexternos
+  path: app/Models/dbsip/sip_usuariosexternos.php
+  connection: mysql_dbsip
+  table: sip_usuariosexternos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller: [app/Http/Controllers/Api/Sip/sip_usuariosexternoscontroller.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_usuariosexternoscontroller.php, via: name_prefix_full}
+- model: sip_zonalmovimientozona
+  path: app/Models/dbsip/sip_zonalmovimientozona.php
+  connection: mysql_dbsip
+  table: sip_zonalmovimientozona
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/Sip/sip_zonalmovimientozonaResource.php]
+  controller: [app/Http/Controllers/Api/Sip/sip_zonalmovimientozonaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/SempiTerno/consulta_personalController.php, app/Http/Controllers/Api/Sincro_sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalcentralController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php, app/Http/Controllers/Api/Sip/sip_personalzonalController.php]
+  resources_usado_en: [app/Http/Resources/Sip/sip_personalzonalResource.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sip/sip_zonalmovimientozonaController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sip/sip_zonalmovimientozonaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: SipPersonalMovimientoContableTemp
+  path: app/Models/dbsip/SipPersonalMovimientoContableTemp.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientocontable_temp
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  roles: {}
+- model: User
+  path: app/Models/User.php
+  connection: mysql_dbsiaw
+  table: catalogo_usuario
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/Siaw/catalogo_usuarioResource.php]
+  controller: [app/Http/Controllers/Auth/RegisterController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Auth/RegisterController.php, via: import_single}
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_usuarioResource.php, via: name_exact_full}
+- model: usuarios
+  path: app/Models/dbsiaw/usuarios.php
+  connection: mysql_dbsiaw
+  table: catalogo_usuario
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id]
+  default_filters: UserFilters
+  relaciones:
+  - {sip_personal: 'hasOne sip_personal (codigo, idusuario)'}
+  filter: [app/Filters/dbsiaw/UserFilters.php]
+  resources: [app/Http/Resources/Siaw/catalogo_usuarioResource.php]
+  controller: [app/Http/Controllers/Api/usuariosController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/Logs/sip_logsasistenciaController.php, app/Http/Controllers/Api/Logs/sip_logspersonalController.php, app/Http/Controllers/Api/Reports/sip_personalplanillareportsController.php,
+    app/Http/Controllers/Api/Reports/sip_personaltiendasreportsController.php, app/Http/Controllers/Api/Siaw/catalogo_parametrosistemaController.php, app/Http/Controllers/Api/Sip/ReporteModificacionesAsistenciaController.php,
+    app/Http/Controllers/Api/Sip/planillaMasivacusppController.php, app/Http/Controllers/Api/Sip/sip_aniosController.php, app/Http/Controllers/Api/Sip/sip_baseplanillacontableController.php, app/Http/Controllers/Api/Sip/sip_cargamasivajobsController.php,
+    app/Http/Controllers/Api/Sip/sip_descansosmedicospendientesController.php, app/Http/Controllers/Api/Sip/sip_feriadosController.php, app/Http/Controllers/Api/Sip/sip_motivoasistenciaController.php, app/Http/Controllers/Api/Sip/sip_motivospremiacionController.php,
+    app/Http/Controllers/Api/Sip/sip_periodocontableController.php, app/Http/Controllers/Api/Sip/sip_personalbaseplanilladetalleController.php, app/Http/Controllers/Api/Sip/sip_personalbloqueoasistenciaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalmovimientosController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientosueldocontabledetController.php, app/Http/Controllers/Api/Sip/sip_personalmovimientotiendaController.php,
+    app/Http/Controllers/Api/Sip/sip_personalsolicitudespremiacionController.php, app/Http/Controllers/Api/Sip/sip_personaltiemposasistenciaController.php, app/Http/Controllers/Api/Sip/sip_planillacontableController.php,
+    app/Http/Controllers/Api/Sip/sip_planillacontableper_detController.php, app/Http/Controllers/Api/Sip/sip_planillacontablepersonalController.php, app/Http/Controllers/Api/Sip/sip_procesos_jobsController.php,
+    app/Http/Controllers/Api/Sip/sip_reportebajaspersonalController.php, app/Http/Controllers/Api/Sip/sip_tipomovimientoplanillaController.php, app/Http/Controllers/Api/Sip/sip_tipoplanillatiendasController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/usuariosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/UserFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Siaw/catalogo_usuarioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}

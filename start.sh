@@ -12,9 +12,23 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
+# En Windows, "python" puede resolver al stub de la Microsoft Store (no un
+# intérprete real) aunque exista en el PATH -- probamos que ejecute antes de
+# confiar en el nombre, y si no, caemos al "py launcher".
+if command -v python >/dev/null 2>&1 && python --version >/dev/null 2>&1; then
+  PYTHON_BIN=python
+elif command -v py >/dev/null 2>&1; then
+  PYTHON_BIN=py
+elif command -v python3 >/dev/null 2>&1; then
+  PYTHON_BIN=python3
+else
+  echo "[start.sh] no se encontró un intérprete de Python funcional (python/py/python3)." >&2
+  exit 1
+fi
+
 if [ ! -d .venv ]; then
   echo "[start.sh] no existe .venv — creándolo…"
-  python -m venv .venv
+  "$PYTHON_BIN" -m venv .venv
 fi
 
 if [ -f .venv/Scripts/activate ]; then

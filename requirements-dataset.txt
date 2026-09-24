@@ -1,0 +1,9 @@
+# Dependencias SOLO del pipeline offline del dataset de estructura
+# (scripts/scan_backend_structure.py, generate_synthetic_repos.py,
+# build_structure_dataset.py, train_structure_models.py).
+# La app y el .exe no las necesitan -- no van a requirements.txt.
+-r requirements.txt
+PyYAML>=6.0
+pandas>=2.2
+pyarrow>=16
+matplotlib>=3.8

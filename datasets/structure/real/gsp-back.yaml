@@ -1,0 +1,3070 @@
+# Ground truth de gsp-back -- generado por scripts/scan_backend_structure.py
+# commit c4de8dc (dev), 23-09-2026 23:41:01. Formato: ver docs del script.
+- model: AghAlmacenes
+  path: app/Models/dbgsp_agh/AghAlmacenes.php
+  connection: mysql_dbgsp_agh
+  table: agh_almacenes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghAlmacenesFilters
+  relaciones:
+  - {habitacion: 'belongsTo AghHabitaciones (habitacion_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghAlmacenesFilters.php]
+  resources: [app/Http/Resources/Agh/AghAlmacenesRelationResource.php, app/Http/Resources/Agh/AghAlmacenesResource.php]
+  requests: [app/Http/Requests/Agh/AghAlmacenes/StoreRequest.php, app/Http/Requests/Agh/AghAlmacenes/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghAlmacenesRules.php]
+  service: [app/Services/Agh/AghAlmacenesService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghAlmacenesController.php]
+  routes: [routes/modules/agh_almacenes.php]
+  filter_usado_en: [app/Filters/Agh/AghMovimientosStockFilters.php, app/Filters/Agh/AghOrdenesCompraFilters.php, app/Filters/Agh/AghProductoAlmacenParFilters.php, app/Filters/Agh/AghStockActualFilters.php]
+  service_usado_en: [app/Services/Agh/AghMovimientosStockService.php, app/Services/Agh/AghOrdenesCompraService.php, app/Services/Agh/AghProductoAlmacenParService.php, app/Services/Agh/AghReservaCargosService.php,
+    app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghAlmacenesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghAlmacenesFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghAlmacenesRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghAlmacenesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghAlmacenesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_almacenes.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghAlmacenesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghAlmacenes/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghAlmacenes/UpdateRequest.php, via: name_exact_full}
+- model: AghCajasDiarias
+  path: app/Models/dbgsp_agh/AghCajasDiarias.php
+  connection: mysql_dbgsp_agh
+  table: agh_cajas_diarias
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghCajasDiariasFilters
+  relaciones:
+  - {estadoCaja: 'belongsTo AghEstadosCaja (estado_caja_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghCajasDiariasFilters.php]
+  resources: [app/Http/Resources/Agh/AghCajasDiariasRelationResource.php, app/Http/Resources/Agh/AghCajasDiariasResource.php]
+  requests: [app/Http/Requests/Agh/AghCajasDiarias/CerrarRequest.php, app/Http/Requests/Agh/AghCajasDiarias/ReabrirRequest.php, app/Http/Requests/Agh/AghCajasDiarias/StoreRequest.php, app/Http/Requests/Agh/AghCajasDiarias/UpdateRequest.php,
+    app/Http/Requests/Agh/Traits/AghCajasDiariasRules.php]
+  service: [app/Services/Agh/AghCajasDiariasService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghCajasDiariasController.php]
+  routes: [routes/modules/agh_cajas_diarias.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghCajasDiariasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghCajasDiariasFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghCajasDiarias/CerrarRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghCajasDiarias/ReabrirRequest.php, via: folder}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghCajasDiariasRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghCajasDiariasRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghCajasDiariasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_cajas_diarias.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghCajasDiariasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghCajasDiarias/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghCajasDiarias/UpdateRequest.php, via: name_exact_full}
+- model: AghCanalesVenta
+  path: app/Models/dbgsp_agh/AghCanalesVenta.php
+  connection: mysql_dbgsp_agh
+  table: agh_canales_venta
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghCanalesVentaService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghCanalesVentaController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghReservasFilters.php]
+  service_usado_en: [app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghCanalesVentaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghCanalesVentaService.php, via: name_exact_full}
+- model: AghCategoriasGasto
+  path: app/Models/dbgsp_agh/AghCategoriasGasto.php
+  connection: mysql_dbgsp_agh
+  table: agh_categorias_gasto
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghCategoriasGastoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghCategoriasGastoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghGastosFilters.php]
+  service_usado_en: [app/Services/Agh/AghGastosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghCategoriasGastoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghCategoriasGastoService.php, via: name_exact_full}
+- model: AghCategoriasProducto
+  path: app/Models/dbgsp_agh/AghCategoriasProducto.php
+  connection: mysql_dbgsp_agh
+  table: agh_categorias_producto
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghCategoriasProductoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghCategoriasProductoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghProductosFilters.php]
+  service_usado_en: [app/Services/Agh/AghProductosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghCategoriasProductoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghCategoriasProductoService.php, via: name_exact_full}
+- model: AghComprobanteDetalle
+  path: app/Models/dbgsp_agh/AghComprobanteDetalle.php
+  connection: mysql_dbgsp_agh
+  table: agh_comprobante_detalle
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {comprobante: 'belongsTo AghComprobantes (comprobante_id, pkid)'}
+  - {reservaCargo: 'belongsTo AghReservaCargos (reserva_cargo_id, pkid)'}
+  resources: [app/Http/Resources/Agh/AghComprobanteDetalleResource.php]
+  service_usado_en: [app/Services/Agh/Facturacion/AghComprobantesService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Agh/AghComprobanteDetalleResource.php, via: name_exact_full}
+- model: AghComprobantes
+  path: app/Models/dbgsp_agh/AghComprobantes.php
+  connection: mysql_dbgsp_agh
+  table: agh_comprobantes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghComprobantesFilters
+  relaciones:
+  - {tipoComprobante: 'belongsTo AghTiposComprobante (tipo_comprobante_id, pkid)'}
+  - {estadoComprobante: 'belongsTo AghEstadosComprobante (estado_comprobante_id, pkid)'}
+  - {reserva: 'belongsTo AghReservas (reserva_id, pkid)'}
+  - {clienteTipoDocumento: 'belongsTo AghTiposDocumento (cliente_tipo_documento_id, pkid)'}
+  - {moneda: 'belongsTo AghMonedas (moneda_id, pkid)'}
+  - {detalle: 'hasMany AghComprobanteDetalle (comprobante_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghComprobantesFilters.php]
+  resources: [app/Http/Resources/Agh/AghComprobantesResource.php]
+  requests: [app/Http/Requests/Agh/AghComprobantes/AnularRequest.php, app/Http/Requests/Agh/AghComprobantes/EmitirRequest.php]
+  service: [app/Services/Agh/Facturacion/AghComprobantesService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghComprobantesController.php]
+  routes: [routes/modules/agh_facturacion.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghComprobantesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghComprobantesFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghComprobantes/AnularRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghComprobantes/EmitirRequest.php, via: folder}
+    resource:
+    - {path: app/Http/Resources/Agh/AghComprobantesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_facturacion.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/Facturacion/AghComprobantesService.php, via: name_exact_full}
+- model: AghConfigFacturacion
+  path: app/Models/dbgsp_agh/AghConfigFacturacion.php
+  connection: mysql_dbgsp_agh
+  table: agh_config_facturacion
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  resources: [app/Http/Resources/Agh/AghConfigFacturacionResource.php]
+  requests: [app/Http/Requests/Agh/AghConfigFacturacion/UpdateRequest.php]
+  service: [app/Services/Agh/Facturacion/AghConfigFacturacionService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghConfigFacturacionController.php]
+  routes: [routes/modules/agh_facturacion.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghConfigFacturacionController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghConfigFacturacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_facturacion.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/Facturacion/AghConfigFacturacionService.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghConfigFacturacion/UpdateRequest.php, via: name_exact_full}
+- model: AghConfiguracionHotel
+  path: app/Models/dbgsp_agh/AghConfiguracionHotel.php
+  connection: mysql_dbgsp_agh
+  table: agh_configuracion_hotel
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {momentoBloqueoInventario: 'belongsTo AghMomentosBloqueoInventario (momento_bloqueo_inventario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  resources: [app/Http/Resources/Agh/AghConfiguracionHotelResource.php]
+  requests: [app/Http/Requests/Agh/AghConfiguracionHotel/UpdateRequest.php]
+  service: [app/Services/Agh/AghConfiguracionHotelService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghConfiguracionHotelController.php]
+  routes: [routes/modules/agh_configuracion_hotel.php]
+  service_usado_en: [app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghConfiguracionHotelController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghConfiguracionHotelResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_configuracion_hotel.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghConfiguracionHotelService.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghConfiguracionHotel/UpdateRequest.php, via: name_exact_full}
+- model: AghEstadosCaja
+  path: app/Models/dbgsp_agh/AghEstadosCaja.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_caja
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghEstadosCajaService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghEstadosCajaController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghCajasDiariasFilters.php]
+  service_usado_en: [app/Services/Agh/AghCajasDiariasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghEstadosCajaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghEstadosCajaService.php, via: name_exact_full}
+- model: AghEstadosComprobante
+  path: app/Models/dbgsp_agh/AghEstadosComprobante.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_comprobante
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  filter_usado_en: [app/Filters/Agh/AghComprobantesFilters.php]
+  service_usado_en: [app/Services/Agh/Facturacion/AghComprobantesService.php]
+  roles: {}
+- model: AghEstadosHabitacion
+  path: app/Models/dbgsp_agh/AghEstadosHabitacion.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_habitacion
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghEstadosHabitacionService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghEstadosHabitacionController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghHabitacionesFilters.php]
+  service_usado_en: [app/Services/Agh/AghHabitacionesService.php, app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservasService.php, app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghEstadosHabitacionController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghEstadosHabitacionService.php, via: name_exact_full}
+- model: AghEstadosHousekeeping
+  path: app/Models/dbgsp_agh/AghEstadosHousekeeping.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_housekeeping
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghEstadosHousekeepingService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghEstadosHousekeepingController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghHabitacionesFilters.php]
+  service_usado_en: [app/Services/Agh/AghHabitacionesService.php, app/Services/Agh/AghReservasService.php, app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghEstadosHousekeepingController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghEstadosHousekeepingService.php, via: name_exact_full}
+- model: AghEstadosOrdenCompra
+  path: app/Models/dbgsp_agh/AghEstadosOrdenCompra.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_orden_compra
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghEstadosOrdenCompraService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghEstadosOrdenCompraController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghOrdenesCompraFilters.php]
+  service_usado_en: [app/Services/Agh/AghOrdenesCompraService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghEstadosOrdenCompraController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghEstadosOrdenCompraService.php, via: name_exact_full}
+- model: AghEstadosPago
+  path: app/Models/dbgsp_agh/AghEstadosPago.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_pago
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghEstadosPagoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghEstadosPagoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghPagosFilters.php]
+  service_usado_en: [app/Services/Agh/AghCajasDiariasService.php, app/Services/Agh/AghPagosService.php, app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghEstadosPagoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghEstadosPagoService.php, via: name_exact_full}
+- model: AghEstadosReserva
+  path: app/Models/dbgsp_agh/AghEstadosReserva.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_reserva
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghEstadosReservaService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghEstadosReservaController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghReservasFilters.php]
+  service_usado_en: [app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservasService.php, app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghEstadosReservaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghEstadosReservaService.php, via: name_exact_full}
+- model: AghEstadosTareaLimpieza
+  path: app/Models/dbgsp_agh/AghEstadosTareaLimpieza.php
+  connection: mysql_dbgsp_agh
+  table: agh_estados_tarea_limpieza
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghEstadosTareaLimpiezaService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghEstadosTareaLimpiezaController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghTareasLimpiezaFilters.php]
+  service_usado_en: [app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghEstadosTareaLimpiezaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghEstadosTareaLimpiezaService.php, via: name_exact_full}
+- model: AghFeriados
+  path: app/Models/dbgsp_agh/AghFeriados.php
+  connection: mysql_dbgsp_agh
+  table: agh_feriados
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghFeriadosFilters
+  relaciones:
+  - {planTarifario: 'belongsTo AghPlanesTarifarios (plan_tarifario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghFeriadosFilters.php]
+  resources: [app/Http/Resources/Agh/AghFeriadosResource.php]
+  requests: [app/Http/Requests/Agh/AghFeriados/ClonarAnioRequest.php, app/Http/Requests/Agh/AghFeriados/StoreRequest.php, app/Http/Requests/Agh/AghFeriados/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghFeriadosRules.php]
+  service: [app/Services/Agh/AghFeriadosService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghFeriadosController.php]
+  routes: [routes/modules/agh_feriados.php]
+  service_usado_en: [app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghFeriadosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghFeriadosFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghFeriados/ClonarAnioRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghFeriadosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghFeriadosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_feriados.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghFeriadosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghFeriados/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghFeriados/UpdateRequest.php, via: name_exact_full}
+- model: AghGastos
+  path: app/Models/dbgsp_agh/AghGastos.php
+  connection: mysql_dbgsp_agh
+  table: agh_gastos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghGastosFilters
+  relaciones:
+  - {categoriaGasto: 'belongsTo AghCategoriasGasto (categoria_gasto_id, pkid)'}
+  - {medioPago: 'belongsTo AghMediosPago (medio_pago_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghGastosFilters.php]
+  resources: [app/Http/Resources/Agh/AghGastosRelationResource.php, app/Http/Resources/Agh/AghGastosResource.php]
+  requests: [app/Http/Requests/Agh/AghGastos/StoreRequest.php, app/Http/Requests/Agh/AghGastos/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghGastosRules.php]
+  service: [app/Services/Agh/AghGastosService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghGastosController.php]
+  routes: [routes/modules/agh_gastos.php]
+  service_usado_en: [app/Services/Agh/AghCajasDiariasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghGastosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghGastosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghGastosRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghGastosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghGastosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_gastos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghGastosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghGastos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghGastos/UpdateRequest.php, via: name_exact_full}
+- model: AghHabitaciones
+  path: app/Models/dbgsp_agh/AghHabitaciones.php
+  connection: mysql_dbgsp_agh
+  table: agh_habitaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghHabitacionesFilters
+  relaciones:
+  - {tipoHabitacion: 'belongsTo AghTiposHabitacion (tipo_habitacion_id, pkid)'}
+  - {estadoHabitacion: 'belongsTo AghEstadosHabitacion (estado_habitacion_id, pkid)'}
+  - {estadoHousekeeping: 'belongsTo AghEstadosHousekeeping (estado_housekeeping_id, pkid)'}
+  - {reservas: 'hasMany AghReservas (habitacion_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghHabitacionesFilters.php]
+  resources: [app/Http/Resources/Agh/AghHabitacionesRelationResource.php, app/Http/Resources/Agh/AghHabitacionesResource.php]
+  requests: [app/Http/Requests/Agh/AghHabitaciones/HousekeepingRequest.php, app/Http/Requests/Agh/AghHabitaciones/StoreRequest.php, app/Http/Requests/Agh/AghHabitaciones/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghHabitacionesRules.php]
+  service: [app/Services/Agh/AghHabitacionesService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghHabitacionesController.php]
+  routes: [routes/modules/agh_habitaciones.php]
+  filter_usado_en: [app/Filters/Agh/AghAlmacenesFilters.php, app/Filters/Agh/AghReservasFilters.php, app/Filters/Agh/AghTareasLimpiezaFilters.php]
+  service_usado_en: [app/Services/Agh/AghAlmacenesService.php, app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservasService.php, app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghHabitacionesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghHabitacionesFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghHabitaciones/HousekeepingRequest.php, via: folder}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghHabitacionesRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghHabitacionesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghHabitacionesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_habitaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghHabitacionesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghHabitaciones/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghHabitaciones/UpdateRequest.php, via: name_exact_full}
+- model: AghHuespedes
+  path: app/Models/dbgsp_agh/AghHuespedes.php
+  connection: mysql_dbgsp_agh
+  table: agh_huespedes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghHuespedesFilters
+  relaciones:
+  - {reservas: 'hasMany AghReservas (huesped_id, pkid)'}
+  - {tipoDocumento: 'belongsTo AghTiposDocumento (tipo_documento_id, pkid)'}
+  - {pais: 'belongsTo AghPaises (pais_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghHuespedesFilters.php]
+  resources: [app/Http/Resources/Agh/AghHuespedesRelationResource.php, app/Http/Resources/Agh/AghHuespedesResource.php]
+  requests: [app/Http/Requests/Agh/AghHuespedes/StoreRequest.php, app/Http/Requests/Agh/AghHuespedes/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghHuespedesRules.php]
+  service: [app/Services/Agh/AghHuespedesService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghHuespedesController.php]
+  routes: [routes/modules/agh_huespedes.php]
+  filter_usado_en: [app/Filters/Agh/AghReservasFilters.php]
+  service_usado_en: [app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghHuespedesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghHuespedesFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghHuespedesRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghHuespedesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghHuespedesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_huespedes.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghHuespedesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghHuespedes/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghHuespedes/UpdateRequest.php, via: name_exact_full}
+- model: AghMediosPago
+  path: app/Models/dbgsp_agh/AghMediosPago.php
+  connection: mysql_dbgsp_agh
+  table: agh_medios_pago
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {tipoPago: 'belongsTo AghTiposPago (tipo_pago_id, pkid)'}
+  service: [app/Services/Agh/AghMediosPagoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghMediosPagoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghGastosFilters.php, app/Filters/Agh/AghPagosFilters.php]
+  service_usado_en: [app/Services/Agh/AghCajasDiariasService.php, app/Services/Agh/AghGastosService.php, app/Services/Agh/AghPagosService.php, app/Services/Agh/AghReportesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghMediosPagoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghMediosPagoService.php, via: name_exact_full}
+- model: AghMomentosBloqueoInventario
+  path: app/Models/dbgsp_agh/AghMomentosBloqueoInventario.php
+  connection: mysql_dbgsp_agh
+  table: agh_momentos_bloqueo_inventario
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghMomentosBloqueoInventarioService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghMomentosBloqueoInventarioController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  service_usado_en: [app/Services/Agh/AghConfiguracionHotelService.php, app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghMomentosBloqueoInventarioController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghMomentosBloqueoInventarioService.php, via: name_exact_full}
+- model: AghMonedas
+  path: app/Models/dbgsp_agh/AghMonedas.php
+  connection: mysql_dbgsp_agh
+  table: agh_monedas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  resources: [app/Http/Resources/Agh/AghMonedaResource.php]
+  service: [app/Services/Agh/AghMonedasService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghMonedasController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  service_usado_en: [app/Services/Agh/AghOrdenesCompraService.php, app/Services/Agh/Facturacion/AghComprobantesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghMonedasController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghMonedaResource.php, via: name_stem}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghMonedasService.php, via: name_exact_full}
+- model: AghMovimientosStock
+  path: app/Models/dbgsp_agh/AghMovimientosStock.php
+  connection: mysql_dbgsp_agh
+  table: agh_movimientos_stock
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghMovimientosStockFilters
+  relaciones:
+  - {producto: 'belongsTo AghProductos (producto_id, pkid)'}
+  - {almacen: 'belongsTo AghAlmacenes (almacen_id, pkid)'}
+  - {tipoMovimiento: 'belongsTo AghTiposMovimientoStock (tipo_movimiento_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghMovimientosStockFilters.php]
+  resources: [app/Http/Resources/Agh/AghMovimientosStockResource.php]
+  requests: [app/Http/Requests/Agh/AghMovimientosStock/AjusteRequest.php, app/Http/Requests/Agh/AghMovimientosStock/TransferenciaRequest.php]
+  service: [app/Services/Agh/AghMovimientosStockService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghMovimientosStockController.php]
+  routes: [routes/modules/agh_movimientos_stock.php]
+  service_usado_en: [app/Services/Agh/Inventario/StockMovementService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghMovimientosStockController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghMovimientosStockFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghMovimientosStock/AjusteRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghMovimientosStock/TransferenciaRequest.php, via: folder}
+    resource:
+    - {path: app/Http/Resources/Agh/AghMovimientosStockResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_movimientos_stock.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghMovimientosStockService.php, via: name_exact_full}
+- model: AghOrdenCompraItems
+  path: app/Models/dbgsp_agh/AghOrdenCompraItems.php
+  connection: mysql_dbgsp_agh
+  table: agh_orden_compra_items
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {ordenCompra: 'belongsTo AghOrdenesCompra (orden_compra_id, pkid)'}
+  - {producto: 'belongsTo AghProductos (producto_id, pkid)'}
+  resources: [app/Http/Resources/Agh/AghOrdenCompraItemResource.php]
+  service_usado_en: [app/Services/Agh/AghOrdenesCompraService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Agh/AghOrdenCompraItemResource.php, via: name_stem}
+- model: AghOrdenesCompra
+  path: app/Models/dbgsp_agh/AghOrdenesCompra.php
+  connection: mysql_dbgsp_agh
+  table: agh_ordenes_compra
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghOrdenesCompraFilters
+  relaciones:
+  - {proveedor: 'belongsTo AghProveedores (proveedor_id, pkid)'}
+  - {almacenDestino: 'belongsTo AghAlmacenes (almacen_destino_id, pkid)'}
+  - {estadoOrdenCompra: 'belongsTo AghEstadosOrdenCompra (estado_orden_compra_id, pkid)'}
+  - {moneda: 'belongsTo AghMonedas (moneda_id, pkid)'}
+  - {items: 'hasMany AghOrdenCompraItems (orden_compra_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghOrdenesCompraFilters.php]
+  resources: [app/Http/Resources/Agh/AghOrdenesCompraResource.php]
+  requests: [app/Http/Requests/Agh/AghOrdenesCompra/RecibirRequest.php, app/Http/Requests/Agh/AghOrdenesCompra/StoreRequest.php, app/Http/Requests/Agh/AghOrdenesCompra/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghOrdenesCompraRules.php]
+  service: [app/Services/Agh/AghOrdenesCompraService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghOrdenesCompraController.php]
+  routes: [routes/modules/agh_ordenes_compra.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghOrdenesCompraController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghOrdenesCompraFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghOrdenesCompra/RecibirRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghOrdenesCompraRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghOrdenesCompraResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_ordenes_compra.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghOrdenesCompraService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghOrdenesCompra/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghOrdenesCompra/UpdateRequest.php, via: name_exact_full}
+- model: AghPagos
+  path: app/Models/dbgsp_agh/AghPagos.php
+  connection: mysql_dbgsp_agh
+  table: agh_pagos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghPagosFilters
+  relaciones:
+  - {reserva: 'belongsTo AghReservas (reserva_id, pkid)'}
+  - {medioPago: 'belongsTo AghMediosPago (medio_pago_id, pkid)'}
+  - {tipoTransaccionPago: 'belongsTo AghTiposTransaccionPago (tipo_transaccion_pago_id, pkid)'}
+  - {estadoPago: 'belongsTo AghEstadosPago (estado_pago_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghPagosFilters.php]
+  resources: [app/Http/Resources/Agh/AghPagosRelationResource.php, app/Http/Resources/Agh/AghPagosResource.php]
+  requests: [app/Http/Requests/Agh/AghPagos/StoreRequest.php, app/Http/Requests/Agh/AghPagos/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghPagosRules.php]
+  service: [app/Services/Agh/AghPagosService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghPagosController.php]
+  routes: [routes/modules/agh_pagos.php]
+  service_usado_en: [app/Services/Agh/AghCajasDiariasService.php, app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghPagosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghPagosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghPagosRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghPagosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghPagosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_pagos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghPagosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghPagos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghPagos/UpdateRequest.php, via: name_exact_full}
+- model: AghPaises
+  path: app/Models/dbgsp_agh/AghPaises.php
+  connection: mysql_dbgsp_agh
+  table: agh_paises
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghPaisesService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghPaisesController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghHuespedesFilters.php]
+  service_usado_en: [app/Services/Agh/AghHuespedesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghPaisesController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghPaisesService.php, via: name_exact_full}
+- model: AghPlanesTarifarios
+  path: app/Models/dbgsp_agh/AghPlanesTarifarios.php
+  connection: mysql_dbgsp_agh
+  table: agh_planes_tarifarios
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghPlanesTarifariosFilters
+  relaciones:
+  - {planBase: 'belongsTo self (plan_base_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghPlanesTarifariosFilters.php]
+  resources: [app/Http/Resources/Agh/AghPlanesTarifariosRelationResource.php, app/Http/Resources/Agh/AghPlanesTarifariosResource.php]
+  requests: [app/Http/Requests/Agh/AghPlanesTarifarios/StoreRequest.php, app/Http/Requests/Agh/AghPlanesTarifarios/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghPlanesTarifariosRules.php]
+  service: [app/Services/Agh/AghPlanesTarifariosService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghPlanesTarifariosController.php]
+  routes: [routes/modules/agh_planes_tarifarios.php]
+  filter_usado_en: [app/Filters/Agh/AghFeriadosFilters.php, app/Filters/Agh/AghTarifasFilters.php]
+  service_usado_en: [app/Services/Agh/AghFeriadosService.php, app/Services/Agh/AghReservasService.php, app/Services/Agh/AghTarifasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghPlanesTarifariosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghPlanesTarifariosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghPlanesTarifariosRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghPlanesTarifariosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghPlanesTarifariosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_planes_tarifarios.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghPlanesTarifariosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghPlanesTarifarios/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghPlanesTarifarios/UpdateRequest.php, via: name_exact_full}
+- model: AghProductoAlmacenPar
+  path: app/Models/dbgsp_agh/AghProductoAlmacenPar.php
+  connection: mysql_dbgsp_agh
+  table: agh_producto_almacen_par
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghProductoAlmacenParFilters
+  relaciones:
+  - {producto: 'belongsTo AghProductos (producto_id, pkid)'}
+  - {almacen: 'belongsTo AghAlmacenes (almacen_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghProductoAlmacenParFilters.php]
+  resources: [app/Http/Resources/Agh/AghProductoAlmacenParResource.php]
+  requests: [app/Http/Requests/Agh/AghProductoAlmacenPar/StoreRequest.php, app/Http/Requests/Agh/AghProductoAlmacenPar/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghProductoAlmacenParRules.php]
+  service: [app/Services/Agh/AghProductoAlmacenParService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghProductoAlmacenParController.php]
+  routes: [routes/modules/agh_producto_almacen_par.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghProductoAlmacenParController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghProductoAlmacenParFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghProductoAlmacenParRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghProductoAlmacenParResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_producto_almacen_par.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghProductoAlmacenParService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghProductoAlmacenPar/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghProductoAlmacenPar/UpdateRequest.php, via: name_exact_full}
+- model: AghProductoProveedor
+  path: app/Models/dbgsp_agh/AghProductoProveedor.php
+  connection: mysql_dbgsp_agh
+  table: agh_producto_proveedor
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghProductoProveedorFilters
+  relaciones:
+  - {producto: 'belongsTo AghProductos (producto_id, pkid)'}
+  - {proveedor: 'belongsTo AghProveedores (proveedor_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghProductoProveedorFilters.php]
+  resources: [app/Http/Resources/Agh/AghProductoProveedorResource.php]
+  requests: [app/Http/Requests/Agh/AghProductoProveedor/StoreRequest.php, app/Http/Requests/Agh/AghProductoProveedor/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghProductoProveedorRules.php]
+  service: [app/Services/Agh/AghProductoProveedorService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghProductoProveedorController.php]
+  routes: [routes/modules/agh_producto_proveedor.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghProductoProveedorController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghProductoProveedorFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghProductoProveedorRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghProductoProveedorResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_producto_proveedor.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghProductoProveedorService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghProductoProveedor/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghProductoProveedor/UpdateRequest.php, via: name_exact_full}
+- model: AghProductos
+  path: app/Models/dbgsp_agh/AghProductos.php
+  connection: mysql_dbgsp_agh
+  table: agh_productos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghProductosFilters
+  relaciones:
+  - {categoriaProducto: 'belongsTo AghCategoriasProducto (categoria_producto_id, pkid)'}
+  - {unidadMedida: 'belongsTo AghUnidadesMedida (unidad_medida_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghProductosFilters.php]
+  resources: [app/Http/Resources/Agh/AghProductosRelationResource.php, app/Http/Resources/Agh/AghProductosResource.php]
+  requests: [app/Http/Requests/Agh/AghProductos/StoreRequest.php, app/Http/Requests/Agh/AghProductos/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghProductosRules.php]
+  service: [app/Services/Agh/AghProductosService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghProductosController.php]
+  routes: [routes/modules/agh_productos.php]
+  filter_usado_en: [app/Filters/Agh/AghMovimientosStockFilters.php, app/Filters/Agh/AghProductoAlmacenParFilters.php, app/Filters/Agh/AghProductoProveedorFilters.php, app/Filters/Agh/AghReservaCargosFilters.php,
+    app/Filters/Agh/AghStockActualFilters.php]
+  service_usado_en: [app/Services/Agh/AghMovimientosStockService.php, app/Services/Agh/AghOrdenesCompraService.php, app/Services/Agh/AghProductoAlmacenParService.php, app/Services/Agh/AghProductoProveedorService.php,
+    app/Services/Agh/AghReservaCargosService.php, app/Services/Agh/AghTareasLimpiezaService.php, app/Services/Agh/Inventario/StockMovementService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghProductosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghProductosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghProductosRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghProductosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghProductosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_productos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghProductosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghProductos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghProductos/UpdateRequest.php, via: name_exact_full}
+- model: AghProveedores
+  path: app/Models/dbgsp_agh/AghProveedores.php
+  connection: mysql_dbgsp_agh
+  table: agh_proveedores
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghProveedoresFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghProveedoresFilters.php]
+  resources: [app/Http/Resources/Agh/AghProveedoresRelationResource.php, app/Http/Resources/Agh/AghProveedoresResource.php]
+  requests: [app/Http/Requests/Agh/AghProveedores/StoreRequest.php, app/Http/Requests/Agh/AghProveedores/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghProveedoresRules.php, app/Http/Requests/Almuerzo/Proveedores/StoreRequest.php,
+    app/Http/Requests/Almuerzo/Proveedores/UpdateRequest.php]
+  service: [app/Services/Agh/AghProveedoresService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghProveedoresController.php]
+  routes: [routes/modules/agh_proveedores.php]
+  filter_usado_en: [app/Filters/Agh/AghOrdenesCompraFilters.php, app/Filters/Agh/AghProductoProveedorFilters.php]
+  service_usado_en: [app/Services/Agh/AghOrdenesCompraService.php, app/Services/Agh/AghProductoProveedorService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghProveedoresController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghProveedoresFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghProveedoresRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghProveedoresRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghProveedoresResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_proveedores.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghProveedoresService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghProveedores/StoreRequest.php, via: name_exact_full}
+    - {path: app/Http/Requests/Almuerzo/Proveedores/StoreRequest.php, via: name_exact}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghProveedores/UpdateRequest.php, via: name_exact_full}
+    - {path: app/Http/Requests/Almuerzo/Proveedores/UpdateRequest.php, via: name_exact}
+- model: AghReservaCargos
+  path: app/Models/dbgsp_agh/AghReservaCargos.php
+  connection: mysql_dbgsp_agh
+  table: agh_reserva_cargos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghReservaCargosFilters
+  relaciones:
+  - {reserva: 'belongsTo AghReservas (reserva_id, pkid)'}
+  - {tipoCargo: 'belongsTo AghTiposCargo (tipo_cargo_id, pkid)'}
+  - {producto: 'belongsTo AghProductos (producto_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghReservaCargosFilters.php]
+  resources: [app/Http/Resources/Agh/AghReservaCargosRelationResource.php, app/Http/Resources/Agh/AghReservaCargosResource.php]
+  requests: [app/Http/Requests/Agh/AghReservaCargos/StoreRequest.php, app/Http/Requests/Agh/AghReservaCargos/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghReservaCargosRules.php]
+  service: [app/Services/Agh/AghReservaCargosService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghReservaCargosController.php]
+  routes: [routes/modules/agh_reserva_cargos.php]
+  service_usado_en: [app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservasService.php, app/Services/Agh/Facturacion/AghComprobantesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghReservaCargosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghReservaCargosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghReservaCargosRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghReservaCargosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghReservaCargosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_reserva_cargos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghReservaCargosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghReservaCargos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghReservaCargos/UpdateRequest.php, via: name_exact_full}
+- model: AghReservas
+  path: app/Models/dbgsp_agh/AghReservas.php
+  connection: mysql_dbgsp_agh
+  table: agh_reservas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghReservasFilters
+  relaciones:
+  - {huesped: 'belongsTo AghHuespedes (huesped_id, pkid)'}
+  - {habitacion: 'belongsTo AghHabitaciones (habitacion_id, pkid)'}
+  - {tipoHabitacion: 'belongsTo AghTiposHabitacion (tipo_habitacion_id, pkid)'}
+  - {planTarifario: 'belongsTo AghPlanesTarifarios (plan_tarifario_id, pkid)'}
+  - {estadoReserva: 'belongsTo AghEstadosReserva (estado_reserva_id, pkid)'}
+  - {canalVenta: 'belongsTo AghCanalesVenta (canal_venta_id, pkid)'}
+  - {cargos: 'hasMany AghReservaCargos (reserva_id, pkid)'}
+  - {pagos: 'hasMany AghPagos (reserva_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghReservasFilters.php]
+  resources: [app/Http/Resources/Agh/AghReservasRelationResource.php, app/Http/Resources/Agh/AghReservasResource.php]
+  requests: [app/Http/Requests/Agh/AghReservas/CheckinRequest.php, app/Http/Requests/Agh/AghReservas/CheckoutRequest.php, app/Http/Requests/Agh/AghReservas/DisponibilidadRequest.php, app/Http/Requests/Agh/AghReservas/MoverRequest.php,
+    app/Http/Requests/Agh/AghReservas/StoreRequest.php, app/Http/Requests/Agh/AghReservas/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghReservasRules.php]
+  service: [app/Services/Agh/AghReservasService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghReservasController.php]
+  routes: [routes/modules/agh_reservas.php]
+  filter_usado_en: [app/Filters/Agh/AghComprobantesFilters.php, app/Filters/Agh/AghPagosFilters.php, app/Filters/Agh/AghReservaCargosFilters.php]
+  service_usado_en: [app/Services/Agh/AghPagosService.php, app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservaCargosService.php, app/Services/Agh/AghTareasLimpiezaService.php, app/Services/Agh/Facturacion/AghComprobantesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghReservasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghReservasFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghReservas/CheckinRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghReservas/CheckoutRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghReservas/DisponibilidadRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghReservas/MoverRequest.php, via: folder}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghReservasRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghReservasRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghReservasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_reservas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghReservasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghReservas/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghReservas/UpdateRequest.php, via: name_exact_full}
+- model: AghSeriesComprobante
+  path: app/Models/dbgsp_agh/AghSeriesComprobante.php
+  connection: mysql_dbgsp_agh
+  table: agh_series_comprobante
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghSeriesComprobanteFilters
+  relaciones:
+  - {tipoComprobante: 'belongsTo AghTiposComprobante (tipo_comprobante_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghSeriesComprobanteFilters.php]
+  resources: [app/Http/Resources/Agh/AghSeriesComprobanteResource.php]
+  requests: [app/Http/Requests/Agh/AghSeriesComprobante/StoreRequest.php, app/Http/Requests/Agh/AghSeriesComprobante/UpdateRequest.php]
+  service: [app/Services/Agh/Facturacion/AghSeriesComprobanteService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghSeriesComprobanteController.php]
+  routes: [routes/modules/agh_facturacion.php]
+  service_usado_en: [app/Services/Agh/Facturacion/AghComprobantesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghSeriesComprobanteController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghSeriesComprobanteFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Agh/AghSeriesComprobanteResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_facturacion.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/Facturacion/AghSeriesComprobanteService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghSeriesComprobante/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghSeriesComprobante/UpdateRequest.php, via: name_exact_full}
+- model: AghStockActual
+  path: app/Models/dbgsp_agh/AghStockActual.php
+  connection: mysql_dbgsp_agh
+  table: agh_stock_actual
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: AghStockActualFilters
+  relaciones:
+  - {producto: 'belongsTo AghProductos (producto_id, pkid)'}
+  - {almacen: 'belongsTo AghAlmacenes (almacen_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghStockActualFilters.php]
+  resources: [app/Http/Resources/Agh/AghStockActualResource.php]
+  service_usado_en: [app/Services/Agh/AghMovimientosStockService.php, app/Services/Agh/Inventario/StockMovementService.php]
+  roles:
+    filter:
+    - {path: app/Filters/Agh/AghStockActualFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Agh/AghStockActualResource.php, via: name_exact_full}
+- model: AghTareaLimpiezaInsumos
+  path: app/Models/dbgsp_agh/AghTareaLimpiezaInsumos.php
+  connection: mysql_dbgsp_agh
+  table: agh_tarea_limpieza_insumos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {tareaLimpieza: 'belongsTo AghTareasLimpieza (tarea_limpieza_id, pkid)'}
+  - {producto: 'belongsTo AghProductos (producto_id, pkid)'}
+  - {almacen: 'belongsTo AghAlmacenes (almacen_id, pkid)'}
+  resources: [app/Http/Resources/Agh/AghTareaLimpiezaInsumoResource.php]
+  service_usado_en: [app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Agh/AghTareaLimpiezaInsumoResource.php, via: name_stem}
+- model: AghTareasLimpieza
+  path: app/Models/dbgsp_agh/AghTareasLimpieza.php
+  connection: mysql_dbgsp_agh
+  table: agh_tareas_limpieza
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghTareasLimpiezaFilters
+  relaciones:
+  - {habitacion: 'belongsTo AghHabitaciones (habitacion_id, pkid)'}
+  - {tipoTarea: 'belongsTo AghTiposTareaLimpieza (tipo_tarea_id, pkid)'}
+  - {estadoTarea: 'belongsTo AghEstadosTareaLimpieza (estado_tarea_id, pkid)'}
+  - {asignadoA: 'belongsTo SiawUsuarios (asignado_a_id, pkid)'}
+  - {verificadaPor: 'belongsTo SiawUsuarios (verificada_por_id, pkid)'}
+  - {completadoPor: 'belongsTo SiawUsuarios (completado_por_id, pkid)'}
+  - {insumos: 'hasMany AghTareaLimpiezaInsumos (tarea_limpieza_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghTareasLimpiezaFilters.php]
+  resources: [app/Http/Resources/Agh/AghTareasLimpiezaResource.php]
+  requests: [app/Http/Requests/Agh/AghTareasLimpieza/StoreRequest.php, app/Http/Requests/Agh/AghTareasLimpieza/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghTareasLimpiezaRules.php]
+  service: [app/Services/Agh/AghTareasLimpiezaService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTareasLimpiezaController.php]
+  routes: [routes/modules/agh_tareas_limpieza.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTareasLimpiezaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghTareasLimpiezaFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghTareasLimpiezaRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghTareasLimpiezaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_tareas_limpieza.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghTareasLimpiezaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghTareasLimpieza/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghTareasLimpieza/UpdateRequest.php, via: name_exact_full}
+- model: AghTarifas
+  path: app/Models/dbgsp_agh/AghTarifas.php
+  connection: mysql_dbgsp_agh
+  table: agh_tarifas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghTarifasFilters
+  relaciones:
+  - {tipoHabitacion: 'belongsTo AghTiposHabitacion (tipo_habitacion_id, pkid)'}
+  - {planTarifario: 'belongsTo AghPlanesTarifarios (plan_tarifario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghTarifasFilters.php]
+  resources: [app/Http/Resources/Agh/AghTarifasRelationResource.php, app/Http/Resources/Agh/AghTarifasResource.php]
+  requests: [app/Http/Requests/Agh/AghTarifas/BulkUpdateRequest.php, app/Http/Requests/Agh/AghTarifas/StoreRequest.php, app/Http/Requests/Agh/AghTarifas/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghTarifasRules.php]
+  service: [app/Services/Agh/AghTarifasService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTarifasController.php]
+  routes: [routes/modules/agh_tarifas.php]
+  service_usado_en: [app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTarifasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghTarifasFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghTarifasRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghTarifasRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghTarifasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_tarifas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghTarifasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghTarifas/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghTarifas/BulkUpdateRequest.php, via: name_exact_full}
+    - {path: app/Http/Requests/Agh/AghTarifas/UpdateRequest.php, via: name_exact_full}
+- model: AghTiposCargo
+  path: app/Models/dbgsp_agh/AghTiposCargo.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_cargo
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghTiposCargoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTiposCargoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghReservaCargosFilters.php]
+  service_usado_en: [app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservaCargosService.php, app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTiposCargoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghTiposCargoService.php, via: name_exact_full}
+- model: AghTiposComprobante
+  path: app/Models/dbgsp_agh/AghTiposComprobante.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_comprobante
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  filter_usado_en: [app/Filters/Agh/AghComprobantesFilters.php, app/Filters/Agh/AghSeriesComprobanteFilters.php]
+  service_usado_en: [app/Services/Agh/Facturacion/AghComprobantesService.php, app/Services/Agh/Facturacion/AghSeriesComprobanteService.php]
+  roles: {}
+- model: AghTiposDocumento
+  path: app/Models/dbgsp_agh/AghTiposDocumento.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_documento
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghTiposDocumentoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTiposDocumentoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghHuespedesFilters.php]
+  requests_usado_en: [app/Http/Requests/Agh/Traits/AghHuespedesRules.php]
+  service_usado_en: [app/Services/Agh/AghHuespedesService.php, app/Services/Agh/Facturacion/AghComprobantesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTiposDocumentoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghTiposDocumentoService.php, via: name_exact_full}
+- model: AghTiposHabitacion
+  path: app/Models/dbgsp_agh/AghTiposHabitacion.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_habitacion
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: AghTiposHabitacionFilters
+  relaciones:
+  - {habitaciones: 'hasMany AghHabitaciones (tipo_habitacion_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Agh/AghTiposHabitacionFilters.php]
+  resources: [app/Http/Resources/Agh/AghTiposHabitacionRelationResource.php, app/Http/Resources/Agh/AghTiposHabitacionResource.php]
+  requests: [app/Http/Requests/Agh/AghTiposHabitacion/StoreRequest.php, app/Http/Requests/Agh/AghTiposHabitacion/UpdateRequest.php, app/Http/Requests/Agh/Traits/AghTiposHabitacionRules.php]
+  service: [app/Services/Agh/AghTiposHabitacionService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTiposHabitacionController.php]
+  routes: [routes/modules/agh_tipos_habitacion.php]
+  filter_usado_en: [app/Filters/Agh/AghHabitacionesFilters.php, app/Filters/Agh/AghTarifasFilters.php]
+  service_usado_en: [app/Services/Agh/AghHabitacionesService.php, app/Services/Agh/AghReservasService.php, app/Services/Agh/AghTarifasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTiposHabitacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Agh/AghTiposHabitacionFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Agh/AghTiposHabitacionRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Agh/Traits/AghTiposHabitacionRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghTiposHabitacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_tipos_habitacion.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Agh/AghTiposHabitacionService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Agh/AghTiposHabitacion/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Agh/AghTiposHabitacion/UpdateRequest.php, via: name_exact_full}
+- model: AghTiposMovimientoStock
+  path: app/Models/dbgsp_agh/AghTiposMovimientoStock.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_movimiento_stock
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghTiposMovimientoStockService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTiposMovimientoStockController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghMovimientosStockFilters.php]
+  service_usado_en: [app/Services/Agh/AghReservaCargosService.php, app/Services/Agh/AghTareasLimpiezaService.php, app/Services/Agh/Inventario/StockMovementService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTiposMovimientoStockController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghTiposMovimientoStockService.php, via: name_exact_full}
+- model: AghTiposPago
+  path: app/Models/dbgsp_agh/AghTiposPago.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_pago
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghTiposPagoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTiposPagoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  service_usado_en: [app/Services/Agh/AghMediosPagoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTiposPagoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghTiposPagoService.php, via: name_exact_full}
+- model: AghTiposTareaLimpieza
+  path: app/Models/dbgsp_agh/AghTiposTareaLimpieza.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_tarea_limpieza
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghTiposTareaLimpiezaService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTiposTareaLimpiezaController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghTareasLimpiezaFilters.php]
+  service_usado_en: [app/Services/Agh/AghTareasLimpiezaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTiposTareaLimpiezaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghTiposTareaLimpiezaService.php, via: name_exact_full}
+- model: AghTiposTransaccionPago
+  path: app/Models/dbgsp_agh/AghTiposTransaccionPago.php
+  connection: mysql_dbgsp_agh
+  table: agh_tipos_transaccion_pago
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghTiposTransaccionPagoService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghTiposTransaccionPagoController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghPagosFilters.php]
+  service_usado_en: [app/Services/Agh/AghCajasDiariasService.php, app/Services/Agh/AghPagosService.php, app/Services/Agh/AghReportesService.php, app/Services/Agh/AghReservasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghTiposTransaccionPagoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghTiposTransaccionPagoService.php, via: name_exact_full}
+- model: AghUnidadesMedida
+  path: app/Models/dbgsp_agh/AghUnidadesMedida.php
+  connection: mysql_dbgsp_agh
+  table: agh_unidades_medida
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Agh/AghUnidadesMedidaService.php]
+  controller: [app/Http/Controllers/Api/Agh/AghUnidadesMedidaController.php]
+  routes: [routes/modules/agh_catalogos.php]
+  filter_usado_en: [app/Filters/Agh/AghProductosFilters.php]
+  service_usado_en: [app/Services/Agh/AghProductosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Agh/AghUnidadesMedidaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/agh_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Agh/AghUnidadesMedidaService.php, via: name_exact_full}
+- model: GspAlmuerzoAreas
+  path: app/Models/dbgsp/GspAlmuerzoAreas.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_areas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoAreasFilters
+  relaciones:
+  - {colaboradores: 'hasMany GspAlmuerzoColaboradores (area_id, pkid)'}
+  filter: [app/Filters/Gsp/GspAlmuerzoAreasFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoAreasResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoAreasService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoAreasController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  filter_usado_en: [app/Filters/Gsp/GspAlmuerzoColaboradoresFilters.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoColaboradoresImportService.php, app/Services/Almuerzo/AlmuerzoColaboradoresService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoAreasController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoAreasFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoAreasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoAreasService.php, via: name_exact}
+- model: GspAlmuerzoColaboradores
+  path: app/Models/dbgsp/GspAlmuerzoColaboradores.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_colaboradores
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoColaboradoresFilters
+  relaciones:
+  - {area: 'belongsTo GspAlmuerzoAreas (area_id, pkid)'}
+  - {tipoHorario: 'belongsTo GspAlmuerzoTiposHorario (tipo_horario_id, pkid)'}
+  - {selecciones: 'hasMany GspAlmuerzoSelecciones (colaborador_id, pkid)'}
+  filter: [app/Filters/Gsp/GspAlmuerzoColaboradoresFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoColaboradoresRelationResource.php, app/Http/Resources/Almuerzo/GspAlmuerzoColaboradoresResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoColaboradoresImportService.php, app/Services/Almuerzo/AlmuerzoColaboradoresService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoColaboradoresController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  controller_usado_en: [app/Http/Controllers/Api/Almuerzo/AlmuerzoSeleccionesController.php]
+  filter_usado_en: [app/Filters/Gsp/GspAlmuerzoSeleccionesFilters.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoAccesoService.php, app/Services/Almuerzo/AlmuerzoReporteService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoColaboradoresController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoColaboradoresFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoColaboradoresRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoColaboradoresResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoColaboradoresImportService.php, via: name_prefix}
+    - {path: app/Services/Almuerzo/AlmuerzoColaboradoresService.php, via: name_exact}
+- model: GspAlmuerzoDiasSemana
+  path: app/Models/dbgsp/GspAlmuerzoDiasSemana.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_dias_semana
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoDiasSemanaFilters
+  filter: [app/Filters/Gsp/GspAlmuerzoDiasSemanaFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoDiasSemanaResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoDiasSemanaService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoDiasSemanaController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoMenuImportService.php, app/Services/Almuerzo/AlmuerzoPlantillasService.php, app/Services/Almuerzo/AlmuerzoSemanasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoDiasSemanaController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoDiasSemanaFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoDiasSemanaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoDiasSemanaService.php, via: name_exact}
+- model: GspAlmuerzoEntradaTipos
+  path: app/Models/dbgsp/GspAlmuerzoEntradaTipos.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_entrada_tipos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoEntradaTiposFilters
+  filter: [app/Filters/Gsp/GspAlmuerzoEntradaTiposFilters.php]
+  service: [app/Services/Almuerzo/AlmuerzoEntradaTiposService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoEntradaTiposController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoAccesoService.php, app/Services/Almuerzo/AlmuerzoExtrasService.php, app/Services/Almuerzo/AlmuerzoReporteService.php, app/Services/Almuerzo/AlmuerzoSeleccionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoEntradaTiposController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoEntradaTiposFilters.php, via: declared}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoEntradaTiposService.php, via: name_exact}
+- model: GspAlmuerzoExtras
+  path: app/Models/dbgsp/GspAlmuerzoExtras.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_extras
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {semana: 'belongsTo GspAlmuerzoSemanas (semana_id, pkid)'}
+  - {semanaItem: 'belongsTo GspAlmuerzoSemanaItems (semana_item_id, pkid)'}
+  - {tipo: 'belongsTo GspAlmuerzoTipos (tipo_id, pkid)'}
+  - {entradaTipo: 'belongsTo GspAlmuerzoEntradaTipos (entrada_tipo_id, pkid)'}
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoExtrasResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoExtrasService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoExtrasController.php]
+  routes: [routes/modules/almuerzo_gestion.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoExtrasController.php, via: name_exact}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoExtrasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoExtrasService.php, via: name_exact}
+- model: GspAlmuerzoPlantillaItems
+  path: app/Models/dbgsp/GspAlmuerzoPlantillaItems.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_plantilla_items
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {plantilla: 'belongsTo GspAlmuerzoPlantillas (plantilla_id, pkid)'}
+  - {diaSemana: 'belongsTo GspAlmuerzoDiasSemana (dia_semana_id, pkid)'}
+  - {proveedorDia: 'belongsTo GspAlmuerzoProveedores (proveedor_id, pkid)'}
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoPlantillaItemsResource.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoMenuImportService.php, app/Services/Almuerzo/AlmuerzoPlantillasService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoPlantillaItemsResource.php, via: name_exact_full}
+- model: GspAlmuerzoPlantillas
+  path: app/Models/dbgsp/GspAlmuerzoPlantillas.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_plantillas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoPlantillasFilters
+  relaciones:
+  - {proveedor: 'belongsTo GspAlmuerzoProveedores (proveedor_id, pkid)'}
+  - {items: 'hasMany GspAlmuerzoPlantillaItems (plantilla_id, pkid)'}
+  filter: [app/Filters/Gsp/GspAlmuerzoPlantillasFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoPlantillasRelationResource.php, app/Http/Resources/Almuerzo/GspAlmuerzoPlantillasResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoPlantillasService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoPlantillasController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  filter_usado_en: [app/Filters/Gsp/GspAlmuerzoSemanasFilters.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoMenuImportService.php, app/Services/Almuerzo/AlmuerzoSemanasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoPlantillasController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoPlantillasFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoPlantillasRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoPlantillasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoPlantillasService.php, via: name_exact}
+- model: GspAlmuerzoProveedores
+  path: app/Models/dbgsp/GspAlmuerzoProveedores.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_proveedores
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoProveedoresFilters
+  relaciones:
+  - {plantillas: 'hasMany GspAlmuerzoPlantillas (proveedor_id, pkid)'}
+  - {semanas: 'hasMany GspAlmuerzoSemanas (proveedor_id, pkid)'}
+  filter: [app/Filters/Gsp/GspAlmuerzoProveedoresFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoProveedoresResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoProveedoresService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoProveedoresController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  filter_usado_en: [app/Filters/Gsp/GspAlmuerzoPlantillasFilters.php, app/Filters/Gsp/GspAlmuerzoSemanasFilters.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoMenuImportService.php, app/Services/Almuerzo/AlmuerzoPlantillasService.php, app/Services/Almuerzo/AlmuerzoSemanasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoProveedoresController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoProveedoresFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoProveedoresResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoProveedoresService.php, via: name_exact}
+- model: GspAlmuerzoSeleccionDias
+  path: app/Models/dbgsp/GspAlmuerzoSeleccionDias.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_seleccion_dias
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {seleccion: 'belongsTo GspAlmuerzoSelecciones (seleccion_id, pkid)'}
+  - {semanaItem: 'belongsTo GspAlmuerzoSemanaItems (semana_item_id, pkid)'}
+  - {tipo: 'belongsTo GspAlmuerzoTipos (tipo_id, pkid)'}
+  - {entradaTipo: 'belongsTo GspAlmuerzoEntradaTipos (entrada_tipo_id, pkid)'}
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoSeleccionDiasResource.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoSeleccionesService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoSeleccionDiasResource.php, via: name_exact_full}
+- model: GspAlmuerzoSelecciones
+  path: app/Models/dbgsp/GspAlmuerzoSelecciones.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_selecciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoSeleccionesFilters
+  relaciones:
+  - {semana: 'belongsTo GspAlmuerzoSemanas (semana_id, pkid)'}
+  - {colaborador: 'belongsTo GspAlmuerzoColaboradores (colaborador_id, pkid)'}
+  - {dias: 'hasMany GspAlmuerzoSeleccionDias (seleccion_id, pkid)'}
+  filter: [app/Filters/Gsp/GspAlmuerzoSeleccionesFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoSeleccionesResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoSeleccionesService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoSeleccionesController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzo_seleccion.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoAccesoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoSeleccionesController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoSeleccionesFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoSeleccionesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzo_seleccion.php, via: name_stem}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoSeleccionesService.php, via: name_exact}
+- model: GspAlmuerzoSemanaEstados
+  path: app/Models/dbgsp/GspAlmuerzoSemanaEstados.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_semana_estados
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoSemanaEstadosFilters
+  filter: [app/Filters/Gsp/GspAlmuerzoSemanaEstadosFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoSemanaEstadosResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoSemanaEstadosService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoSemanaEstadosController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  filter_usado_en: [app/Filters/Gsp/GspAlmuerzoSemanasFilters.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoMenuImportService.php, app/Services/Almuerzo/AlmuerzoSemanasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoSemanaEstadosController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoSemanaEstadosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoSemanaEstadosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoSemanaEstadosService.php, via: name_exact}
+- model: GspAlmuerzoSemanaItems
+  path: app/Models/dbgsp/GspAlmuerzoSemanaItems.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_semana_items
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {semana: 'belongsTo GspAlmuerzoSemanas (semana_id, pkid)'}
+  - {diaSemana: 'belongsTo GspAlmuerzoDiasSemana (dia_semana_id, pkid)'}
+  - {proveedorDia: 'belongsTo GspAlmuerzoProveedores (proveedor_id, pkid)'}
+  - {seleccionDias: 'hasMany GspAlmuerzoSeleccionDias (semana_item_id, pkid)'}
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoSemanaItemsResource.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoExtrasService.php, app/Services/Almuerzo/AlmuerzoMenuImportService.php, app/Services/Almuerzo/AlmuerzoSeleccionesService.php, app/Services/Almuerzo/AlmuerzoSemanasService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoSemanaItemsResource.php, via: name_exact_full}
+- model: GspAlmuerzoSemanas
+  path: app/Models/dbgsp/GspAlmuerzoSemanas.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_semanas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoSemanasFilters
+  relaciones:
+  - {plantilla: 'belongsTo GspAlmuerzoPlantillas (plantilla_id, pkid)'}
+  - {proveedor: 'belongsTo GspAlmuerzoProveedores (proveedor_id, pkid)'}
+  - {proveedor2: 'belongsTo GspAlmuerzoProveedores (proveedor_2_id, pkid)'}
+  - {estado: 'belongsTo GspAlmuerzoSemanaEstados (estado_id, pkid)'}
+  - {items: 'hasMany GspAlmuerzoSemanaItems (semana_id, pkid)'}
+  - {selecciones: 'hasMany GspAlmuerzoSelecciones (semana_id, pkid)'}
+  filter: [app/Filters/Gsp/GspAlmuerzoSemanasFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoSemanasRelationResource.php, app/Http/Resources/Almuerzo/GspAlmuerzoSemanasResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoSemanasService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoReporteController.php, app/Http/Controllers/Api/Almuerzo/AlmuerzoSemanasController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  controller_usado_en: [app/Http/Controllers/Api/Almuerzo/AlmuerzoExtrasController.php]
+  filter_usado_en: [app/Filters/Gsp/GspAlmuerzoSeleccionesFilters.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoExtrasService.php, app/Services/Almuerzo/AlmuerzoMenuImportService.php, app/Services/Almuerzo/AlmuerzoSeleccionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoReporteController.php, via: import_single}
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoSemanasController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoSemanasFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoSemanasRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoSemanasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoSemanasService.php, via: name_exact}
+- model: GspAlmuerzoTipos
+  path: app/Models/dbgsp/GspAlmuerzoTipos.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_tipos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoTiposFilters
+  filter: [app/Filters/Gsp/GspAlmuerzoTiposFilters.php]
+  service: [app/Services/Almuerzo/AlmuerzoTiposService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoTiposController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoAccesoService.php, app/Services/Almuerzo/AlmuerzoExtrasService.php, app/Services/Almuerzo/AlmuerzoReporteService.php, app/Services/Almuerzo/AlmuerzoSeleccionesService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoTiposController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoTiposFilters.php, via: declared}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoTiposService.php, via: name_exact}
+- model: GspAlmuerzoTiposHorario
+  path: app/Models/dbgsp/GspAlmuerzoTiposHorario.php
+  connection: mysql_dbgsp
+  table: gsp_almuerzo_tipos_horario
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: GspAlmuerzoTiposHorarioFilters
+  relaciones:
+  - {colaboradores: 'hasMany GspAlmuerzoColaboradores (tipo_horario_id, pkid)'}
+  filter: [app/Filters/Gsp/GspAlmuerzoTiposHorarioFilters.php]
+  resources: [app/Http/Resources/Almuerzo/GspAlmuerzoTiposHorarioResource.php]
+  service: [app/Services/Almuerzo/AlmuerzoTiposHorarioService.php]
+  controller: [app/Http/Controllers/Api/Almuerzo/AlmuerzoTiposHorarioController.php]
+  routes: [routes/modules/almuerzo_gestion.php, routes/modules/almuerzos_dashboard.php]
+  filter_usado_en: [app/Filters/Gsp/GspAlmuerzoColaboradoresFilters.php]
+  service_usado_en: [app/Services/Almuerzo/AlmuerzoColaboradoresService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Almuerzo/AlmuerzoTiposHorarioController.php, via: name_exact}
+    filter:
+    - {path: app/Filters/Gsp/GspAlmuerzoTiposHorarioFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Almuerzo/GspAlmuerzoTiposHorarioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/almuerzo_gestion.php, via: route_controller}
+    - {path: routes/modules/almuerzos_dashboard.php, via: route_controller}
+    service:
+    - {path: app/Services/Almuerzo/AlmuerzoTiposHorarioService.php, via: name_exact}
+- model: NexoArticuloProveedor
+  path: app/Models/dbgsp_nexo/NexoArticuloProveedor.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_articulo_proveedor
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: NexoArticuloProveedorFilters
+  relaciones:
+  - {articulo: 'belongsTo NexoArticulos (articulo_id, pkid)'}
+  - {proveedor: 'belongsTo NexoTerceros (tercero_id, pkid)'}
+  - {moneda: 'belongsTo NexoMonedas (moneda_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoArticuloProveedorFilters.php]
+  resources: [app/Http/Resources/Nexo/NexoArticuloProveedorResource.php]
+  requests: [app/Http/Requests/Nexo/NexoArticuloProveedor/StoreRequest.php, app/Http/Requests/Nexo/NexoArticuloProveedor/UpdateRequest.php, app/Http/Requests/Nexo/Traits/NexoArticuloProveedorRules.php]
+  service: [app/Services/Nexo/NexoArticuloProveedorService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoArticuloProveedorController.php]
+  routes: [routes/modules/nexo_ubicaciones.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoArticuloProveedorController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Nexo/NexoArticuloProveedorFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Nexo/Traits/NexoArticuloProveedorRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoArticuloProveedorResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_ubicaciones.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoArticuloProveedorService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Nexo/NexoArticuloProveedor/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoArticuloProveedor/UpdateRequest.php, via: name_exact_full}
+- model: NexoArticulos
+  path: app/Models/dbgsp_nexo/NexoArticulos.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_articulos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: NexoArticulosFilters
+  relaciones:
+  - {categoriaArticulo: 'belongsTo NexoCategoriasArticulo (categoria_articulo_id, pkid)'}
+  - {marca: 'belongsTo NexoMarcas (marca_id, pkid)'}
+  - {tipoArticulo: 'belongsTo NexoTiposArticulo (tipo_articulo_id, pkid)'}
+  - {modoTracking: 'belongsTo NexoModosTracking (modo_tracking_id, pkid)'}
+  - {unidadBase: 'belongsTo NexoUnidadesMedida (unidad_base_id, pkid)'}
+  - {claseImpuesto: 'belongsTo NexoClasesImpuesto (clase_impuesto_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoArticulosFilters.php]
+  resources: [app/Http/Resources/Nexo/NexoArticuloRelationResource.php, app/Http/Resources/Nexo/NexoArticuloResource.php]
+  requests: [app/Http/Requests/Nexo/NexoArticulos/StoreRequest.php, app/Http/Requests/Nexo/NexoArticulos/UpdateRequest.php, app/Http/Requests/Nexo/Traits/NexoArticulosRules.php]
+  service: [app/Services/Nexo/NexoArticulosService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoArticulosController.php]
+  routes: [routes/modules/nexo_articulos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticuloProveedorFilters.php, app/Filters/Nexo/NexoArticuloUbicacionParametrosFilters.php, app/Filters/Nexo/NexoMovimientosStockFilters.php, app/Filters/Nexo/NexoStockActualFilters.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/Inventario/StockMovementService.php, app/Services/Nexo/NexoArticuloProveedorService.php, app/Services/Nexo/NexoArticuloUbicacionParametrosService.php,
+    app/Services/Nexo/NexoMovimientosStockService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoArticulosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Nexo/NexoArticulosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Nexo/NexoArticuloRelationResource.php, via: name_stem}
+    request_trait:
+    - {path: app/Http/Requests/Nexo/Traits/NexoArticulosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoArticuloResource.php, via: name_stem}
+    route:
+    - {path: routes/modules/nexo_articulos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Nexo/NexoArticulosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Nexo/NexoArticulos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoArticulos/UpdateRequest.php, via: name_exact_full}
+- model: NexoArticuloUbicacionParametros
+  path: app/Models/dbgsp_nexo/NexoArticuloUbicacionParametros.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_articulo_ubicacion_parametros
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: NexoArticuloUbicacionParametrosFilters
+  relaciones:
+  - {articulo: 'belongsTo NexoArticulos (articulo_id, pkid)'}
+  - {ubicacion: 'belongsTo NexoUbicacionesStock (ubicacion_id, pkid)'}
+  - {ubicacionReposicion: 'belongsTo NexoUbicacionesStock (ubicacion_reposicion_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoArticuloUbicacionParametrosFilters.php]
+  resources: [app/Http/Resources/Nexo/NexoArticuloUbicacionParametrosResource.php]
+  requests: [app/Http/Requests/Nexo/NexoArticuloUbicacionParametros/StoreRequest.php, app/Http/Requests/Nexo/NexoArticuloUbicacionParametros/UpdateRequest.php, app/Http/Requests/Nexo/Traits/NexoArticuloUbicacionParametrosRules.php]
+  service: [app/Services/Nexo/NexoArticuloUbicacionParametrosService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoArticuloUbicacionParametrosController.php]
+  routes: [routes/modules/nexo_ubicaciones.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoArticuloUbicacionParametrosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Nexo/NexoArticuloUbicacionParametrosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Nexo/Traits/NexoArticuloUbicacionParametrosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoArticuloUbicacionParametrosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_ubicaciones.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoArticuloUbicacionParametrosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Nexo/NexoArticuloUbicacionParametros/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoArticuloUbicacionParametros/UpdateRequest.php, via: name_exact_full}
+- model: NexoCategoriasArticulo
+  path: app/Models/dbgsp_nexo/NexoCategoriasArticulo.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_categorias_articulo
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {parent: 'belongsTo self (parent_id, pkid)'}
+  - {hijos: 'hasMany self (parent_id, pkid)'}
+  service: [app/Services/Nexo/NexoCategoriasArticuloService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoCategoriasArticuloController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticulosFilters.php]
+  service_usado_en: [app/Services/Nexo/NexoArticulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoCategoriasArticuloController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoCategoriasArticuloService.php, via: name_exact_full}
+- model: NexoClasesImpuesto
+  path: app/Models/dbgsp_nexo/NexoClasesImpuesto.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_clases_impuesto
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoClasesImpuestoService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoClasesImpuestoController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticulosFilters.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/NexoArticulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoClasesImpuestoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoClasesImpuestoService.php, via: name_exact_full}
+- model: NexoComprobanteDetalle
+  path: app/Models/dbgsp_nexo/NexoComprobanteDetalle.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_comprobante_detalle
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {comprobante: 'belongsTo NexoComprobantes (comprobante_id, pkid)'}
+  - {articulo: 'belongsTo NexoArticulos (articulo_id, pkid)'}
+  - {unidad: 'belongsTo NexoUnidadesMedida (unidad_id, pkid)'}
+  - {claseImpuesto: 'belongsTo NexoClasesImpuesto (clase_impuesto_id, pkid)'}
+  resources: [app/Http/Resources/Nexo/NexoComprobanteDetalleResource.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoComprobanteDetalleResource.php, via: name_exact_full}
+- model: NexoComprobantes
+  path: app/Models/dbgsp_nexo/NexoComprobantes.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_comprobantes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: NexoComprobantesFilters
+  relaciones:
+  - {tipoComprobante: 'belongsTo NexoTiposComprobante (tipo_comprobante_id, pkid)'}
+  - {estadoComprobante: 'belongsTo NexoEstadosComprobante (estado_comprobante_id, pkid)'}
+  - {modoEmision: 'belongsTo NexoModosEmision (modo_emision_id, pkid)'}
+  - {moneda: 'belongsTo NexoMonedas (moneda_id, pkid)'}
+  - {tercero: 'belongsTo NexoTerceros (tercero_id, pkid)'}
+  - {motivoNota: 'belongsTo NexoMotivosNota (motivo_nota_id, pkid)'}
+  - {comprobanteRef: 'belongsTo self (comprobante_ref_id, pkid)'}
+  - {detalle: 'hasMany NexoComprobanteDetalle (comprobante_id, pkid)'}
+  - {tributos: 'hasMany NexoComprobanteTributos (comprobante_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoComprobantesFilters.php]
+  requests: [app/Http/Requests/Agh/AghComprobantes/AnularRequest.php, app/Http/Requests/Agh/AghComprobantes/EmitirRequest.php]
+  service: [app/Services/Nexo/NexoComprobantesService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoComprobantesController.php]
+  routes: [routes/modules/nexo_facturacion.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoComprobantesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Nexo/NexoComprobantesFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghComprobantes/AnularRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghComprobantes/EmitirRequest.php, via: folder}
+    route:
+    - {path: routes/modules/nexo_facturacion.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoComprobantesService.php, via: name_exact_full}
+- model: NexoComprobanteTributos
+  path: app/Models/dbgsp_nexo/NexoComprobanteTributos.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_comprobante_tributos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id]
+  relaciones:
+  - {comprobante: 'belongsTo NexoComprobantes (comprobante_id, pkid)'}
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php]
+  roles: {}
+- model: NexoCondicionesPago
+  path: app/Models/dbgsp_nexo/NexoCondicionesPago.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_condiciones_pago
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoCondicionesPagoService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoCondicionesPagoController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoTercerosFilters.php]
+  service_usado_en: [app/Services/Nexo/NexoTercerosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoCondicionesPagoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoCondicionesPagoService.php, via: name_exact_full}
+- model: NexoConfigFacturacion
+  path: app/Models/dbgsp_nexo/NexoConfigFacturacion.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_config_facturacion
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {modoEmision: 'belongsTo NexoModosEmision (modo_emision_id, pkid)'}
+  - {monedaDefault: 'belongsTo NexoMonedas (moneda_default_id, pkid)'}
+  resources: [app/Http/Resources/Nexo/NexoConfigFacturacionResource.php]
+  requests: [app/Http/Requests/Nexo/NexoConfigFacturacion/UpdateRequest.php]
+  service: [app/Services/Nexo/NexoConfigFacturacionService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoConfigFacturacionController.php]
+  routes: [routes/modules/nexo_facturacion.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoConfigFacturacionController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoConfigFacturacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_facturacion.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoConfigFacturacionService.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoConfigFacturacion/UpdateRequest.php, via: name_exact_full}
+- model: NexoConfigInventario
+  path: app/Models/dbgsp_nexo/NexoConfigInventario.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_config_inventario
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {metodoCosteo: 'belongsTo NexoMetodosCosteo (metodo_costeo_id, pkid)'}
+  - {politicaStockNegativo: 'belongsTo NexoPoliticasStockNegativo (politica_stock_negativo_id, pkid)'}
+  resources: [app/Http/Resources/Nexo/NexoConfigInventarioResource.php]
+  requests: [app/Http/Requests/Nexo/NexoConfigInventario/UpdateRequest.php]
+  service: [app/Services/Nexo/NexoConfigInventarioService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoConfigInventarioController.php]
+  routes: [routes/modules/nexo_inventario.php]
+  service_usado_en: [app/Services/Nexo/Inventario/StockMovementService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoConfigInventarioController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoConfigInventarioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_inventario.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoConfigInventarioService.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoConfigInventario/UpdateRequest.php, via: name_exact_full}
+- model: NexoEstadosComprobante
+  path: app/Models/dbgsp_nexo/NexoEstadosComprobante.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_estados_comprobante
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoEstadosComprobanteService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoEstadosComprobanteController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoComprobantesFilters.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoEstadosComprobanteController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoEstadosComprobanteService.php, via: name_exact_full}
+- model: NexoLogEnvioSunat
+  path: app/Models/dbgsp_nexo/NexoLogEnvioSunat.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_log_envio_sunat
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id]
+  relaciones:
+  - {comprobante: 'belongsTo NexoComprobantes (comprobante_id, pkid)'}
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php]
+  roles: {}
+- model: NexoMarcas
+  path: app/Models/dbgsp_nexo/NexoMarcas.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_marcas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoMarcasService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoMarcasController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticulosFilters.php]
+  service_usado_en: [app/Services/Nexo/NexoArticulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoMarcasController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoMarcasService.php, via: name_exact_full}
+- model: NexoMetodosCosteo
+  path: app/Models/dbgsp_nexo/NexoMetodosCosteo.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_metodos_costeo
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoMetodosCosteoService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoMetodosCosteoController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  service_usado_en: [app/Services/Nexo/NexoConfigInventarioService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoMetodosCosteoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoMetodosCosteoService.php, via: name_exact_full}
+- model: NexoModosEmision
+  path: app/Models/dbgsp_nexo/NexoModosEmision.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_modos_emision
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoModosEmisionService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoModosEmisionController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/NexoConfigFacturacionService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoModosEmisionController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoModosEmisionService.php, via: name_exact_full}
+- model: NexoModosTracking
+  path: app/Models/dbgsp_nexo/NexoModosTracking.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_modos_tracking
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoModosTrackingService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoModosTrackingController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticulosFilters.php]
+  service_usado_en: [app/Services/Nexo/NexoArticulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoModosTrackingController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoModosTrackingService.php, via: name_exact_full}
+- model: NexoMonedas
+  path: app/Models/dbgsp_nexo/NexoMonedas.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_monedas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  resources: [app/Http/Resources/Agh/AghMonedaResource.php]
+  service: [app/Services/Nexo/NexoMonedasService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoMonedasController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/NexoArticuloProveedorService.php, app/Services/Nexo/NexoConfigFacturacionService.php, app/Services/Nexo/NexoTercerosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoMonedasController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Agh/AghMonedaResource.php, via: name_stem}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoMonedasService.php, via: name_exact_full}
+- model: NexoMotivosNota
+  path: app/Models/dbgsp_nexo/NexoMotivosNota.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_motivos_nota
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoMotivosNotaService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoMotivosNotaController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoMotivosNotaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoMotivosNotaService.php, via: name_exact_full}
+- model: NexoMovimientosStock
+  path: app/Models/dbgsp_nexo/NexoMovimientosStock.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_movimientos_stock
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id]
+  default_filters: NexoMovimientosStockFilters
+  relaciones:
+  - {articulo: 'belongsTo NexoArticulos (articulo_id, pkid)'}
+  - {ubicacion: 'belongsTo NexoUbicacionesStock (ubicacion_id, pkid)'}
+  - {tipoMovimiento: 'belongsTo NexoTiposMovimiento (tipo_movimiento_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoMovimientosStockFilters.php]
+  requests: [app/Http/Requests/Agh/AghMovimientosStock/AjusteRequest.php, app/Http/Requests/Agh/AghMovimientosStock/TransferenciaRequest.php]
+  service: [app/Services/Nexo/NexoMovimientosStockService.php]
+  service_usado_en: [app/Services/Nexo/Inventario/StockMovementService.php]
+  roles:
+    filter:
+    - {path: app/Filters/Nexo/NexoMovimientosStockFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Agh/AghMovimientosStock/AjusteRequest.php, via: folder}
+    - {path: app/Http/Requests/Agh/AghMovimientosStock/TransferenciaRequest.php, via: folder}
+    service:
+    - {path: app/Services/Nexo/NexoMovimientosStockService.php, via: name_exact_full}
+- model: NexoPoliticasStockNegativo
+  path: app/Models/dbgsp_nexo/NexoPoliticasStockNegativo.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_politicas_stock_negativo
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoPoliticasStockNegativoService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoPoliticasStockNegativoController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  service_usado_en: [app/Services/Nexo/Inventario/StockMovementService.php, app/Services/Nexo/NexoConfigInventarioService.php, app/Services/Nexo/NexoUbicacionesStockService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoPoliticasStockNegativoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoPoliticasStockNegativoService.php, via: name_exact_full}
+- model: NexoSeriesComprobante
+  path: app/Models/dbgsp_nexo/NexoSeriesComprobante.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_series_comprobante
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: NexoSeriesComprobanteFilters
+  relaciones:
+  - {tipoComprobante: 'belongsTo NexoTiposComprobante (tipo_comprobante_id, pkid)'}
+  - {ubicacion: 'belongsTo NexoUbicacionesStock (ubicacion_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoSeriesComprobanteFilters.php]
+  resources: [app/Http/Resources/Nexo/NexoSeriesComprobanteResource.php]
+  requests: [app/Http/Requests/Nexo/NexoSeriesComprobante/StoreRequest.php, app/Http/Requests/Nexo/NexoSeriesComprobante/UpdateRequest.php, app/Http/Requests/Nexo/Traits/NexoSeriesComprobanteRules.php]
+  service: [app/Services/Nexo/NexoSeriesComprobanteService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoSeriesComprobanteController.php]
+  routes: [routes/modules/nexo_facturacion.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoSeriesComprobanteController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Nexo/NexoSeriesComprobanteFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Nexo/Traits/NexoSeriesComprobanteRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoSeriesComprobanteResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_facturacion.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoSeriesComprobanteService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Nexo/NexoSeriesComprobante/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoSeriesComprobante/UpdateRequest.php, via: name_exact_full}
+- model: NexoStockActual
+  path: app/Models/dbgsp_nexo/NexoStockActual.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_stock_actual
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: NexoStockActualFilters
+  relaciones:
+  - {articulo: 'belongsTo NexoArticulos (articulo_id, pkid)'}
+  - {ubicacion: 'belongsTo NexoUbicacionesStock (ubicacion_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoStockActualFilters.php]
+  resources: [app/Http/Resources/Nexo/NexoStockActualResource.php]
+  service_usado_en: [app/Services/Nexo/Inventario/StockMovementService.php, app/Services/Nexo/NexoMovimientosStockService.php]
+  roles:
+    filter:
+    - {path: app/Filters/Nexo/NexoStockActualFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoStockActualResource.php, via: name_exact_full}
+- model: NexoTerceros
+  path: app/Models/dbgsp_nexo/NexoTerceros.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_terceros
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: NexoTercerosFilters
+  relaciones:
+  - {tipoIdentificador: 'belongsTo NexoTiposIdentificador (tipo_identificador_id, pkid)'}
+  - {condicionPago: 'belongsTo NexoCondicionesPago (condicion_pago_id, pkid)'}
+  - {monedaDefault: 'belongsTo NexoMonedas (moneda_default_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoTercerosFilters.php]
+  resources: [app/Http/Resources/Nexo/NexoTerceroRelationResource.php, app/Http/Resources/Nexo/NexoTerceroResource.php]
+  requests: [app/Http/Requests/Nexo/NexoTerceros/StoreRequest.php, app/Http/Requests/Nexo/NexoTerceros/UpdateRequest.php, app/Http/Requests/Nexo/Traits/NexoTercerosRules.php]
+  service: [app/Services/Nexo/NexoTercerosService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoTercerosController.php]
+  routes: [routes/modules/nexo_terceros.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticuloProveedorFilters.php, app/Filters/Nexo/NexoComprobantesFilters.php]
+  service_usado_en: [app/Services/Nexo/NexoArticuloProveedorService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoTercerosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Nexo/NexoTercerosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Nexo/NexoTerceroRelationResource.php, via: name_stem}
+    request_trait:
+    - {path: app/Http/Requests/Nexo/Traits/NexoTercerosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Nexo/NexoTerceroResource.php, via: name_stem}
+    route:
+    - {path: routes/modules/nexo_terceros.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Nexo/NexoTercerosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Nexo/NexoTerceros/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoTerceros/UpdateRequest.php, via: name_exact_full}
+- model: NexoTiposArticulo
+  path: app/Models/dbgsp_nexo/NexoTiposArticulo.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_tipos_articulo
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoTiposArticuloService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoTiposArticuloController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticulosFilters.php]
+  service_usado_en: [app/Services/Nexo/NexoArticulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoTiposArticuloController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoTiposArticuloService.php, via: name_exact_full}
+- model: NexoTiposComprobante
+  path: app/Models/dbgsp_nexo/NexoTiposComprobante.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_tipos_comprobante
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoTiposComprobanteService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoTiposComprobanteController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoComprobantesFilters.php, app/Filters/Nexo/NexoSeriesComprobanteFilters.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/NexoSeriesComprobanteService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoTiposComprobanteController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoTiposComprobanteService.php, via: name_exact_full}
+- model: NexoTiposIdentificador
+  path: app/Models/dbgsp_nexo/NexoTiposIdentificador.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_tipos_identificador
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoTiposIdentificadorService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoTiposIdentificadorController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoTercerosFilters.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/NexoTercerosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoTiposIdentificadorController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoTiposIdentificadorService.php, via: name_exact_full}
+- model: NexoTiposMovimiento
+  path: app/Models/dbgsp_nexo/NexoTiposMovimiento.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_tipos_movimiento
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoTiposMovimientoService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoTiposMovimientoController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoMovimientosStockFilters.php]
+  service_usado_en: [app/Services/Nexo/Inventario/StockMovementService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoTiposMovimientoController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoTiposMovimientoService.php, via: name_exact_full}
+- model: NexoTiposUbicacion
+  path: app/Models/dbgsp_nexo/NexoTiposUbicacion.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_tipos_ubicacion
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoTiposUbicacionService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoTiposUbicacionController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoUbicacionesStockFilters.php]
+  service_usado_en: [app/Services/Nexo/NexoUbicacionesStockService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoTiposUbicacionController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoTiposUbicacionService.php, via: name_exact_full}
+- model: NexoUbicacionesStock
+  path: app/Models/dbgsp_nexo/NexoUbicacionesStock.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_ubicaciones_stock
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: NexoUbicacionesStockFilters
+  relaciones:
+  - {tipoUbicacion: 'belongsTo NexoTiposUbicacion (tipo_ubicacion_id, pkid)'}
+  - {politicaStockNegativo: 'belongsTo NexoPoliticasStockNegativo (politica_stock_negativo_id, pkid)'}
+  - {parent: 'belongsTo self (parent_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Nexo/NexoUbicacionesStockFilters.php]
+  requests: [app/Http/Requests/Nexo/NexoUbicacionesStock/StoreRequest.php, app/Http/Requests/Nexo/NexoUbicacionesStock/UpdateRequest.php, app/Http/Requests/Nexo/Traits/NexoUbicacionesStockRules.php]
+  service: [app/Services/Nexo/NexoUbicacionesStockService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoUbicacionesStockController.php]
+  routes: [routes/modules/nexo_ubicaciones.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticuloUbicacionParametrosFilters.php, app/Filters/Nexo/NexoMovimientosStockFilters.php, app/Filters/Nexo/NexoSeriesComprobanteFilters.php, app/Filters/Nexo/NexoStockActualFilters.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/Inventario/StockMovementService.php, app/Services/Nexo/NexoArticuloUbicacionParametrosService.php, app/Services/Nexo/NexoMovimientosStockService.php,
+    app/Services/Nexo/NexoSeriesComprobanteService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoUbicacionesStockController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Nexo/NexoUbicacionesStockFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Nexo/Traits/NexoUbicacionesStockRules.php, via: name_prefix_full}
+    route:
+    - {path: routes/modules/nexo_ubicaciones.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoUbicacionesStockService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Nexo/NexoUbicacionesStock/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Nexo/NexoUbicacionesStock/UpdateRequest.php, via: name_exact_full}
+- model: NexoUnidadesMedida
+  path: app/Models/dbgsp_nexo/NexoUnidadesMedida.php
+  connection: mysql_dbgsp_nexo
+  table: nexo_unidades_medida
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  service: [app/Services/Nexo/NexoUnidadesMedidaService.php]
+  controller: [app/Http/Controllers/Api/Nexo/NexoUnidadesMedidaController.php]
+  routes: [routes/modules/nexo_catalogos.php]
+  filter_usado_en: [app/Filters/Nexo/NexoArticulosFilters.php]
+  service_usado_en: [app/Services/Nexo/Facturacion/FacturacionService.php, app/Services/Nexo/NexoArticulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Nexo/NexoUnidadesMedidaController.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/nexo_catalogos.php, via: route_controller}
+    service:
+    - {path: app/Services/Nexo/NexoUnidadesMedidaService.php, via: name_exact_full}
+- model: SiawAuditLog
+  path: app/Models/dbgsp_siaw/SiawAuditLog.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_audit_log
+  pk: {name: pkid, incrementing: true, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id]
+  relaciones:
+  - {createdBy: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  roles: {}
+- model: SiawContentModel
+  path: app/Models/dbgsp_siaw/SiawContentModel.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_content_model
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawContentModelFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  - {permisos: 'hasMany SiawContentPermisos (content_model_id, pkid)'}
+  - {sistema: 'belongsTo SiawSistemas (sistema_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawContentModelFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawContentModelRelationResource.php, app/Http/Resources/Siaw/SiawContentModelResource.php]
+  requests: [app/Http/Requests/Siaw/SiawContentModel/StoreRequest.php, app/Http/Requests/Siaw/SiawContentModel/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawContentModelRules.php]
+  service: [app/Services/Siaw/SiawContentModelService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawContentModelController.php]
+  routes: [routes/modules/siaw_content_model.php]
+  filter_usado_en: [app/Filters/Siaw/SiawContentPermisosFilters.php]
+  service_usado_en: [app/Services/Siaw/SiawContentPermisosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawContentModelController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawContentModelFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Siaw/SiawContentModelRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawContentModelRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawContentModelResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_content_model.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawContentModelService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawContentModel/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawContentModel/UpdateRequest.php, via: name_exact_full}
+- model: SiawContentPermisos
+  path: app/Models/dbgsp_siaw/SiawContentPermisos.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_content_permisos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawContentPermisosFilters
+  relaciones:
+  - {contentModel: 'belongsTo SiawContentModel (content_model_id, pkid)'}
+  - {sistema: 'belongsTo SiawSistemas (sistema_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawContentPermisosFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawContentPermisosRelationResource.php, app/Http/Resources/Siaw/SiawContentPermisosResource.php]
+  requests: [app/Http/Requests/Siaw/SiawContentPermisos/BulkStoreRequest.php, app/Http/Requests/Siaw/SiawContentPermisos/StoreRequest.php, app/Http/Requests/Siaw/SiawContentPermisos/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawContentPermisosRules.php]
+  service: [app/Services/Siaw/SiawContentPermisosService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawContentPermisosController.php]
+  routes: [routes/modules/siaw_content_permisos.php]
+  filter_usado_en: [app/Filters/Siaw/SiawMenuPermisoFilters.php, app/Filters/Siaw/SiawPermisoRolFilters.php, app/Filters/Siaw/SiawPermisoUsuarioFilters.php]
+  requests_usado_en: [app/Http/Requests/Siaw/SiawPermisoUsuario/StoreRequest.php, app/Http/Requests/Siaw/SiawPermisoUsuario/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php]
+  service_usado_en: [app/Services/Auth/AuthService.php, app/Services/Siaw/SiawMenuPermisoService.php, app/Services/Siaw/SiawPermisoRolService.php, app/Services/Siaw/SiawPermisoUsuarioService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawContentPermisosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawContentPermisosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Siaw/SiawContentPermisosRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawContentPermisosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawContentPermisosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_content_permisos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawContentPermisosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawContentPermisos/BulkStoreRequest.php, via: name_exact_full}
+    - {path: app/Http/Requests/Siaw/SiawContentPermisos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawContentPermisos/UpdateRequest.php, via: name_exact_full}
+- model: SiawMenuPermiso
+  path: app/Models/dbgsp_siaw/SiawMenuPermiso.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_menu_permiso
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawMenuPermisoFilters
+  relaciones:
+  - {menu: 'belongsTo SiawMenus (menu_id, pkid)'}
+  - {permiso: 'belongsTo SiawContentPermisos (permiso_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawMenuPermisoFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawMenuPermisoResource.php]
+  requests: [app/Http/Requests/Siaw/SiawMenuPermiso/StoreRequest.php, app/Http/Requests/Siaw/SiawMenuPermiso/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php]
+  service: [app/Services/Siaw/SiawMenuPermisoService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawMenuPermisoController.php]
+  routes: [routes/modules/siaw_menu_permiso.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawMenuPermisoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawMenuPermisoFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawMenuPermisoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_menu_permiso.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawMenuPermisoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawMenuPermiso/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawMenuPermiso/UpdateRequest.php, via: name_exact_full}
+- model: SiawMenus
+  path: app/Models/dbgsp_siaw/SiawMenus.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_menus
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawMenusFilters
+  relaciones:
+  - {sistema: 'belongsTo SiawSistemas (sistema_id, pkid)'}
+  - {parent: 'belongsTo SiawMenus (parent_id, pkid)'}
+  - {hijos: 'hasMany SiawMenus (parent_id, pkid)'}
+  - {permisos: 'hasMany SiawMenuPermiso (menu_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawMenusFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawMenusRelationResource.php, app/Http/Resources/Siaw/SiawMenusResource.php]
+  requests: [app/Http/Requests/Siaw/SiawMenus/StoreRequest.php, app/Http/Requests/Siaw/SiawMenus/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawMenusRules.php]
+  service: [app/Services/Siaw/SiawMenusService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawMenusController.php]
+  routes: [routes/modules/siaw_menus.php]
+  filter_usado_en: [app/Filters/Siaw/SiawMenuPermisoFilters.php]
+  requests_usado_en: [app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php]
+  service_usado_en: [app/Services/Auth/AuthService.php, app/Services/Siaw/SiawMenuPermisoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawMenusController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawMenusFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Siaw/SiawMenusRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawMenusRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawMenusResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_menus.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawMenusService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawMenus/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawMenus/UpdateRequest.php, via: name_exact_full}
+- model: SiawPermisoRol
+  path: app/Models/dbgsp_siaw/SiawPermisoRol.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_permiso_rol
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawPermisoRolFilters
+  relaciones:
+  - {rol: 'belongsTo SiawRoles (rol_id, pkid)'}
+  - {permiso: 'belongsTo SiawContentPermisos (permiso_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawPermisoRolFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawPermisoRolResource.php]
+  requests: [app/Http/Requests/Siaw/SiawPermisoRol/StoreRequest.php, app/Http/Requests/Siaw/SiawPermisoRol/SyncRequest.php, app/Http/Requests/Siaw/SiawPermisoRol/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawPermisoRolRules.php]
+  service: [app/Services/Siaw/SiawPermisoRolService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawPermisoRolController.php]
+  routes: [routes/modules/siaw_permiso_rol.php]
+  service_usado_en: [app/Services/Auth/AuthService.php, app/Services/Siaw/SiawContentPermisosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawPermisoRolController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawPermisoRolFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoRol/SyncRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawPermisoRolRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawPermisoRolResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_permiso_rol.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawPermisoRolService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoRol/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoRol/UpdateRequest.php, via: name_exact_full}
+- model: SiawPermisoUsuario
+  path: app/Models/dbgsp_siaw/SiawPermisoUsuario.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_permiso_usuario
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawPermisoUsuarioFilters
+  relaciones:
+  - {permiso: 'belongsTo SiawContentPermisos (permiso_id, pkid)'}
+  - {usuario: 'belongsTo SiawUsuarios (usuario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawPermisoUsuarioFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawPermisoUsuarioResource.php]
+  requests: [app/Http/Requests/Siaw/SiawPermisoUsuario/StoreRequest.php, app/Http/Requests/Siaw/SiawPermisoUsuario/SyncRequest.php, app/Http/Requests/Siaw/SiawPermisoUsuario/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawPermisoUsuarioRules.php]
+  service: [app/Services/Siaw/SiawPermisoUsuarioService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawPermisoUsuarioController.php]
+  routes: [routes/modules/siaw_permiso_usuario.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawPermisoUsuarioController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawPermisoUsuarioFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoUsuario/SyncRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawPermisoUsuarioRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawPermisoUsuarioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_permiso_usuario.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawPermisoUsuarioService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoUsuario/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoUsuario/UpdateRequest.php, via: name_exact_full}
+- model: SiawRoles
+  path: app/Models/dbgsp_siaw/SiawRoles.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_roles
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawRolesFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawRolesFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawRolRelationResource.php, app/Http/Resources/Siaw/SiawRolesResource.php]
+  requests: [app/Http/Requests/Siaw/SiawRoles/StoreRequest.php, app/Http/Requests/Siaw/SiawRoles/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawRolesRules.php]
+  service: [app/Services/Siaw/SiawRolesService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawRolesController.php]
+  routes: [routes/modules/siaw_roles.php]
+  filter_usado_en: [app/Filters/Siaw/SiawPermisoRolFilters.php, app/Filters/Siaw/SiawRolUsuarioFilters.php, app/Filters/Siaw/SiawUsuariosFilters.php]
+  service_usado_en: [app/Services/Siaw/SiawContentPermisosService.php, app/Services/Siaw/SiawPermisoRolService.php, app/Services/Siaw/SiawRolUsuarioService.php, app/Services/Siaw/SiawUsuariosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawRolesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawRolesFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Siaw/SiawRolRelationResource.php, via: name_stem}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawRolesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawRolesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_roles.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawRolesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawRoles/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawRoles/UpdateRequest.php, via: name_exact_full}
+- model: SiawRolUsuario
+  path: app/Models/dbgsp_siaw/SiawRolUsuario.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_rol_usuario
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawRolUsuarioFilters
+  relaciones:
+  - {rol: 'belongsTo SiawRoles (rol_id, pkid)'}
+  - {usuario: 'belongsTo SiawUsuarios (usuario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawRolUsuarioFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawRolUsuarioResource.php]
+  requests: [app/Http/Requests/Siaw/SiawRolUsuario/StoreRequest.php, app/Http/Requests/Siaw/SiawRolUsuario/SyncRequest.php, app/Http/Requests/Siaw/SiawRolUsuario/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawRolUsuarioRules.php]
+  service: [app/Services/Siaw/SiawRolUsuarioService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawRolUsuarioController.php]
+  routes: [routes/modules/siaw_rol_usuario.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawRolUsuarioController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawRolUsuarioFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Siaw/SiawRolUsuario/SyncRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawRolUsuarioRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawRolUsuarioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_rol_usuario.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawRolUsuarioService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawRolUsuario/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawRolUsuario/UpdateRequest.php, via: name_exact_full}
+- model: SiawSistemas
+  path: app/Models/dbgsp_siaw/SiawSistemas.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_sistemas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawSistemasFilters
+  relaciones:
+  - {menus: 'hasMany SiawMenus (sistema_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawSistemasFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawSistemasRelationResource.php, app/Http/Resources/Siaw/SiawSistemasResource.php]
+  requests: [app/Http/Requests/Siaw/SiawSistemas/StoreRequest.php, app/Http/Requests/Siaw/SiawSistemas/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawSistemasRules.php]
+  service: [app/Services/Siaw/SiawSistemasService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawSistemasController.php]
+  routes: [routes/modules/siaw_sistemas.php]
+  filter_usado_en: [app/Filters/Siaw/SiawContentModelFilters.php, app/Filters/Siaw/SiawContentPermisosFilters.php, app/Filters/Siaw/SiawMenusFilters.php]
+  service_usado_en: [app/Services/Siaw/SiawContentModelService.php, app/Services/Siaw/SiawMenusService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawSistemasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawSistemasFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Siaw/SiawSistemasRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawSistemasRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawSistemasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_sistemas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawSistemasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawSistemas/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawSistemas/UpdateRequest.php, via: name_exact_full}
+- model: SiawTokensAcceso
+  path: app/Models/dbgsp_siaw/SiawTokensAcceso.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_tokens_acceso
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  service_usado_en: [app/Services/Auth/AuthService.php]
+  roles: {}
+- model: SiawUsuarios
+  path: app/Models/dbgsp_siaw/SiawUsuarios.php
+  connection: mysql_dbgsp_siaw
+  table: siaw_usuarios
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawUsuariosFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  - {rol: 'belongsTo SiawRoles (rol_id, pkid)'}
+  filter: [app/Filters/Siaw/SiawUsuariosFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawUsuarioRelationResource.php, app/Http/Resources/Siaw/SiawUsuarioResource.php]
+  requests: [app/Http/Requests/Siaw/SiawUsuarios/StoreSiawUsuarioRequest.php, app/Http/Requests/Siaw/SiawUsuarios/UpdateSiawUsuarioRequest.php, app/Http/Requests/Siaw/Traits/SiawUsuariosRules.php]
+  service: [app/Services/Siaw/SiawUsuariosService.php]
+  controller: [app/Http/Controllers/Api/Siaw/SiawUsuariosController.php]
+  routes: [routes/modules/siaw_usuarios.php]
+  controller_usado_en: [app/Http/Controllers/Api/AuthController.php]
+  filter_usado_en: [app/Filters/Agh/AghTareasLimpiezaFilters.php, app/Filters/Siaw/SiawPermisoUsuarioFilters.php, app/Filters/Siaw/SiawRolUsuarioFilters.php]
+  requests_usado_en: [app/Http/Requests/Siaw/SiawPermisoUsuario/StoreRequest.php, app/Http/Requests/Siaw/SiawPermisoUsuario/UpdateRequest.php]
+  service_usado_en: [app/Services/Agh/AghTareasLimpiezaService.php, app/Services/Auth/AuthService.php, app/Services/Siaw/SiawPermisoUsuarioService.php, app/Services/Siaw/SiawRolUsuarioService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Siaw/SiawUsuariosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Siaw/SiawUsuariosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/Siaw/SiawUsuarioRelationResource.php, via: name_stem}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawUsuariosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawUsuarioResource.php, via: name_stem}
+    route:
+    - {path: routes/modules/siaw_usuarios.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawUsuariosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawUsuarios/StoreSiawUsuarioRequest.php, via: name_stem}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawUsuarios/UpdateSiawUsuarioRequest.php, via: name_stem}

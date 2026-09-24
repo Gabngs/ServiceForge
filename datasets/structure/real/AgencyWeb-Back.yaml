@@ -1,0 +1,1714 @@
+# Ground truth de AgencyWeb-Back -- generado por scripts/scan_backend_structure.py
+# commit e93fa23 (dev), 23-09-2026 23:40:58. Formato: ver docs del script.
+- model: MdtAeropuertos
+  path: app/Models/dbmdt/MdtAeropuertos.php
+  connection: dbmdt
+  table: mdt_aeropuertos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtAeropuertosFilters
+  relaciones:
+  - {destinos: 'hasMany MdtDestinos (aeropuerto_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtAeropuertosFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtAeropuertosResource.php]
+  requests: [app/Http/Requests/Mdt/MdtAeropuertos/StoreRequest.php, app/Http/Requests/Mdt/MdtAeropuertos/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtAeropuertosRules.php]
+  service: [app/Services/Mdt/MdtAeropuertosService.php]
+  controller: [app/Http/Controllers/Api/MdtAeropuertosController.php]
+  routes: [routes/modules/mdt_aeropuertos.php]
+  filter_usado_en: [app/Filters/MdtDestinosFilters.php, app/Filters/MdtSegmentosVueloFilters.php, app/Filters/MdtVuelosFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtDestinosService.php, app/Services/Mdt/MdtSegmentosVueloService.php, app/Services/Mdt/MdtVuelosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtAeropuertosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtAeropuertosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtAeropuertosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtAeropuertosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_aeropuertos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtAeropuertosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtAeropuertos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtAeropuertos/UpdateRequest.php, via: name_exact_full}
+- model: MdtBusquedasSabre
+  path: app/Models/dbmdt/MdtBusquedasSabre.php
+  connection: dbmdt
+  table: mdt_busquedas_sabre
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtBusquedasSabreFilters
+  relaciones:
+  - {empleado: 'belongsTo MdtEmpleados (empleado_id, pkid)'}
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtBusquedasSabreFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtBusquedasSabreResource.php]
+  requests: [app/Http/Requests/Mdt/MdtBusquedasSabre/StoreRequest.php, app/Http/Requests/Mdt/MdtBusquedasSabre/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtBusquedasSabreRules.php]
+  service: [app/Services/Mdt/MdtBusquedasSabreService.php]
+  controller: [app/Http/Controllers/Api/MdtBusquedasSabreController.php]
+  routes: [routes/modules/mdt_busquedas_sabre.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtBusquedasSabreController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtBusquedasSabreFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtBusquedasSabreRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtBusquedasSabreResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_busquedas_sabre.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtBusquedasSabreService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtBusquedasSabre/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtBusquedasSabre/UpdateRequest.php, via: name_exact_full}
+- model: MdtCatalogo
+  path: app/Models/dbmdt/MdtCatalogo.php
+  connection: dbmdt
+  table: mdt_catalogo
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtCatalogoFilters
+  relaciones:
+  - {det: 'hasMany MdtCatalogoDet (catalogo_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtCatalogoFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtCatalogoResource.php]
+  requests: [app/Http/Requests/Mdt/MdtCatalogo/StoreRequest.php, app/Http/Requests/Mdt/MdtCatalogo/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtCatalogoRules.php]
+  service: [app/Services/Mdt/MdtCatalogoService.php]
+  controller: [app/Http/Controllers/Api/MdtCatalogoController.php]
+  routes: [routes/modules/mdt_catalogo.php]
+  filter_usado_en: [app/Filters/MdtCatalogoDetFilters.php]
+  requests_usado_en: [app/Http/Requests/Mdt/Traits/MdtCatalogoDetRules.php]
+  service_usado_en: [app/Services/Mdt/MdtCatalogoDetService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtCatalogoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtCatalogoFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtCatalogoRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtCatalogoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_catalogo.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtCatalogoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtCatalogo/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtCatalogo/UpdateRequest.php, via: name_exact_full}
+- model: MdtCatalogoDet
+  path: app/Models/dbmdt/MdtCatalogoDet.php
+  connection: dbmdt
+  table: mdt_catalogo_det
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtCatalogoDetFilters
+  relaciones:
+  - {catalogo: 'belongsTo MdtCatalogo (catalogo_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtCatalogoDetFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtCatalogoDetResource.php]
+  requests: [app/Http/Requests/Mdt/MdtCatalogoDet/StoreRequest.php, app/Http/Requests/Mdt/MdtCatalogoDet/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtCatalogoDetRules.php]
+  service: [app/Services/Mdt/MdtCatalogoDetService.php]
+  controller: [app/Http/Controllers/Api/MdtCatalogoDetController.php]
+  routes: [routes/modules/mdt_catalogo_det.php]
+  filter_usado_en: [app/Filters/MdtClientesFilters.php, app/Filters/MdtCotizacionesFilters.php, app/Filters/MdtCuotasPagoFilters.php, app/Filters/MdtDocumentosClienteFilters.php, app/Filters/MdtItemsCotizacionFilters.php,
+    app/Filters/MdtItemsPaqueteFilters.php, app/Filters/MdtItemsProformaFilters.php, app/Filters/MdtItemsVentaFilters.php, app/Filters/MdtLibroReclamacionesFilters.php, app/Filters/MdtNotasClienteFilters.php,
+    app/Filters/MdtPagosFilters.php, app/Filters/MdtPaquetesFilters.php, app/Filters/MdtPasajerosVentaFilters.php, app/Filters/MdtProformasFilters.php, app/Filters/MdtServiciosFilters.php, app/Filters/MdtTiposCambioFilters.php,
+    app/Filters/MdtVentasFilters.php, app/Filters/MdtVuelosFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtClientesService.php, app/Services/Mdt/MdtCotizacionesService.php, app/Services/Mdt/MdtCuotasPagoService.php, app/Services/Mdt/MdtDocumentosClienteService.php, app/Services/Mdt/MdtItemsCotizacionService.php,
+    app/Services/Mdt/MdtItemsPaqueteService.php, app/Services/Mdt/MdtItemsProformaService.php, app/Services/Mdt/MdtItemsVentaService.php, app/Services/Mdt/MdtLibroReclamacionesService.php, app/Services/Mdt/MdtNotasClienteService.php,
+    app/Services/Mdt/MdtPagosService.php, app/Services/Mdt/MdtPaquetesService.php, app/Services/Mdt/MdtPasajerosVentaService.php, app/Services/Mdt/MdtProformasService.php, app/Services/Mdt/MdtSegmentosVueloService.php,
+    app/Services/Mdt/MdtServiciosService.php, app/Services/Mdt/MdtTiposCambioService.php, app/Services/Mdt/MdtVentasService.php, app/Services/Mdt/MdtVuelosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtCatalogoDetController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtCatalogoDetFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtCatalogoDetRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtCatalogoDetResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_catalogo_det.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtCatalogoDetService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtCatalogoDet/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtCatalogoDet/UpdateRequest.php, via: name_exact_full}
+- model: MdtClientes
+  path: app/Models/dbmdt/MdtClientes.php
+  connection: dbmdt
+  table: mdt_clientes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtClientesFilters
+  relaciones:
+  - {usuario: 'belongsTo SiawUsuarios (usuario_id, pkid)'}
+  - {tipoDoc: 'belongsTo MdtCatalogoDet (tipo_doc_id, pkid)'}
+  - {genero: 'belongsTo MdtCatalogoDet (genero_id, pkid)'}
+  - {referidoPor: 'belongsTo self (referido_por, pkid)'}
+  - {agenteAsignado: 'belongsTo MdtEmpleados (agente_asignado_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtClientesFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtClientesResource.php]
+  requests: [app/Http/Requests/Mdt/MdtClientes/StoreRequest.php, app/Http/Requests/Mdt/MdtClientes/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtClientesRules.php]
+  service: [app/Services/Mdt/MdtClientesService.php]
+  controller: [app/Http/Controllers/Api/MdtClientesController.php]
+  routes: [routes/modules/mdt_clientes.php]
+  filter_usado_en: [app/Filters/MdtBusquedasSabreFilters.php, app/Filters/MdtCotizacionesFilters.php, app/Filters/MdtDocumentosClienteFilters.php, app/Filters/MdtLibroReclamacionesFilters.php, app/Filters/MdtNotasClienteFilters.php,
+    app/Filters/MdtPasajerosVentaFilters.php, app/Filters/MdtProformasFilters.php, app/Filters/MdtReferidosFilters.php, app/Filters/MdtVentasFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtBusquedasSabreService.php, app/Services/Mdt/MdtCotizacionesService.php, app/Services/Mdt/MdtDocumentosClienteService.php, app/Services/Mdt/MdtLibroReclamacionesService.php,
+    app/Services/Mdt/MdtNotasClienteService.php, app/Services/Mdt/MdtPasajerosVentaService.php, app/Services/Mdt/MdtProformasService.php, app/Services/Mdt/MdtReferidosService.php, app/Services/Mdt/MdtVentasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtClientesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtClientesFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtClientesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtClientesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_clientes.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtClientesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtClientes/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtClientes/UpdateRequest.php, via: name_exact_full}
+- model: MdtConfiguracionSistema
+  path: app/Models/dbmdt/MdtConfiguracionSistema.php
+  connection: dbmdt
+  table: mdt_configuracion_sistema
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtConfiguracionSistemaFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtConfiguracionSistemaFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtConfiguracionSistemaResource.php]
+  requests: [app/Http/Requests/Mdt/MdtConfiguracionSistema/StoreRequest.php, app/Http/Requests/Mdt/MdtConfiguracionSistema/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtConfiguracionSistemaRules.php]
+  service: [app/Services/Mdt/MdtConfiguracionSistemaService.php]
+  controller: [app/Http/Controllers/Api/MdtConfiguracionSistemaController.php]
+  routes: [routes/modules/mdt_configuracion_sistema.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtConfiguracionSistemaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtConfiguracionSistemaFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtConfiguracionSistemaRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtConfiguracionSistemaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_configuracion_sistema.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtConfiguracionSistemaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtConfiguracionSistema/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtConfiguracionSistema/UpdateRequest.php, via: name_exact_full}
+- model: MdtContratosHotel
+  path: app/Models/dbmdt/MdtContratosHotel.php
+  connection: dbmdt
+  table: mdt_contratos_hotel
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtContratosHotelFilters
+  relaciones:
+  - {hotel: 'belongsTo MdtHoteles (hotel_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtContratosHotelFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtContratosHotelResource.php]
+  requests: [app/Http/Requests/Mdt/MdtContratosHotel/StoreRequest.php, app/Http/Requests/Mdt/MdtContratosHotel/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtContratosHotelRules.php]
+  service: [app/Services/Mdt/MdtContratosHotelService.php]
+  controller: [app/Http/Controllers/Api/MdtContratosHotelController.php]
+  routes: [routes/modules/mdt_contratos_hotel.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtContratosHotelController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtContratosHotelFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtContratosHotelRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtContratosHotelResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_contratos_hotel.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtContratosHotelService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtContratosHotel/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtContratosHotel/UpdateRequest.php, via: name_exact_full}
+- model: MdtCotizaciones
+  path: app/Models/dbmdt/MdtCotizaciones.php
+  connection: dbmdt
+  table: mdt_cotizaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtCotizacionesFilters
+  relaciones:
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {empleado: 'belongsTo MdtEmpleados (empleado_id, pkid)'}
+  - {tipo: 'belongsTo MdtCatalogoDet (tipo_id, pkid)'}
+  - {estado: 'belongsTo MdtCatalogoDet (estado_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtCotizacionesFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtCotizacionesResource.php]
+  requests: [app/Http/Requests/Mdt/MdtCotizaciones/StoreRequest.php, app/Http/Requests/Mdt/MdtCotizaciones/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtCotizacionesRules.php]
+  service: [app/Services/Mdt/MdtCotizacionesService.php]
+  controller: [app/Http/Controllers/Api/MdtCotizacionesController.php]
+  routes: [routes/modules/mdt_cotizaciones.php]
+  filter_usado_en: [app/Filters/MdtItemsCotizacionFilters.php, app/Filters/MdtProformasFilters.php, app/Filters/MdtVentasFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtItemsCotizacionService.php, app/Services/Mdt/MdtProformasService.php, app/Services/Mdt/MdtVentasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtCotizacionesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtCotizacionesFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtCotizacionesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtCotizacionesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_cotizaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtCotizacionesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtCotizaciones/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtCotizaciones/UpdateRequest.php, via: name_exact_full}
+- model: MdtCuotasPago
+  path: app/Models/dbmdt/MdtCuotasPago.php
+  connection: dbmdt
+  table: mdt_cuotas_pago
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtCuotasPagoFilters
+  relaciones:
+  - {venta: 'belongsTo MdtVentas (venta_id, pkid)'}
+  - {pago: 'belongsTo MdtPagos (pago_id, pkid)'}
+  - {estado: 'belongsTo MdtCatalogoDet (estado_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtCuotasPagoFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtCuotasPagoResource.php]
+  requests: [app/Http/Requests/Mdt/MdtCuotasPago/StoreRequest.php, app/Http/Requests/Mdt/MdtCuotasPago/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtCuotasPagoRules.php]
+  service: [app/Services/Mdt/MdtCuotasPagoService.php]
+  controller: [app/Http/Controllers/Api/MdtCuotasPagoController.php]
+  routes: [routes/modules/mdt_cuotas_pago.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtCuotasPagoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtCuotasPagoFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtCuotasPagoRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtCuotasPagoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_cuotas_pago.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtCuotasPagoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtCuotasPago/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtCuotasPago/UpdateRequest.php, via: name_exact_full}
+- model: MdtDestinos
+  path: app/Models/dbmdt/MdtDestinos.php
+  connection: dbmdt
+  table: mdt_destinos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtDestinosFilters
+  relaciones:
+  - {aeropuerto: 'belongsTo MdtAeropuertos (aeropuerto_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtDestinosFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtDestinosResource.php]
+  requests: [app/Http/Requests/Mdt/MdtDestinos/StoreRequest.php, app/Http/Requests/Mdt/MdtDestinos/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtDestinosRules.php]
+  service: [app/Services/Mdt/MdtDestinosService.php]
+  controller: [app/Http/Controllers/Api/MdtDestinosController.php]
+  routes: [routes/modules/mdt_destinos.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtDestinosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtDestinosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtDestinosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtDestinosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_destinos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtDestinosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtDestinos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtDestinos/UpdateRequest.php, via: name_exact_full}
+- model: MdtDocumentosCliente
+  path: app/Models/dbmdt/MdtDocumentosCliente.php
+  connection: dbmdt
+  table: mdt_documentos_cliente
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtDocumentosClienteFilters
+  relaciones:
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {tipo: 'belongsTo MdtCatalogoDet (tipo_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtDocumentosClienteFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtDocumentosClienteResource.php]
+  requests: [app/Http/Requests/Mdt/MdtDocumentosCliente/StoreRequest.php, app/Http/Requests/Mdt/MdtDocumentosCliente/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtDocumentosClienteRules.php]
+  service: [app/Services/Mdt/MdtDocumentosClienteService.php]
+  controller: [app/Http/Controllers/Api/MdtDocumentosClienteController.php]
+  routes: [routes/modules/mdt_documentos_cliente.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtDocumentosClienteController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtDocumentosClienteFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtDocumentosClienteRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtDocumentosClienteResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_documentos_cliente.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtDocumentosClienteService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtDocumentosCliente/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtDocumentosCliente/UpdateRequest.php, via: name_exact_full}
+- model: MdtEmpleados
+  path: app/Models/dbmdt/MdtEmpleados.php
+  connection: dbmdt
+  table: mdt_empleados
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtEmpleadosFilters
+  relaciones:
+  - {usuario: 'belongsTo SiawUsuarios (usuario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtEmpleadosFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtEmpleadosResource.php]
+  requests: [app/Http/Requests/Mdt/MdtEmpleados/StoreRequest.php, app/Http/Requests/Mdt/MdtEmpleados/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtEmpleadosRules.php]
+  service: [app/Services/Mdt/MdtEmpleadosService.php]
+  controller: [app/Http/Controllers/Api/MdtEmpleadosController.php]
+  routes: [routes/modules/mdt_empleados.php]
+  filter_usado_en: [app/Filters/MdtBusquedasSabreFilters.php, app/Filters/MdtClientesFilters.php, app/Filters/MdtCotizacionesFilters.php, app/Filters/MdtNotasClienteFilters.php, app/Filters/MdtPagosFilters.php,
+    app/Filters/MdtProformasFilters.php, app/Filters/MdtVentasFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtBusquedasSabreService.php, app/Services/Mdt/MdtClientesService.php, app/Services/Mdt/MdtCotizacionesService.php, app/Services/Mdt/MdtNotasClienteService.php, app/Services/Mdt/MdtPagosService.php,
+    app/Services/Mdt/MdtProformasService.php, app/Services/Mdt/MdtVentasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtEmpleadosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtEmpleadosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtEmpleadosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtEmpleadosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_empleados.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtEmpleadosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtEmpleados/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtEmpleados/UpdateRequest.php, via: name_exact_full}
+- model: MdtHabitacionesHotel
+  path: app/Models/dbmdt/MdtHabitacionesHotel.php
+  connection: dbmdt
+  table: mdt_habitaciones_hotel
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtHabitacionesHotelFilters
+  relaciones:
+  - {hotel: 'belongsTo MdtHoteles (hotel_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtHabitacionesHotelFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtHabitacionesHotelResource.php]
+  requests: [app/Http/Requests/Mdt/MdtHabitacionesHotel/StoreRequest.php, app/Http/Requests/Mdt/MdtHabitacionesHotel/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtHabitacionesHotelRules.php]
+  service: [app/Services/Mdt/MdtHabitacionesHotelService.php]
+  controller: [app/Http/Controllers/Api/MdtHabitacionesHotelController.php]
+  routes: [routes/modules/mdt_habitaciones_hotel.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtHabitacionesHotelController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtHabitacionesHotelFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtHabitacionesHotelRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtHabitacionesHotelResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_habitaciones_hotel.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtHabitacionesHotelService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtHabitacionesHotel/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtHabitacionesHotel/UpdateRequest.php, via: name_exact_full}
+- model: MdtHoteles
+  path: app/Models/dbmdt/MdtHoteles.php
+  connection: dbmdt
+  table: mdt_hoteles
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtHotelesFilters
+  relaciones:
+  - {proveedor: 'belongsTo MdtProveedores (proveedor_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtHotelesFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtHotelesResource.php]
+  requests: [app/Http/Requests/Mdt/MdtHoteles/StoreRequest.php, app/Http/Requests/Mdt/MdtHoteles/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtHotelesRules.php]
+  service: [app/Services/Mdt/MdtHotelesService.php]
+  controller: [app/Http/Controllers/Api/MdtHotelesController.php]
+  routes: [routes/modules/mdt_hoteles.php]
+  filter_usado_en: [app/Filters/MdtContratosHotelFilters.php, app/Filters/MdtHabitacionesHotelFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtContratosHotelService.php, app/Services/Mdt/MdtHabitacionesHotelService.php, app/Services/Mdt/MdtItemsCotizacionService.php, app/Services/Mdt/MdtItemsPaqueteService.php,
+    app/Services/Mdt/MdtItemsProformaService.php, app/Services/Mdt/MdtItemsVentaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtHotelesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtHotelesFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtHotelesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtHotelesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_hoteles.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtHotelesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtHoteles/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtHoteles/UpdateRequest.php, via: name_exact_full}
+- model: MdtItemsCotizacion
+  path: app/Models/dbmdt/MdtItemsCotizacion.php
+  connection: dbmdt
+  table: mdt_items_cotizacion
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtItemsCotizacionFilters
+  relaciones:
+  - {cotizacion: 'belongsTo MdtCotizaciones (cotizacion_id, pkid)'}
+  - {tipoItem: 'belongsTo MdtCatalogoDet (tipo_item_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtItemsCotizacionFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtItemsCotizacionResource.php]
+  requests: [app/Http/Requests/Mdt/MdtItemsCotizacion/StoreRequest.php, app/Http/Requests/Mdt/MdtItemsCotizacion/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtItemsCotizacionRules.php]
+  service: [app/Services/Mdt/MdtItemsCotizacionService.php]
+  controller: [app/Http/Controllers/Api/MdtItemsCotizacionController.php]
+  routes: [routes/modules/mdt_items_cotizacion.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtItemsCotizacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtItemsCotizacionFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtItemsCotizacionRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtItemsCotizacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_items_cotizacion.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtItemsCotizacionService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsCotizacion/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsCotizacion/UpdateRequest.php, via: name_exact_full}
+- model: MdtItemsPaquete
+  path: app/Models/dbmdt/MdtItemsPaquete.php
+  connection: dbmdt
+  table: mdt_items_paquete
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtItemsPaqueteFilters
+  relaciones:
+  - {paquete: 'belongsTo MdtPaquetes (paquete_id, pkid)'}
+  - {tipoItem: 'belongsTo MdtCatalogoDet (tipo_item_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtItemsPaqueteFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtItemsPaqueteResource.php]
+  requests: [app/Http/Requests/Mdt/MdtItemsPaquete/StoreRequest.php, app/Http/Requests/Mdt/MdtItemsPaquete/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtItemsPaqueteRules.php]
+  service: [app/Services/Mdt/MdtItemsPaqueteService.php]
+  controller: [app/Http/Controllers/Api/MdtItemsPaqueteController.php]
+  routes: [routes/modules/mdt_items_paquete.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtItemsPaqueteController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtItemsPaqueteFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtItemsPaqueteRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtItemsPaqueteResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_items_paquete.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtItemsPaqueteService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsPaquete/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsPaquete/UpdateRequest.php, via: name_exact_full}
+- model: MdtItemsProforma
+  path: app/Models/dbmdt/MdtItemsProforma.php
+  connection: dbmdt
+  table: mdt_items_proforma
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtItemsProformaFilters
+  relaciones:
+  - {proforma: 'belongsTo MdtProformas (proforma_id, pkid)'}
+  - {tipoItem: 'belongsTo MdtCatalogoDet (tipo_item_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtItemsProformaFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtItemsProformaResource.php]
+  requests: [app/Http/Requests/Mdt/MdtItemsProforma/StoreRequest.php, app/Http/Requests/Mdt/MdtItemsProforma/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtItemsProformaRules.php]
+  service: [app/Services/Mdt/MdtItemsProformaService.php]
+  controller: [app/Http/Controllers/Api/MdtItemsProformaController.php]
+  routes: [routes/modules/mdt_items_proforma.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtItemsProformaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtItemsProformaFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtItemsProformaRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtItemsProformaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_items_proforma.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtItemsProformaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsProforma/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsProforma/UpdateRequest.php, via: name_exact_full}
+- model: MdtItemsVenta
+  path: app/Models/dbmdt/MdtItemsVenta.php
+  connection: dbmdt
+  table: mdt_items_venta
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtItemsVentaFilters
+  relaciones:
+  - {venta: 'belongsTo MdtVentas (venta_id, pkid)'}
+  - {tipoItem: 'belongsTo MdtCatalogoDet (tipo_item_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtItemsVentaFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtItemsVentaResource.php]
+  requests: [app/Http/Requests/Mdt/MdtItemsVenta/StoreRequest.php, app/Http/Requests/Mdt/MdtItemsVenta/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtItemsVentaRules.php]
+  service: [app/Services/Mdt/MdtItemsVentaService.php]
+  controller: [app/Http/Controllers/Api/MdtItemsVentaController.php]
+  routes: [routes/modules/mdt_items_venta.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtItemsVentaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtItemsVentaFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtItemsVentaRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtItemsVentaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_items_venta.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtItemsVentaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsVenta/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtItemsVenta/UpdateRequest.php, via: name_exact_full}
+- model: MdtLibroReclamaciones
+  path: app/Models/dbmdt/MdtLibroReclamaciones.php
+  connection: dbmdt
+  table: mdt_libro_reclamaciones
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtLibroReclamacionesFilters
+  relaciones:
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {venta: 'belongsTo MdtVentas (venta_id, pkid)'}
+  - {estado: 'belongsTo MdtCatalogoDet (estado_id, pkid)'}
+  - {respondidoPor: 'belongsTo MdtEmpleados (respondido_por, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtLibroReclamacionesFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtLibroReclamacionesResource.php]
+  requests: [app/Http/Requests/Mdt/MdtLibroReclamaciones/StoreRequest.php, app/Http/Requests/Mdt/MdtLibroReclamaciones/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtLibroReclamacionesRules.php]
+  service: [app/Services/Mdt/MdtLibroReclamacionesService.php]
+  controller: [app/Http/Controllers/Api/MdtLibroReclamacionesController.php]
+  routes: [routes/modules/mdt_libro_reclamaciones.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtLibroReclamacionesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtLibroReclamacionesFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtLibroReclamacionesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtLibroReclamacionesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_libro_reclamaciones.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtLibroReclamacionesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtLibroReclamaciones/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtLibroReclamaciones/UpdateRequest.php, via: name_exact_full}
+- model: MdtNotasCliente
+  path: app/Models/dbmdt/MdtNotasCliente.php
+  connection: dbmdt
+  table: mdt_notas_cliente
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtNotasClienteFilters
+  relaciones:
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {empleado: 'belongsTo MdtEmpleados (empleado_id, pkid)'}
+  - {tipo: 'belongsTo MdtCatalogoDet (tipo_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtNotasClienteFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtNotasClienteResource.php]
+  requests: [app/Http/Requests/Mdt/MdtNotasCliente/StoreRequest.php, app/Http/Requests/Mdt/MdtNotasCliente/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtNotasClienteRules.php]
+  service: [app/Services/Mdt/MdtNotasClienteService.php]
+  controller: [app/Http/Controllers/Api/MdtNotasClienteController.php]
+  routes: [routes/modules/mdt_notas_cliente.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtNotasClienteController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtNotasClienteFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtNotasClienteRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtNotasClienteResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_notas_cliente.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtNotasClienteService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtNotasCliente/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtNotasCliente/UpdateRequest.php, via: name_exact_full}
+- model: MdtPagos
+  path: app/Models/dbmdt/MdtPagos.php
+  connection: dbmdt
+  table: mdt_pagos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtPagosFilters
+  relaciones:
+  - {venta: 'belongsTo MdtVentas (venta_id, pkid)'}
+  - {metodoPago: 'belongsTo MdtCatalogoDet (metodo_pago_id, pkid)'}
+  - {estado: 'belongsTo MdtCatalogoDet (estado_id, pkid)'}
+  - {recibidoPor: 'belongsTo MdtEmpleados (recibido_por, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtPagosFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtPagosResource.php]
+  requests: [app/Http/Requests/Mdt/MdtPagos/StoreRequest.php, app/Http/Requests/Mdt/MdtPagos/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtPagosRules.php]
+  service: [app/Services/Mdt/MdtPagosService.php]
+  controller: [app/Http/Controllers/Api/MdtPagosController.php]
+  routes: [routes/modules/mdt_pagos.php]
+  filter_usado_en: [app/Filters/MdtCuotasPagoFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtCuotasPagoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtPagosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtPagosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtPagosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtPagosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_pagos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtPagosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtPagos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtPagos/UpdateRequest.php, via: name_exact_full}
+- model: MdtPaquetes
+  path: app/Models/dbmdt/MdtPaquetes.php
+  connection: dbmdt
+  table: mdt_paquetes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtPaquetesFilters
+  relaciones:
+  - {tipo: 'belongsTo MdtCatalogoDet (tipo_id, pkid)'}
+  - {proveedor: 'belongsTo MdtProveedores (proveedor_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtPaquetesFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtPaquetesResource.php]
+  requests: [app/Http/Requests/Mdt/MdtPaquetes/StoreRequest.php, app/Http/Requests/Mdt/MdtPaquetes/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtPaquetesRules.php]
+  service: [app/Services/Mdt/MdtPaquetesService.php]
+  controller: [app/Http/Controllers/Api/MdtPaquetesController.php]
+  routes: [routes/modules/mdt_paquetes.php]
+  filter_usado_en: [app/Filters/MdtItemsPaqueteFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtItemsCotizacionService.php, app/Services/Mdt/MdtItemsPaqueteService.php, app/Services/Mdt/MdtItemsProformaService.php, app/Services/Mdt/MdtItemsVentaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtPaquetesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtPaquetesFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtPaquetesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtPaquetesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_paquetes.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtPaquetesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtPaquetes/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtPaquetes/UpdateRequest.php, via: name_exact_full}
+- model: MdtPasajerosVenta
+  path: app/Models/dbmdt/MdtPasajerosVenta.php
+  connection: dbmdt
+  table: mdt_pasajeros_venta
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtPasajerosVentaFilters
+  relaciones:
+  - {venta: 'belongsTo MdtVentas (venta_id, pkid)'}
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {tipoDoc: 'belongsTo MdtCatalogoDet (tipo_doc_id, pkid)'}
+  - {tipoPasajero: 'belongsTo MdtCatalogoDet (tipo_pasajero_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtPasajerosVentaFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtPasajerosVentaResource.php]
+  requests: [app/Http/Requests/Mdt/MdtPasajerosVenta/StoreRequest.php, app/Http/Requests/Mdt/MdtPasajerosVenta/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtPasajerosVentaRules.php]
+  service: [app/Services/Mdt/MdtPasajerosVentaService.php]
+  controller: [app/Http/Controllers/Api/MdtPasajerosVentaController.php]
+  routes: [routes/modules/mdt_pasajeros_venta.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtPasajerosVentaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtPasajerosVentaFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtPasajerosVentaRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtPasajerosVentaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_pasajeros_venta.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtPasajerosVentaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtPasajerosVenta/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtPasajerosVenta/UpdateRequest.php, via: name_exact_full}
+- model: MdtProformas
+  path: app/Models/dbmdt/MdtProformas.php
+  connection: dbmdt
+  table: mdt_proformas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtProformasFilters
+  relaciones:
+  - {cotizacion: 'belongsTo MdtCotizaciones (cotizacion_id, pkid)'}
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {empleado: 'belongsTo MdtEmpleados (empleado_id, pkid)'}
+  - {estado: 'belongsTo MdtCatalogoDet (estado_id, pkid)'}
+  - {aprobadaPor: 'belongsTo MdtEmpleados (aprobada_por, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtProformasFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtProformasResource.php]
+  requests: [app/Http/Requests/Mdt/MdtProformas/StoreRequest.php, app/Http/Requests/Mdt/MdtProformas/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtProformasRules.php]
+  service: [app/Services/Mdt/MdtProformasService.php]
+  controller: [app/Http/Controllers/Api/MdtProformasController.php]
+  routes: [routes/modules/mdt_proformas.php]
+  filter_usado_en: [app/Filters/MdtItemsProformaFilters.php, app/Filters/MdtVentasFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtItemsProformaService.php, app/Services/Mdt/MdtVentasService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtProformasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtProformasFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtProformasRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtProformasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_proformas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtProformasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtProformas/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtProformas/UpdateRequest.php, via: name_exact_full}
+- model: MdtProveedores
+  path: app/Models/dbmdt/MdtProveedores.php
+  connection: dbmdt
+  table: mdt_proveedores
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtProveedoresFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtProveedoresFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtProveedoresResource.php]
+  requests: [app/Http/Requests/Mdt/MdtProveedores/StoreRequest.php, app/Http/Requests/Mdt/MdtProveedores/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtProveedoresRules.php]
+  service: [app/Services/Mdt/MdtProveedoresService.php]
+  controller: [app/Http/Controllers/Api/MdtProveedoresController.php]
+  routes: [routes/modules/mdt_proveedores.php]
+  filter_usado_en: [app/Filters/MdtHotelesFilters.php, app/Filters/MdtPaquetesFilters.php, app/Filters/MdtServiciosFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtHotelesService.php, app/Services/Mdt/MdtPaquetesService.php, app/Services/Mdt/MdtServiciosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtProveedoresController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtProveedoresFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtProveedoresRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtProveedoresResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_proveedores.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtProveedoresService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtProveedores/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtProveedores/UpdateRequest.php, via: name_exact_full}
+- model: MdtReferidos
+  path: app/Models/dbmdt/MdtReferidos.php
+  connection: dbmdt
+  table: mdt_referidos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtReferidosFilters
+  relaciones:
+  - {referidor: 'belongsTo MdtClientes (referidor_id, pkid)'}
+  - {referido: 'belongsTo MdtClientes (referido_id, pkid)'}
+  - {venta: 'belongsTo MdtVentas (venta_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtReferidosFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtReferidosResource.php]
+  requests: [app/Http/Requests/Mdt/MdtReferidos/StoreRequest.php, app/Http/Requests/Mdt/MdtReferidos/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtReferidosRules.php]
+  service: [app/Services/Mdt/MdtReferidosService.php]
+  controller: [app/Http/Controllers/Api/MdtReferidosController.php]
+  routes: [routes/modules/mdt_referidos.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtReferidosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtReferidosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtReferidosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtReferidosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_referidos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtReferidosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtReferidos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtReferidos/UpdateRequest.php, via: name_exact_full}
+- model: MdtSegmentosVuelo
+  path: app/Models/dbmdt/MdtSegmentosVuelo.php
+  connection: dbmdt
+  table: mdt_segmentos_vuelo
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtSegmentosVueloFilters
+  relaciones:
+  - {vuelo: 'belongsTo MdtVuelos (vuelo_id, pkid)'}
+  - {aerolinea: 'belongsTo MdtCatalogoDet (aerolinea_id, pkid)'}
+  - {origen: 'belongsTo MdtAeropuertos (aeropuerto_origen, pkid)'}
+  - {destino: 'belongsTo MdtAeropuertos (aeropuerto_destino, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtSegmentosVueloFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtSegmentosVueloResource.php]
+  requests: [app/Http/Requests/Mdt/MdtSegmentosVuelo/StoreRequest.php, app/Http/Requests/Mdt/MdtSegmentosVuelo/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtSegmentosVueloRules.php]
+  service: [app/Services/Mdt/MdtSegmentosVueloService.php]
+  controller: [app/Http/Controllers/Api/MdtSegmentosVueloController.php]
+  routes: [routes/modules/mdt_segmentos_vuelo.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtSegmentosVueloController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtSegmentosVueloFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtSegmentosVueloRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtSegmentosVueloResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_segmentos_vuelo.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtSegmentosVueloService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtSegmentosVuelo/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtSegmentosVuelo/UpdateRequest.php, via: name_exact_full}
+- model: MdtServicios
+  path: app/Models/dbmdt/MdtServicios.php
+  connection: dbmdt
+  table: mdt_servicios
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtServiciosFilters
+  relaciones:
+  - {tipo: 'belongsTo MdtCatalogoDet (tipo_id, pkid)'}
+  - {proveedor: 'belongsTo MdtProveedores (proveedor_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtServiciosFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtServiciosResource.php]
+  requests: [app/Http/Requests/Mdt/MdtServicios/StoreRequest.php, app/Http/Requests/Mdt/MdtServicios/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtServiciosRules.php]
+  service: [app/Services/Mdt/MdtServiciosService.php]
+  controller: [app/Http/Controllers/Api/MdtServiciosController.php]
+  routes: [routes/modules/mdt_servicios.php]
+  filter_usado_en: [app/Filters/MdtServiciosVisaFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtItemsCotizacionService.php, app/Services/Mdt/MdtItemsPaqueteService.php, app/Services/Mdt/MdtItemsProformaService.php, app/Services/Mdt/MdtItemsVentaService.php,
+    app/Services/Mdt/MdtServiciosVisaService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtServiciosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtServiciosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtServiciosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtServiciosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_servicios.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtServiciosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtServicios/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtServicios/UpdateRequest.php, via: name_exact_full}
+- model: MdtServiciosVisa
+  path: app/Models/dbmdt/MdtServiciosVisa.php
+  connection: dbmdt
+  table: mdt_servicios_visa
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtServiciosVisaFilters
+  relaciones:
+  - {servicio: 'belongsTo MdtServicios (servicio_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtServiciosVisaFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtServiciosVisaResource.php]
+  requests: [app/Http/Requests/Mdt/MdtServiciosVisa/StoreRequest.php, app/Http/Requests/Mdt/MdtServiciosVisa/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtServiciosVisaRules.php]
+  service: [app/Services/Mdt/MdtServiciosVisaService.php]
+  controller: [app/Http/Controllers/Api/MdtServiciosVisaController.php]
+  routes: [routes/modules/mdt_servicios_visa.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtServiciosVisaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtServiciosVisaFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtServiciosVisaRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtServiciosVisaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_servicios_visa.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtServiciosVisaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtServiciosVisa/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtServiciosVisa/UpdateRequest.php, via: name_exact_full}
+- model: MdtTiposCambio
+  path: app/Models/dbmdt/MdtTiposCambio.php
+  connection: dbmdt
+  table: mdt_tipos_cambio
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtTiposCambioFilters
+  relaciones:
+  - {monedaOrigen: 'belongsTo MdtCatalogoDet (moneda_origen_id, pkid)'}
+  - {monedaDestino: 'belongsTo MdtCatalogoDet (moneda_destino_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtTiposCambioFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtTiposCambioResource.php]
+  requests: [app/Http/Requests/Mdt/MdtTiposCambio/StoreRequest.php, app/Http/Requests/Mdt/MdtTiposCambio/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtTiposCambioRules.php]
+  service: [app/Services/Mdt/MdtTiposCambioService.php]
+  controller: [app/Http/Controllers/Api/MdtTiposCambioController.php]
+  routes: [routes/modules/mdt_tipos_cambio.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtTiposCambioController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtTiposCambioFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtTiposCambioRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtTiposCambioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_tipos_cambio.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtTiposCambioService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtTiposCambio/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtTiposCambio/UpdateRequest.php, via: name_exact_full}
+- model: MdtVentas
+  path: app/Models/dbmdt/MdtVentas.php
+  connection: dbmdt
+  table: mdt_ventas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtVentasFilters
+  relaciones:
+  - {proforma: 'belongsTo MdtProformas (proforma_id, pkid)'}
+  - {cotizacion: 'belongsTo MdtCotizaciones (cotizacion_id, pkid)'}
+  - {cliente: 'belongsTo MdtClientes (cliente_id, pkid)'}
+  - {empleado: 'belongsTo MdtEmpleados (empleado_id, pkid)'}
+  - {supervisor: 'belongsTo MdtEmpleados (supervisor_id, pkid)'}
+  - {tipo: 'belongsTo MdtCatalogoDet (tipo_id, pkid)'}
+  - {estado: 'belongsTo MdtCatalogoDet (estado_id, pkid)'}
+  - {estadoPago: 'belongsTo MdtCatalogoDet (estado_pago_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtVentasFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtVentasResource.php]
+  requests: [app/Http/Requests/Mdt/MdtVentas/StoreRequest.php, app/Http/Requests/Mdt/MdtVentas/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtVentasRules.php]
+  service: [app/Services/Mdt/MdtVentasService.php]
+  controller: [app/Http/Controllers/Api/MdtVentasController.php]
+  routes: [routes/modules/mdt_ventas.php]
+  filter_usado_en: [app/Filters/MdtCuotasPagoFilters.php, app/Filters/MdtItemsVentaFilters.php, app/Filters/MdtPagosFilters.php, app/Filters/MdtPasajerosVentaFilters.php, app/Filters/MdtReferidosFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtCuotasPagoService.php, app/Services/Mdt/MdtItemsVentaService.php, app/Services/Mdt/MdtLibroReclamacionesService.php, app/Services/Mdt/MdtPagosService.php, app/Services/Mdt/MdtPasajerosVentaService.php,
+    app/Services/Mdt/MdtReferidosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtVentasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtVentasFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtVentasRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtVentasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_ventas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtVentasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtVentas/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtVentas/UpdateRequest.php, via: name_exact_full}
+- model: MdtVuelos
+  path: app/Models/dbmdt/MdtVuelos.php
+  connection: dbmdt
+  table: mdt_vuelos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: MdtVuelosFilters
+  relaciones:
+  - {aerolinea: 'belongsTo MdtCatalogoDet (aerolinea_id, pkid)'}
+  - {origen: 'belongsTo MdtAeropuertos (aeropuerto_origen, pkid)'}
+  - {destino: 'belongsTo MdtAeropuertos (aeropuerto_destino, pkid)'}
+  - {claseCabina: 'belongsTo MdtCatalogoDet (clase_cabina_id, pkid)'}
+  - {estado: 'belongsTo MdtCatalogoDet (estado_id, pkid)'}
+  - {fuente: 'belongsTo MdtCatalogoDet (fuente_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/MdtVuelosFilters.php]
+  resources: [app/Http/Resources/Mdt/MdtVuelosResource.php]
+  requests: [app/Http/Requests/Mdt/MdtVuelos/StoreRequest.php, app/Http/Requests/Mdt/MdtVuelos/UpdateRequest.php, app/Http/Requests/Mdt/Traits/MdtVuelosRules.php]
+  service: [app/Services/Mdt/MdtVuelosService.php]
+  controller: [app/Http/Controllers/Api/MdtVuelosController.php]
+  routes: [routes/modules/mdt_vuelos.php]
+  filter_usado_en: [app/Filters/MdtSegmentosVueloFilters.php]
+  service_usado_en: [app/Services/Mdt/MdtItemsCotizacionService.php, app/Services/Mdt/MdtItemsPaqueteService.php, app/Services/Mdt/MdtItemsProformaService.php, app/Services/Mdt/MdtItemsVentaService.php,
+    app/Services/Mdt/MdtSegmentosVueloService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/MdtVuelosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/MdtVuelosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Mdt/Traits/MdtVuelosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Mdt/MdtVuelosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/mdt_vuelos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Mdt/MdtVuelosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Mdt/MdtVuelos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Mdt/MdtVuelos/UpdateRequest.php, via: name_exact_full}
+- model: SiawAuditLog
+  path: app/Models/dbmdt_siaw/SiawAuditLog.php
+  connection: dbsiaw
+  table: siaw_audit_log
+  pk: {name: pkid, incrementing: true, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id]
+  relaciones:
+  - {createdBy: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  roles: {}
+- model: SiawContentModel
+  path: app/Models/dbmdt_siaw/SiawContentModel.php
+  connection: dbsiaw
+  table: siaw_content_model
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawContentModelFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  - {permisos: 'hasMany SiawContentPermisos (content_model_id, pkid)'}
+  - {sistema: 'belongsTo SiawSistemas (sistema_id, pkid)'}
+  filter: [app/Filters/SiawContentModelFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawContentModelResource.php]
+  requests: [app/Http/Requests/Siaw/SiawContentModel/StoreRequest.php, app/Http/Requests/Siaw/SiawContentModel/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawContentModelRules.php]
+  service: [app/Services/Siaw/SiawContentModelService.php]
+  controller: [app/Http/Controllers/Api/SiawContentModelController.php]
+  routes: [routes/modules/siaw_content_model.php]
+  filter_usado_en: [app/Filters/SiawContentPermisosFilters.php]
+  service_usado_en: [app/Services/Siaw/SiawContentPermisosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawContentModelController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawContentModelFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawContentModelRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawContentModelResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_content_model.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawContentModelService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawContentModel/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawContentModel/UpdateRequest.php, via: name_exact_full}
+- model: SiawContentPermisos
+  path: app/Models/dbmdt_siaw/SiawContentPermisos.php
+  connection: dbsiaw
+  table: siaw_content_permisos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawContentPermisosFilters
+  relaciones:
+  - {contentModel: 'belongsTo SiawContentModel (content_model_id, pkid)'}
+  - {sistema: 'belongsTo SiawSistemas (sistema_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawContentPermisosFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawContentPermisosIndexResource.php, app/Http/Resources/Siaw/SiawContentPermisosResource.php]
+  requests: [app/Http/Requests/Siaw/SiawContentPermisos/BulkStoreRequest.php, app/Http/Requests/Siaw/SiawContentPermisos/StoreRequest.php, app/Http/Requests/Siaw/SiawContentPermisos/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawContentPermisosRules.php]
+  service: [app/Services/Siaw/SiawContentPermisosService.php]
+  controller: [app/Http/Controllers/Api/SiawContentPermisosController.php]
+  routes: [routes/modules/siaw_content_permisos.php]
+  filter_usado_en: [app/Filters/SiawMenuPermisoFilters.php, app/Filters/SiawPermisoRolFilters.php, app/Filters/SiawPermisoUsuarioFilters.php]
+  requests_usado_en: [app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php, app/Http/Requests/Siaw/Traits/SiawPermisoRolRules.php, app/Http/Requests/Siaw/Traits/SiawPermisoUsuarioRules.php]
+  service_usado_en: [app/Services/Auth/AuthService.php, app/Services/Siaw/SiawMenuPermisoService.php, app/Services/Siaw/SiawPermisoRolService.php, app/Services/Siaw/SiawPermisoUsuarioService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawContentPermisosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawContentPermisosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawContentPermisosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawContentPermisosIndexResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Siaw/SiawContentPermisosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_content_permisos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawContentPermisosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawContentPermisos/BulkStoreRequest.php, via: name_exact_full}
+    - {path: app/Http/Requests/Siaw/SiawContentPermisos/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawContentPermisos/UpdateRequest.php, via: name_exact_full}
+- model: SiawMenuPermiso
+  path: app/Models/dbmdt_siaw/SiawMenuPermiso.php
+  connection: dbsiaw
+  table: siaw_menu_permiso
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawMenuPermisoFilters
+  relaciones:
+  - {menu: 'belongsTo SiawMenus (menu_id, pkid)'}
+  - {permiso: 'belongsTo SiawContentPermisos (permiso_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawMenuPermisoFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawMenuPermisoResource.php]
+  requests: [app/Http/Requests/Siaw/SiawMenuPermiso/StoreRequest.php, app/Http/Requests/Siaw/SiawMenuPermiso/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php]
+  service: [app/Services/Siaw/SiawMenuPermisoService.php]
+  controller: [app/Http/Controllers/Api/SiawMenuPermisoController.php]
+  routes: [routes/modules/siaw_menu_permiso.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawMenuPermisoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawMenuPermisoFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawMenuPermisoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_menu_permiso.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawMenuPermisoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawMenuPermiso/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawMenuPermiso/UpdateRequest.php, via: name_exact_full}
+- model: SiawMenus
+  path: app/Models/dbmdt_siaw/SiawMenus.php
+  connection: dbsiaw
+  table: siaw_menus
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawMenusFilters
+  relaciones:
+  - {sistema: 'belongsTo SiawSistemas (sistema_id, pkid)'}
+  - {parent: 'belongsTo SiawMenus (parent_id, pkid)'}
+  - {hijos: 'hasMany SiawMenus (parent_id, pkid)'}
+  - {permisos: 'hasMany SiawMenuPermiso (menu_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawMenusFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawMenusIndexResource.php, app/Http/Resources/Siaw/SiawMenusResource.php]
+  requests: [app/Http/Requests/Siaw/SiawMenus/StoreRequest.php, app/Http/Requests/Siaw/SiawMenus/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawMenusRules.php]
+  service: [app/Services/Siaw/SiawMenusService.php]
+  controller: [app/Http/Controllers/Api/SiawMenusController.php]
+  routes: [routes/modules/siaw_menus.php]
+  filter_usado_en: [app/Filters/SiawMenuPermisoFilters.php]
+  requests_usado_en: [app/Http/Requests/Siaw/Traits/SiawMenuPermisoRules.php]
+  service_usado_en: [app/Services/Auth/AuthService.php, app/Services/Siaw/SiawMenuPermisoService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawMenusController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawMenusFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawMenusRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawMenusIndexResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Siaw/SiawMenusResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_menus.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawMenusService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawMenus/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawMenus/UpdateRequest.php, via: name_exact_full}
+- model: SiawPermisoRol
+  path: app/Models/dbmdt_siaw/SiawPermisoRol.php
+  connection: dbsiaw
+  table: siaw_permiso_rol
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawPermisoRolFilters
+  relaciones:
+  - {rol: 'belongsTo SiawRoles (rol_id, pkid)'}
+  - {permiso: 'belongsTo SiawContentPermisos (permiso_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawPermisoRolFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawPermisoRolResource.php]
+  requests: [app/Http/Requests/Siaw/SiawPermisoRol/StoreRequest.php, app/Http/Requests/Siaw/SiawPermisoRol/SyncRequest.php, app/Http/Requests/Siaw/SiawPermisoRol/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawPermisoRolRules.php]
+  service: [app/Services/Siaw/SiawPermisoRolService.php]
+  controller: [app/Http/Controllers/Api/SiawPermisoRolController.php]
+  routes: [routes/modules/siaw_permiso_rol.php]
+  service_usado_en: [app/Services/Auth/AuthService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawPermisoRolController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawPermisoRolFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoRol/SyncRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawPermisoRolRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawPermisoRolResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_permiso_rol.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawPermisoRolService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoRol/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoRol/UpdateRequest.php, via: name_exact_full}
+- model: SiawPermisoUsuario
+  path: app/Models/dbmdt_siaw/SiawPermisoUsuario.php
+  connection: dbsiaw
+  table: siaw_permiso_usuario
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawPermisoUsuarioFilters
+  relaciones:
+  - {permiso: 'belongsTo SiawContentPermisos (permiso_id, pkid)'}
+  - {usuario: 'belongsTo SiawUsuarios (usuario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawPermisoUsuarioFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawPermisoUsuarioResource.php]
+  requests: [app/Http/Requests/Siaw/SiawPermisoUsuario/StoreRequest.php, app/Http/Requests/Siaw/SiawPermisoUsuario/SyncRequest.php, app/Http/Requests/Siaw/SiawPermisoUsuario/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawPermisoUsuarioRules.php]
+  service: [app/Services/Siaw/SiawPermisoUsuarioService.php]
+  controller: [app/Http/Controllers/Api/SiawPermisoUsuarioController.php]
+  routes: [routes/modules/siaw_permiso_usuario.php]
+  service_usado_en: [app/Services/Auth/AuthService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawPermisoUsuarioController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawPermisoUsuarioFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoUsuario/SyncRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawPermisoUsuarioRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawPermisoUsuarioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_permiso_usuario.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawPermisoUsuarioService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoUsuario/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawPermisoUsuario/UpdateRequest.php, via: name_exact_full}
+- model: SiawRoles
+  path: app/Models/dbmdt_siaw/SiawRoles.php
+  connection: dbsiaw
+  table: siaw_roles
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawRolesFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawRolesFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawRolesResource.php]
+  requests: [app/Http/Requests/Siaw/SiawRoles/StoreRequest.php, app/Http/Requests/Siaw/SiawRoles/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawRolesRules.php]
+  service: [app/Services/Siaw/SiawRolesService.php]
+  controller: [app/Http/Controllers/Api/SiawRolesController.php]
+  routes: [routes/modules/siaw_roles.php]
+  filter_usado_en: [app/Filters/SiawPermisoRolFilters.php, app/Filters/SiawRolUsuarioFilters.php, app/Filters/SiawUsuariosFilters.php]
+  requests_usado_en: [app/Http/Requests/Siaw/Traits/SiawPermisoRolRules.php]
+  service_usado_en: [app/Services/Siaw/SiawPermisoRolService.php, app/Services/Siaw/SiawRolUsuarioService.php, app/Services/Siaw/SiawUsuariosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawRolesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawRolesFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawRolesRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawRolesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_roles.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawRolesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawRoles/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawRoles/UpdateRequest.php, via: name_exact_full}
+- model: SiawRolUsuario
+  path: app/Models/dbmdt_siaw/SiawRolUsuario.php
+  connection: dbsiaw
+  table: siaw_rol_usuario
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawRolUsuarioFilters
+  relaciones:
+  - {rol: 'belongsTo SiawRoles (rol_id, pkid)'}
+  - {usuario: 'belongsTo SiawUsuarios (usuario_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawRolUsuarioFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawRolUsuarioResource.php]
+  requests: [app/Http/Requests/Siaw/SiawRolUsuario/StoreRequest.php, app/Http/Requests/Siaw/SiawRolUsuario/SyncRequest.php, app/Http/Requests/Siaw/SiawRolUsuario/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawRolUsuarioRules.php]
+  service: [app/Services/Siaw/SiawRolUsuarioService.php]
+  controller: [app/Http/Controllers/Api/SiawRolUsuarioController.php]
+  routes: [routes/modules/siaw_rol_usuario.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawRolUsuarioController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawRolUsuarioFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Requests/Siaw/SiawRolUsuario/SyncRequest.php, via: folder}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawRolUsuarioRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawRolUsuarioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_rol_usuario.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawRolUsuarioService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawRolUsuario/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawRolUsuario/UpdateRequest.php, via: name_exact_full}
+- model: SiawSistemas
+  path: app/Models/dbmdt_siaw/SiawSistemas.php
+  connection: dbsiaw
+  table: siaw_sistemas
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawSistemasFilters
+  relaciones:
+  - {menus: 'hasMany SiawMenus (sistema_id, pkid)'}
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  filter: [app/Filters/SiawSistemasFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawSistemasIndexResource.php, app/Http/Resources/Siaw/SiawSistemasResource.php]
+  requests: [app/Http/Requests/Siaw/SiawSistemas/StoreRequest.php, app/Http/Requests/Siaw/SiawSistemas/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawSistemasRules.php]
+  service: [app/Services/Siaw/SiawSistemasService.php]
+  controller: [app/Http/Controllers/Api/SiawSistemasController.php]
+  routes: [routes/modules/siaw_sistemas.php]
+  filter_usado_en: [app/Filters/SiawContentModelFilters.php, app/Filters/SiawContentPermisosFilters.php, app/Filters/SiawMenusFilters.php]
+  service_usado_en: [app/Services/Siaw/SiawMenusService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawSistemasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawSistemasFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawSistemasRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawSistemasIndexResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/Siaw/SiawSistemasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_sistemas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawSistemasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawSistemas/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawSistemas/UpdateRequest.php, via: name_exact_full}
+- model: SiawTokensAcceso
+  path: app/Models/dbmdt_siaw/SiawTokensAcceso.php
+  connection: dbsiaw
+  table: siaw_tokens_acceso
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  service_usado_en: [app/Services/Auth/AuthService.php]
+  roles: {}
+- model: SiawUsuarios
+  path: app/Models/dbmdt_siaw/SiawUsuarios.php
+  connection: dbsiaw
+  table: siaw_usuarios
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SiawUsuariosFilters
+  relaciones:
+  - {created_by: 'belongsTo SiawUsuarios (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo SiawUsuarios (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo SiawUsuarios (deleted_by_id, pkid)'}
+  - {rol: 'belongsTo SiawRoles (rol_id, pkid)'}
+  filter: [app/Filters/SiawUsuariosFilters.php]
+  resources: [app/Http/Resources/Siaw/SiawUsuariosResource.php]
+  requests: [app/Http/Requests/Siaw/SiawUsuarios/StoreRequest.php, app/Http/Requests/Siaw/SiawUsuarios/UpdateRequest.php, app/Http/Requests/Siaw/Traits/SiawUsuariosRules.php]
+  service: [app/Services/Siaw/SiawUsuariosService.php]
+  controller: [app/Http/Controllers/Api/SiawUsuariosController.php]
+  routes: [routes/modules/siaw_usuarios.php]
+  controller_usado_en: [app/Http/Controllers/Api/AuthController.php]
+  filter_usado_en: [app/Filters/MdtClientesFilters.php, app/Filters/MdtEmpleadosFilters.php, app/Filters/SiawPermisoUsuarioFilters.php, app/Filters/SiawRolUsuarioFilters.php]
+  requests_usado_en: [app/Http/Requests/Siaw/Traits/SiawPermisoUsuarioRules.php]
+  service_usado_en: [app/Services/Auth/AuthService.php, app/Services/Mdt/MdtClientesService.php, app/Services/Mdt/MdtEmpleadosService.php, app/Services/Siaw/SiawPermisoUsuarioService.php, app/Services/Siaw/SiawRolUsuarioService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/SiawUsuariosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/SiawUsuariosFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Requests/Siaw/Traits/SiawUsuariosRules.php, via: name_prefix_full}
+    resource:
+    - {path: app/Http/Resources/Siaw/SiawUsuariosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/modules/siaw_usuarios.php, via: name_exact_full}
+    service:
+    - {path: app/Services/Siaw/SiawUsuariosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Requests/Siaw/SiawUsuarios/StoreRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Requests/Siaw/SiawUsuarios/UpdateRequest.php, via: name_exact_full}
+- model: User
+  path: app/Models/User.php
+  connection: null
+  table: User
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  roles: {}

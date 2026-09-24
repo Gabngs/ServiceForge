@@ -1,0 +1,2294 @@
+# Ground truth de siaw-laravel-backend -- generado por scripts/scan_backend_structure.py
+# commit dfa8268 (production), 23-09-2026 23:41:04. Formato: ver docs del script.
+- model: auth_group
+  path: app/Models/dbsiaw/auth_group.php
+  connection: mysql_dbsiaw
+  table: auth_group
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: auth_group_permission
+  path: app/Models/dbsiaw/auth_group_permission.php
+  connection: mysql_dbsiaw
+  table: auth_group_permissions
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: auth_permission
+  path: app/Models/dbsiaw/auth_permission.php
+  connection: mysql_dbsiaw
+  table: auth_permission
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  requests: [app/Http/Request/dbsiaw/BaseAuthPermissionRequest.php, app/Http/Request/dbsiaw/PermissionGuardRequest.php, app/Http/Request/dbsiaw/StoreAuthPermissionRequest.php, app/Http/Request/dbsiaw/Traits/ValidateAuthPermission.php,
+    app/Http/Request/dbsiaw/permission_guard/PermissionGuardRequest.php]
+  service: [app/Services/AuthpermissionService.php, app/Services/PermissionGuardService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/PermissionGuardController.php]
+  routes: [routes/permission_guard.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/BaseAuthPermissionRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/PermissionGuardController.php, via: name_prefix}
+    other_request:
+    - {path: app/Http/Request/dbsiaw/PermissionGuardRequest.php, via: name_prefix}
+    - {path: app/Http/Request/dbsiaw/permission_guard/PermissionGuardRequest.php, via: name_prefix}
+    request_trait:
+    - {path: app/Http/Request/dbsiaw/Traits/ValidateAuthPermission.php, via: name_exact_full}
+    route:
+    - {path: routes/permission_guard.php, via: name_prefix}
+    service:
+    - {path: app/Services/AuthpermissionService.php, via: name_exact_full}
+    - {path: app/Services/PermissionGuardService.php, via: name_prefix}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/StoreAuthPermissionRequest.php, via: name_exact_full}
+- model: catalogo_almacart
+  path: app/Models/dbsiaw/catalogo_almacart.php
+  connection: mysql_dbsiaw
+  table: catalogo_almacart
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_almacartFilters
+  relaciones:
+  - {catalogo_almacenes: 'belongsTo catalogo_almacenes (almacen_id, pkid)'}
+  - {catalogo_articulos: 'belongsTo catalogo_articulos (articulo_id, pkid)'}
+  - {catalogo_unidadmed: 'belongsTo catalogo_unidadmed (unidadmed2_id, idunidadmed)'}
+  filter: [app/Filters/dbsiaw/catalogo_almacartFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_almacartResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_almacartRequest.php, app/Http/Request/dbsiaw/Storecatalogo_almacartRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_almacartRequest.php]
+  service: [app/Services/catalogo_almacartService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_almacartController.php]
+  routes: [routes/catalogo_almacart.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/subir_almacenesController.php]
+  service_usado_en: [app/Services/catalogo_articulosService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_almacartRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_almacartController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_almacartFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_almacartResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_almacart.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_almacartService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_almacartRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_almacartRequest.php, via: name_exact_full}
+- model: catalogo_almacenes
+  path: app/Models/dbsiaw/catalogo_almacenes.php
+  connection: mysql_dbsiaw
+  table: catalogo_almacenes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_almacenesFilters
+  relaciones:
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_almacenesFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_almacenesRelationResource.php, app/Http/Resources/dbsiaw/catalogo_almacenesResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_almacenesRequest.php, app/Http/Request/dbsiaw/Storecatalogo_almacenesRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_almacenesRequest.php]
+  service: [app/Services/catalogo_almacenesService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_almacenesController.php]
+  routes: [routes/catalogo_almacenes.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/subir_almacenesController.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_almacartFilters.php]
+  service_usado_en: [app/Services/catalogo_almacartService.php, app/Services/catalogo_articulosService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_almacenesRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_almacenesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_almacenesFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_almacenesRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_almacenesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_almacenes.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_almacenesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_almacenesRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_almacenesRequest.php, via: name_exact_full}
+- model: catalogo_ambientes
+  path: app/Models/dbsiaw/catalogo_ambientes.php
+  connection: mysql_dbsiaw
+  table: catalogo_ambientes
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_ambientesFilters
+  relaciones:
+  - {createdBy: 'belongsTo User (created_by_id, pkid)'}
+  - {updatedBy: 'belongsTo User (updated_by_id, pkid)'}
+  - {deletedBy: 'belongsTo User (deleted_by_id, pkid)'}
+  - {ambientestiendas: 'hasMany catalogo_ambientestiendas (ambientes_id, pkid)'}
+  - {tipoprecio: 'belongsTo catalogo_tipoprecio (tipoprecio_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_ambientesFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_ambientesRelationResource.php, app/Http/Resources/dbsiaw/catalogo_ambientesResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_ambientesRequest.php, app/Http/Request/dbsiaw/Storecatalogo_ambientesRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_ambientesRequest.php]
+  service: [app/Services/catalogo_ambientesService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_ambientesController.php]
+  routes: [routes/catalogo_ambientes.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/subir_ambientesController.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_ambientestiendasFilters.php]
+  service_usado_en: [app/Services/catalogo_ambientestiendasService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_ambientesRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_ambientesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_ambientesFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_ambientesRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_ambientesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_ambientes.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_ambientesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_ambientesRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_ambientesRequest.php, via: name_exact_full}
+- model: catalogo_ambientestiendas
+  path: app/Models/dbsiaw/catalogo_ambientestiendas.php
+  connection: mysql_dbsiaw
+  table: catalogo_ambientestiendas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_ambientestiendasFilters
+  relaciones:
+  - {createdBy: 'belongsTo User (created_by_id, pkid)'}
+  - {updatedBy: 'belongsTo User (updated_by_id, pkid)'}
+  - {deletedBy: 'belongsTo User (deleted_by_id, pkid)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {ambiente: 'belongsTo catalogo_ambientes (ambientes_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_ambientestiendasFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_ambientestiendasResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_ambientestiendasRequest.php, app/Http/Request/dbsiaw/Storecatalogo_ambientestiendasRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_ambientestiendasRequest.php]
+  service: [app/Services/catalogo_ambientestiendasService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_ambientestiendasController.php]
+  routes: [routes/catalogo_ambientestiendas.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/subir_ambientesController.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_ambientestiendasRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_ambientestiendasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_ambientestiendasFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_ambientestiendasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_ambientestiendas.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_ambientestiendasService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_ambientestiendasRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_ambientestiendasRequest.php, via: name_exact_full}
+- model: catalogo_areaproduccion
+  path: app/Models/dbsiaw/catalogo_areaproduccion.php
+  connection: mysql_dbsiaw
+  table: catalogo_areaproduccion
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_areaproduccionFilters
+  filter: [app/Filters/dbsiaw/catalogo_areaproduccionFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_areaproduccionRelationResource.php, app/Http/Resources/dbsiaw/catalogo_areaproduccionResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_areaproduccionController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/bajar_articulosController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  service_usado_en: [app/Services/catalogo_articulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_areaproduccionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_areaproduccionFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_areaproduccionRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_areaproduccionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_articulos
+  path: app/Models/dbsiaw/catalogo_articulos.php
+  connection: mysql_dbsiaw
+  table: catalogo_articulos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_articulosFilters
+  filter: [app/Filters/dbsiaw/catalogo_articulosFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_articulosExternalResource.php, app/Http/Resources/dbsiaw/catalogo_articulosRelationResource.php, app/Http/Resources/dbsiaw/catalogo_articulosResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_articulos/Basecatalogo_articuloRequest.php, app/Http/Request/dbsiaw/catalogo_articulos/FindAllcatalogo_articulosRequest.php, app/Http/Request/dbsiaw/catalogo_articulos/FindMultiplecatalogo_articulosRequest.php,
+    app/Http/Request/dbsiaw/catalogo_articulos/FindOnecatalogo_articuloRequest.php, app/Http/Request/dbsiaw/catalogo_articulos/GetSinAlmacenRequest.php, app/Http/Request/dbsiaw/catalogo_articulos/GetSinPrecioTdaRequest.php,
+    app/Http/Request/dbsiaw/catalogo_articulos/Storecatalogo_articuloRequest.php, app/Http/Request/dbsiaw/catalogo_articulos/Updatecatalogo_articuloRequest.php]
+  service: [app/Services/catalogo_articulosService.php]
+  controller: [app/Http/Controllers/Api/api_externa/ArticulosExternalController.php, app/Http/Controllers/Api/catalogo_articulosController.php]
+  routes: [routes/api.php, routes/external.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/bajar_articulosController.php, app/Http/Controllers/Api/sincronizacion/subir_almacenesController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_almacartFilters.php, app/Filters/dbsiaw/catalogo_preciartFilters.php, app/Filters/dbsiaw/catalogo_preciart_logFilters.php, app/Filters/dbsiaw/catalogo_regalos_articulosFilters.php]
+  service_usado_en: [app/Services/catalogo_almacartService.php, app/Services/catalogo_preciartService.php, app/Services/catalogo_preciart_logService.php, app/Services/catalogo_regalosService.php, app/Services/catalogo_regalos_articulosService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/Basecatalogo_articuloRequest.php, via: name_stem}
+    controller:
+    - {path: app/Http/Controllers/Api/api_externa/ArticulosExternalController.php, via: name_prefix}
+    - {path: app/Http/Controllers/Api/catalogo_articulosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_articulosFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/FindAllcatalogo_articulosRequest.php, via: folder}
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/FindMultiplecatalogo_articulosRequest.php, via: folder}
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/FindOnecatalogo_articuloRequest.php, via: folder}
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/GetSinAlmacenRequest.php, via: folder}
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/GetSinPrecioTdaRequest.php, via: folder}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_articulosRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_articulosExternalResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_articulosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    - {path: routes/external.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_articulosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/Storecatalogo_articuloRequest.php, via: name_stem}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_articulos/Updatecatalogo_articuloRequest.php, via: name_stem}
+- model: catalogo_authgroup
+  path: app/Models/dbsiaw/catalogo_authgroup.php
+  connection: mysql_dbsiaw
+  table: auth_group
+  pk: {name: id, incrementing: true, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  relaciones:
+  - {extensions: 'hasMany catalogo_groupextension (group_id, id)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_authgroupResource.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_auth_groupController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_auth_groupController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_authgroupResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_authpermission
+  path: app/Models/dbsiaw/catalogo_authpermission.php
+  connection: mysql_dbsiaw
+  table: auth_permission
+  pk: {name: id, incrementing: true, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  relaciones:
+  - {contentType: 'belongsTo catalogo_djangocontenttype (content_type_id, id)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_authpermissionResource.php]
+  requests: [app/Http/Request/dbsiaw/BaseAuthPermissionRequest.php, app/Http/Request/dbsiaw/PermissionGuardRequest.php, app/Http/Request/dbsiaw/StoreAuthPermissionRequest.php, app/Http/Request/dbsiaw/Traits/ValidateAuthPermission.php,
+    app/Http/Request/dbsiaw/permission_guard/PermissionGuardRequest.php]
+  service: [app/Services/AuthpermissionService.php, app/Services/PermissionGuardService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/PermissionGuardController.php]
+  routes: [routes/permission_guard.php]
+  service_usado_en: [app/Services/catalogo_blockedpermissionsService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/BaseAuthPermissionRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/PermissionGuardController.php, via: name_prefix}
+    other_request:
+    - {path: app/Http/Request/dbsiaw/PermissionGuardRequest.php, via: name_prefix}
+    - {path: app/Http/Request/dbsiaw/permission_guard/PermissionGuardRequest.php, via: name_prefix}
+    request_trait:
+    - {path: app/Http/Request/dbsiaw/Traits/ValidateAuthPermission.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_authpermissionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/permission_guard.php, via: name_prefix}
+    service:
+    - {path: app/Services/AuthpermissionService.php, via: name_exact_full}
+    - {path: app/Services/PermissionGuardService.php, via: name_prefix}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/StoreAuthPermissionRequest.php, via: name_exact_full}
+- model: catalogo_blockedpermissions
+  path: app/Models/dbsiaw/catalogo_blockedpermissions.php
+  connection: mysql_dbsiaw
+  table: catalogo_blockedpermissions
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {permission: 'belongsTo catalogo_authpermission (permission_id, id)'}
+  - {group: 'belongsTo catalogo_authgroup (group_id, id)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_blockedpermissionsResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_blockedpermissions/BulkStorecatalogBlockedpermissionsRequest.php, app/Http/Request/dbsiaw/catalogo_blockedpermissions/StorecatalogBlockedpermissionsRequest.php]
+  service: [app/Services/catalogo_blockedpermissionsService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_blockedpermissionsController.php]
+  routes: [routes/catalogo_blockedpermissions.php]
+  service_usado_en: [app/Services/PermissionGuardService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_blockedpermissionsController.php, via: name_exact_full}
+    other_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_blockedpermissions/BulkStorecatalogBlockedpermissionsRequest.php, via: folder}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_blockedpermissionsResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_blockedpermissions.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_blockedpermissionsService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_blockedpermissions/StorecatalogBlockedpermissionsRequest.php, via: folder}
+- model: catalogo_cajas
+  path: app/Models/dbsiaw/catalogo_cajas.php
+  connection: mysql_dbsiaw
+  table: catalogo_cajas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_cajasFilters
+  relaciones:
+  - {terminal: 'belongsTo catalogo_terminales (terminal_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_cajasFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_cajasResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_cajasController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_cajasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_cajasFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_cajasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_casafinanciera
+  path: app/Models/dbsiaw/catalogo_casafinanciera.php
+  connection: mysql_dbsiaw
+  table: catalogo_casafinanciera
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {tarjetascredito: 'hasMany catalogo_tarjetascredito (casafinanciera_id, pkid)'}
+  controller: [app/Http/Controllers/Api/sincronizacion/subir_casafinancieraController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/subir_tarjetascreditoController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/sincronizacion/subir_casafinancieraController.php, via: import_single}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_clasesgasto
+  path: app/Models/dbsiaw/catalogo_clasesgasto.php
+  connection: mysql_dbsiaw
+  table: catalogo_clasesgasto
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_clasesgastoFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_clasesgastoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_clasesgastoRelationResource.php, app/Http/Resources/dbsiaw/catalogo_clasesgastoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_clasesgasto/Basecatalogo_clasesgastoRequest.php, app/Http/Request/dbsiaw/catalogo_clasesgasto/Storecatalogo_clasesgastoRequest.php, app/Http/Request/dbsiaw/catalogo_clasesgasto/Updatecatalogo_clasesgastoRequest.php]
+  service: [app/Services/catalogo_clasesgastoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_clasesgastoController.php]
+  routes: [routes/catalogo_clasesgasto.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_tiposgastoFilters.php]
+  service_usado_en: [app/Services/catalogo_tiposgastoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_clasesgasto/Basecatalogo_clasesgastoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_clasesgastoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_clasesgastoFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_clasesgastoRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_clasesgastoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_clasesgasto.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_clasesgastoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_clasesgasto/Storecatalogo_clasesgastoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_clasesgasto/Updatecatalogo_clasesgastoRequest.php, via: name_exact_full}
+- model: catalogo_clasificacion
+  path: app/Models/dbsiaw/catalogo_clasificacion.php
+  connection: mysql_dbsiaw
+  table: catalogo_clasificacion
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_clasificacionFilters
+  filter: [app/Filters/dbsiaw/catalogo_clasificacionFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_clasificacionRelationResource.php, app/Http/Resources/dbsiaw/catalogo_clasificacionResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_clasificacionController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/catalogo_familiasController.php, app/Http/Controllers/Api/sincronizacion/bajar_articulosController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_clasificacionController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_clasificacionFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_clasificacionRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_clasificacionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_clientes
+  path: app/Models/dbsiaw/catalogo_clientes.php
+  connection: mysql_dbsiaw
+  table: catalogo_clientes
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_clientesFilters
+  relaciones:
+  - {created_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  - {tipodocumento: 'belongsTo catalogo_tipodocumento (tipodocumento_id, pkid)'}
+  - {regalos: 'hasMany catalogo_regalos (cliente_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_clientesFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_clientesResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_clientesRequest.php, app/Http/Request/dbsiaw/Storecatalogo_clientesRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_clientesRequest.php]
+  service: [app/Services/catalogo_clientesService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_clientesController.php]
+  routes: [routes/catalogo_clientes.php]
+  service_usado_en: [app/Services/catalogo_regalosService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_clientesRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_clientesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_clientesFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_clientesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_clientes.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_clientesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_clientesRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_clientesRequest.php, via: name_exact_full}
+- model: catalogo_correos
+  path: app/Models/dbsiaw/catalogo_correos.php
+  connection: mysql_dbsiaw
+  table: catalogo_correos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_correosFilters
+  relaciones:
+  - {procesos: 'belongsToMany catalogo_procesos (catalogo_procesoscorreo, correo_id)'}
+  - {create_by: 'belongsTo User (created_by_id, pkid)'}
+  - {update_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_correosFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_correosRelationResource.php, app/Http/Resources/dbsiaw/catalogo_correosResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_correos/Basecatalogo_correosRequest.php, app/Http/Request/dbsiaw/catalogo_correos/BulkStorecatalogo_correosRequest.php, app/Http/Request/dbsiaw/catalogo_correos/GetCorreosSinProcesocatalogo_correosRequest.php,
+    app/Http/Request/dbsiaw/catalogo_correos/Storecatalogo_correosRequest.php, app/Http/Request/dbsiaw/catalogo_correos/Updatecatalogo_correosRequest.php]
+  service: [app/Services/catalogo_correosService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_correosController.php]
+  routes: [routes/catalogo_correos.php]
+  controller_usado_en: [app/Http/Controllers/Api/dbsiaw/catalogo_procesoscorreoController.php]
+  service_usado_en: [app/Services/catalogo_procesoscorreoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_correos/Basecatalogo_correosRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_correosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_correosFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_correos/BulkStorecatalogo_correosRequest.php, via: folder}
+    - {path: app/Http/Request/dbsiaw/catalogo_correos/GetCorreosSinProcesocatalogo_correosRequest.php, via: folder}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_correosRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_correosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_correos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_correosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_correos/Storecatalogo_correosRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_correos/Updatecatalogo_correosRequest.php, via: name_exact_full}
+- model: catalogo_djangocontenttype
+  path: app/Models/dbsiaw/catalogo_djangocontenttype.php
+  connection: mysql_dbsiaw
+  table: django_content_type
+  pk: {name: id, incrementing: true, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  service: [app/Services/DjangoContentTypeService.php]
+  controller: [app/Http/Controllers/Api/catalogo_djangocontentController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_djangocontentController.php, via: import_single}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/DjangoContentTypeService.php, via: name_exact_full}
+- model: catalogo_empresa
+  path: app/Models/dbsiaw/catalogo_empresa.php
+  connection: mysql_dbsiaw
+  table: catalogo_empresa
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_empresaFilters
+  relaciones:
+  - {catalogo_ubigeo: 'belongsTo catalogo_ubigeo (ubigeo_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_empresaFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_empresaRelationResource.php, app/Http/Resources/dbsiaw/catalogo_empresaResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_empresa/Basecatalogo_empresaRequest.php, app/Http/Request/dbsiaw/catalogo_empresa/Storecatalogo_empresaRequest.php, app/Http/Request/dbsiaw/catalogo_empresa/Updatecatalogo_empresaRequest.php]
+  service: [app/Services/catalogo_empresaService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_empresaController.php]
+  routes: [routes/catalogo_empresa.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_empresatiendaFilters.php]
+  service_usado_en: [app/Services/catalogo_empresatiendaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_empresa/Basecatalogo_empresaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_empresaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_empresaFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_empresaRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_empresaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_empresa.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_empresaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_empresa/Storecatalogo_empresaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_empresa/Updatecatalogo_empresaRequest.php, via: name_exact_full}
+- model: catalogo_empresatienda
+  path: app/Models/dbsiaw/catalogo_empresatienda.php
+  connection: mysql_dbsiaw
+  table: catalogo_empresatienda
+  pk: {name: pkid, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_empresatiendaFilters
+  relaciones:
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_empresatiendaFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_empresatiendaResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_empresatienda/Basecatalogo_empresatiendaRequest.php, app/Http/Request/dbsiaw/catalogo_empresatienda/Storecatalogo_empresatiendaRequest.php, app/Http/Request/dbsiaw/catalogo_empresatienda/Updatecatalogo_empresatiendaRequest.php]
+  service: [app/Services/catalogo_empresatiendaService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_empresatiendaController.php]
+  routes: [routes/catalogo_empresatienda.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_empresatienda/Basecatalogo_empresatiendaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_empresatiendaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_empresatiendaFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_empresatiendaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_empresatienda.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_empresatiendaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_empresatienda/Storecatalogo_empresatiendaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_empresatienda/Updatecatalogo_empresatiendaRequest.php, via: name_exact_full}
+- model: catalogo_estructura
+  path: app/Models/dbsiaw/catalogo_estructura.php
+  connection: mysql_dbsiaw
+  table: catalogo_estructuras
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {childs: 'hasMany self (parent_id, pkid)'}
+  - {catalogo_personal_estructura: 'hasMany catalogo_personal_estructura (estructura_id, pkid)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_estructuraResource.php, app/Http/Resources/dbsiaw/catalogo_estructuraSimpleResource.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_estructuraController.php]
+  routes: [routes/catalogo_estructura.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_estructuraController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_estructuraResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_estructuraSimpleResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/catalogo_estructura.php, via: name_exact_full}
+- model: catalogo_familias
+  path: app/Models/dbsiaw/catalogo_familias.php
+  connection: mysql_dbsiaw
+  table: catalogo_familias
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_familiasFilters
+  filter: [app/Filters/dbsiaw/catalogo_familiasFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_familiasRelationResource.php, app/Http/Resources/dbsiaw/catalogo_familiasResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_familiasController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/catalogo_subfamiliasController.php, app/Http/Controllers/Api/sincronizacion/bajar_articulosController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_familiasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_familiasFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_familiasRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_familiasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_formulaciones
+  path: app/Models/dbsiaw/catalogo_formulaciones.php
+  connection: mysql_dbsiaw
+  table: catalogo_formulaciones
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  roles: {}
+- model: catalogo_groupextension
+  path: app/Models/dbsiaw/catalogo_groupextension.php
+  connection: mysql_dbsiaw
+  table: catalogo_groupextension
+  pk: {name: pkid, incrementing: true, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [updated_by_id]
+  relaciones:
+  - {catalogo_group: 'belongsTo catalogo_authgroup (group_id, id)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_groupextensionResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_gruposController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_gruposController.php, via: import_single}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_groupextensionResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_grupogasto
+  path: app/Models/dbsiaw/catalogo_grupogasto.php
+  connection: mysql_dbsiaw
+  table: catalogo_grupogasto
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_grupogastoFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_grupogastoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_grupogastoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_grupogasto/Basecatalogo_grupogastoRequest.php, app/Http/Request/dbsiaw/catalogo_grupogasto/Storecatalogo_grupogastoRequest.php, app/Http/Request/dbsiaw/catalogo_grupogasto/Updatecatalogo_grupogastoRequest.php]
+  service: [app/Services/catalogo_grupogastoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_grupogastoController.php]
+  routes: [routes/catalogo_grupogasto.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_grupogasto/Basecatalogo_grupogastoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_grupogastoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_grupogastoFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_grupogastoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_grupogasto.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_grupogastoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_grupogasto/Storecatalogo_grupogastoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_grupogasto/Updatecatalogo_grupogastoRequest.php, via: name_exact_full}
+- model: catalogo_insumo
+  path: app/Models/dbsiaw/catalogo_insumo.php
+  connection: mysql_dbsiaw
+  table: catalogo_insumos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_insumoFilters
+  relaciones:
+  - {bp_group: 'belongsTo SapBpGroup (bp_group_code, code)'}
+  - {proveedor_insumos: 'hasMany catalogo_proveedor_insumo (insumo_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_insumoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_insumoRelationResource.php, app/Http/Resources/dbsiaw/catalogo_insumoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_insumo/Basecatalogo_insumoRequest.php, app/Http/Request/dbsiaw/catalogo_insumo/Storecatalogo_insumoRequest.php, app/Http/Request/dbsiaw/catalogo_insumo/Updatecatalogo_insumoRequest.php]
+  service: [app/Services/catalogo_insumoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_insumoController.php]
+  routes: [routes/catalogo_insumo.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_proveedor_insumoFilters.php]
+  service_usado_en: [app/Services/catalogo_proveedor_insumoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_insumo/Basecatalogo_insumoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_insumoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_insumoFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_insumoRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_insumoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_insumo.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_insumoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_insumo/Storecatalogo_insumoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_insumo/Updatecatalogo_insumoRequest.php, via: name_exact_full}
+- model: catalogo_monedas
+  path: app/Models/dbsiaw/catalogo_monedas.php
+  connection: mysql_dbsiaw
+  table: catalogo_monedas
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {catalogo_tiendas: hasMany catalogo_tienda}
+  roles: {}
+- model: catalogo_motivosgasto
+  path: app/Models/dbsiaw/catalogo_motivosgasto.php
+  connection: mysql_dbsiaw
+  table: catalogo_motivosgasto
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_motivosgastoFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_motivosgastoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_motivosgastoExternalResource.php, app/Http/Resources/dbsiaw/catalogo_motivosgastoRelationResource.php, app/Http/Resources/dbsiaw/catalogo_motivosgastoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_motivosgasto/Basecatalogo_motivosgastoRequest.php, app/Http/Request/dbsiaw/catalogo_motivosgasto/Storecatalogo_motivosgastoRequest.php, app/Http/Request/dbsiaw/catalogo_motivosgasto/Updatecatalogo_motivosgastoRequest.php]
+  service: [app/Services/catalogo_motivosgastoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_motivosgastoController.php]
+  routes: [routes/catalogo_motivosgasto.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_motivostipogastoFilters.php]
+  service_usado_en: [app/Services/catalogo_motivostipogastoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_motivosgasto/Basecatalogo_motivosgastoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_motivosgastoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_motivosgastoFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_motivosgastoRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_motivosgastoExternalResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_motivosgastoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_motivosgasto.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_motivosgastoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_motivosgasto/Storecatalogo_motivosgastoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_motivosgasto/Updatecatalogo_motivosgastoRequest.php, via: name_exact_full}
+- model: catalogo_motivostipogasto
+  path: app/Models/dbsiaw/catalogo_motivostipogasto.php
+  connection: mysql_dbsiaw
+  table: catalogo_motivostipogasto
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_motivostipogastoFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  - {catalogo_motivosgasto: 'belongsTo catalogo_motivosgasto (motivosgasto_id, pkid)'}
+  - {catalogo_tiposgasto: 'belongsTo catalogo_tiposgasto (tiposgasto_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_motivostipogastoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_motivostipogastoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_motivostipogasto/Basecatalogo_motivostipogastoRequest.php, app/Http/Request/dbsiaw/catalogo_motivostipogasto/Storecatalogo_motivostipogastoRequest.php, app/Http/Request/dbsiaw/catalogo_motivostipogasto/Updatecatalogo_motivostipogastoRequest.php]
+  service: [app/Services/catalogo_motivostipogastoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_motivostipogastoController.php]
+  routes: [routes/catalogo_motivostipogasto.php]
+  service_usado_en: [app/Services/catalogo_tiposgastoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_motivostipogasto/Basecatalogo_motivostipogastoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_motivostipogastoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_motivostipogastoFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_motivostipogastoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_motivostipogasto.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_motivostipogastoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_motivostipogasto/Storecatalogo_motivostipogastoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_motivostipogasto/Updatecatalogo_motivostipogastoRequest.php, via: name_exact_full}
+- model: catalogo_nivel
+  path: app/Models/dbsiaw/catalogo_nivel.php
+  connection: mysql_dbsiaw
+  table: catalogo_niveles
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  resources: [app/Http/Resources/dbsiaw/catalogo_nivelResource.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_nivelResource.php, via: name_exact_full}
+- model: catalogo_personal_estructura
+  path: app/Models/dbsiaw/catalogo_personal_estructura.php
+  connection: mysql_dbsiaw
+  table: catalogo_personal_estructura
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {sipPersonal: 'belongsTo sip_personal (personal_id, pkid)'}
+  controller_usado_en: [app/Http/Controllers/Api/dbsiaw/catalogo_estructuraController.php]
+  roles: {}
+- model: catalogo_preciart
+  path: app/Models/dbsiaw/catalogo_preciart.php
+  connection: mysql_dbsiaw
+  table: catalogo_preciart
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_preciartFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  - {catalogo_articulos: 'belongsTo catalogo_articulos (articulos_id, pkid)'}
+  - {catalogo_tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_preciartFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_preciartExternalResource.php, app/Http/Resources/dbsiaw/catalogo_preciartRelationResource.php, app/Http/Resources/dbsiaw/catalogo_preciartResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_preciartRequest.php, app/Http/Request/dbsiaw/Storecatalogo_preciartRequest.php, app/Http/Request/dbsiaw/Traits/ValidatePreciartBulkUpdate.php, app/Http/Request/dbsiaw/Updatecatalogo_preciartRequest.php]
+  service: [app/Services/catalogo_preciartService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_preciartController.php]
+  routes: [routes/catalogo_preciart.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/bajar_articulosController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  service_usado_en: [app/Services/catalogo_articulosService.php, app/Services/catalogo_preciart_logService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_preciartRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_preciartController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_preciartFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_preciartRelationResource.php, via: name_exact_full}
+    request_trait:
+    - {path: app/Http/Request/dbsiaw/Traits/ValidatePreciartBulkUpdate.php, via: name_prefix}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_preciartExternalResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_preciartResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_preciart.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_preciartService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_preciartRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_preciartRequest.php, via: name_exact_full}
+- model: catalogo_preciart_log
+  path: app/Models/dbsiaw/catalogo_preciart_log.php
+  connection: mysql_dbsiaw
+  table: catalogo_preciart_log
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_preciart_logFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  - {articulo: 'belongsTo catalogo_articulos (articulos_id, pkid)'}
+  - {catalogo_tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {catalogo_preciart: 'belongsTo catalogo_preciart (preciart_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_preciart_logFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_preciart_logResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_preciart_logRequest.php, app/Http/Request/dbsiaw/Storecatalogo_preciart_logRequest.php, app/Http/Request/dbsiaw/Traits/ValidatePreciartLogOperations.php,
+    app/Http/Request/dbsiaw/Updatecatalogo_preciart_logRequest.php]
+  service: [app/Services/catalogo_preciart_logService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_preciart_logController.php]
+  routes: [routes/catalogo_preciart_log.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_preciart_logRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_preciart_logController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_preciart_logFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Request/dbsiaw/Traits/ValidatePreciartLogOperations.php, via: name_prefix}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_preciart_logResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_preciart_log.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_preciart_logService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_preciart_logRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_preciart_logRequest.php, via: name_exact_full}
+- model: catalogo_procesos
+  path: app/Models/dbsiaw/catalogo_procesos.php
+  connection: mysql_dbsiaw
+  table: catalogo_procesos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_procesosFilters
+  relaciones:
+  - {correos: 'belongsToMany catalogo_correos (catalogo_procesoscorreo, proceso_id)'}
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_procesosFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_procesosRelationResource.php, app/Http/Resources/dbsiaw/catalogo_procesosResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_procesos/Basecatalogo_procesosRequest.php, app/Http/Request/dbsiaw/catalogo_procesos/Storecatalogo_procesosRequest.php, app/Http/Request/dbsiaw/catalogo_procesos/Updatecatalogo_procesosRequest.php]
+  service: [app/Services/catalogo_procesosService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_procesosController.php]
+  routes: [routes/catalogo_procesos.php]
+  controller_usado_en: [app/Http/Controllers/Api/dbsiaw/catalogo_procesoscorreoController.php]
+  service_usado_en: [app/Services/NotificacionService.php, app/Services/catalogo_correosService.php, app/Services/catalogo_procesoscorreoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_procesos/Basecatalogo_procesosRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_procesosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_procesosFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_procesosRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_procesosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_procesos.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_procesosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_procesos/Storecatalogo_procesosRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_procesos/Updatecatalogo_procesosRequest.php, via: name_exact_full}
+- model: catalogo_procesosaudit
+  path: app/Models/dbsiaw/catalogo_procesosaudit.php
+  connection: mysql_dbsiaw
+  table: catalogo_procesosaudit
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: [created_by_id]
+  default_filters: catalogo_procesosauditFilters
+  relaciones:
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_procesosauditFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_procesosauditResource.php]
+  service: [app/Services/catalogo_procesosauditService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_procesosauditController.php]
+  routes: [routes/catalogo_procesosaudit.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_procesosauditController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_procesosauditFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_procesosauditResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_procesosaudit.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_procesosauditService.php, via: name_exact_full}
+- model: catalogo_procesoscorreo
+  path: app/Models/dbsiaw/catalogo_procesoscorreo.php
+  connection: mysql_dbsiaw
+  table: catalogo_procesoscorreo
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {proceso: 'belongsTo catalogo_procesos (proceso_id, pkid)'}
+  - {correo: 'belongsTo catalogo_correos (correo_id, pkid)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  requests: [app/Http/Request/dbsiaw/catalogo_procesoscorreo/Basecatalogo_procesoscorreoRequest.php, app/Http/Request/dbsiaw/catalogo_procesoscorreo/Storecatalogo_procesoscorreoRequest.php, app/Http/Request/dbsiaw/catalogo_procesoscorreo/Updatecatalogo_procesoscorreoRequest.php]
+  service: [app/Services/catalogo_procesoscorreoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_procesoscorreoController.php]
+  routes: [routes/catalogo_procesos.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_procesoscorreo/Basecatalogo_procesoscorreoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_procesoscorreoController.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_procesos.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_procesoscorreoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_procesoscorreo/Storecatalogo_procesoscorreoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_procesoscorreo/Updatecatalogo_procesoscorreoRequest.php, via: name_exact_full}
+- model: catalogo_proveedor_insumo
+  path: app/Models/dbsiaw/catalogo_proveedor_insumo.php
+  connection: mysql_dbsiaw
+  table: catalogo_proveedor_insumos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_proveedor_insumoFilters
+  relaciones:
+  - {business_partner: 'belongsTo SapBusinessPartner (businesspartners_id, pkid)'}
+  - {solicitud_proveedor: 'belongsTo catalogo_solicitud_proveedor (proveedor_id, pkid)'}
+  - {insumo: 'belongsTo catalogo_insumo (insumo_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_proveedor_insumoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_proveedor_insumoRelationResource.php, app/Http/Resources/dbsiaw/catalogo_proveedor_insumoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_proveedor_insumo/Basecatalogo_proveedor_insumoRequest.php, app/Http/Request/dbsiaw/catalogo_proveedor_insumo/Storecatalogo_proveedor_insumoRequest.php, app/Http/Request/dbsiaw/catalogo_proveedor_insumo/Updatecatalogo_proveedor_insumoRequest.php]
+  service: [app/Services/catalogo_proveedor_insumoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_proveedor_insumoController.php]
+  routes: [routes/catalogo_proveedor_insumo.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_proveedor_insumo/Basecatalogo_proveedor_insumoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_proveedor_insumoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_proveedor_insumoFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_proveedor_insumoRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_proveedor_insumoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_proveedor_insumo.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_proveedor_insumoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_proveedor_insumo/Storecatalogo_proveedor_insumoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_proveedor_insumo/Updatecatalogo_proveedor_insumoRequest.php, via: name_exact_full}
+- model: catalogo_regalos
+  path: app/Models/dbsiaw/catalogo_regalos.php
+  connection: mysql_dbsiaw
+  table: catalogo_regalos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_regalosFilters
+  relaciones:
+  - {created_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  - {cliente: 'belongsTo catalogo_clientes (cliente_id, pkid)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_regalosFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_regalosResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_regalosRequest.php, app/Http/Request/dbsiaw/Storecatalogo_regalosRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_regalosRequest.php]
+  service: [app/Services/catalogo_regalosService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_regalosController.php]
+  routes: [routes/catalogo_clientes.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_regalosRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_regalosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_regalosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_regalosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_clientes.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_regalosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_regalosRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_regalosRequest.php, via: name_exact_full}
+- model: catalogo_regalos_articulos
+  path: app/Models/dbsiaw/catalogo_regalos_articulos.php
+  connection: mysql_dbsiaw
+  table: catalogo_regalos_articulos
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_regalos_articulosFilters
+  relaciones:
+  - {articulo: 'belongsTo catalogo_articulos (articulo_id, pkid)'}
+  - {created_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_regalos_articulosFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_regalos_articulosResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_regalos_articulosRequest.php, app/Http/Request/dbsiaw/Storecatalogo_regalos_articulosRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_regalos_articulosRequest.php]
+  service: [app/Services/catalogo_regalos_articulosService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_regalos_articulosController.php]
+  routes: [routes/catalogo_clientes.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_regalos_articulosRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_regalos_articulosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_regalos_articulosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_regalos_articulosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_clientes.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_regalos_articulosService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_regalos_articulosRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_regalos_articulosRequest.php, via: name_exact_full}
+- model: catalogo_solicitud_proveedor
+  path: app/Models/dbsiaw/catalogo_solicitud_proveedor.php
+  connection: mysql_dbsiaw
+  table: catalogo_solicitudproveedor
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_solicitud_proveedorFilters
+  relaciones:
+  - {usuario_atencion: 'belongsTo User (usuario_atencion, pkid)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  - {business_partner: 'belongsTo SapBusinessPartner (business_partner_id, pkid)'}
+  - {departamento: 'belongsTo catalogo_ubigeo (departamento_id, pkid)'}
+  - {provincia: 'belongsTo catalogo_ubigeo (provincia_id, pkid)'}
+  - {distrito: 'belongsTo catalogo_ubigeo (distrito_id, pkid)'}
+  - {proveedor_insumos: 'hasMany catalogo_proveedor_insumo (proveedor_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_solicitud_proveedorFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_solicitud_proveedorRelationResource.php, app/Http/Resources/dbsiaw/catalogo_solicitud_proveedorResource.php, app/Http/Resources/dbsiaw/catalogo_solicitud_proveedorTinyResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Basecatalogo_solicitud_proveedorRequest.php, app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/StoreExternalProveedorRequest.php, app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Storecatalogo_solicitud_proveedorRequest.php,
+    app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Updatecatalogo_solicitud_proveedorRequest.php]
+  service: [app/Services/catalogo_solicitud_proveedorService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_solicitud_proveedorController.php]
+  routes: [routes/catalogo_solicitud_proveedor.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_procesosauditFilters.php, app/Filters/dbsiaw/catalogo_proveedor_insumoFilters.php]
+  service_usado_en: [app/Services/SapBusinessPartnerService.php, app/Services/catalogo_proveedor_insumoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Basecatalogo_solicitud_proveedorRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_solicitud_proveedorController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_solicitud_proveedorFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_solicitud_proveedorRelationResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_solicitud_proveedorTinyResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_solicitud_proveedorResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_solicitud_proveedor.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_solicitud_proveedorService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/StoreExternalProveedorRequest.php, via: folder}
+    - {path: app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Storecatalogo_solicitud_proveedorRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Updatecatalogo_solicitud_proveedorRequest.php, via: name_exact_full}
+- model: catalogo_subfamilias
+  path: app/Models/dbsiaw/catalogo_subfamilias.php
+  connection: mysql_dbsiaw
+  table: catalogo_subfamilias
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_subfamiliasFilters
+  filter: [app/Filters/dbsiaw/catalogo_subfamiliasFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_subfamiliasRelationResource.php, app/Http/Resources/dbsiaw/catalogo_subfamiliasResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_subfamiliasController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/bajar_articulosController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  service_usado_en: [app/Services/catalogo_articulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_subfamiliasController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_subfamiliasFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_subfamiliasRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_subfamiliasResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_tarjetascredito
+  path: app/Models/dbsiaw/catalogo_tarjetascredito.php
+  connection: mysql_dbsiaw
+  table: catalogo_tarjetascredito
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {casafinanciera: 'belongsTo catalogo_casafinanciera (casafinanciera_id, pkid)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_tarjetascreditoResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_tarjetascreditoController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/subir_tarjetascreditoController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_tarjetascreditoController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tarjetascreditoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_terminales
+  path: app/Models/dbsiaw/catalogo_terminales.php
+  connection: mysql_dbsiaw
+  table: catalogo_terminales
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_terminalesFilters
+  relaciones:
+  - {cajas: 'hasMany catalogo_cajas (terminal_id, pkid)'}
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {created_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_terminalesFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_terminalesResource.php]
+  requests: [app/Http/Request/dbsiaw/Traits/catalogo_terminales/ValidatesCatalogo_terminales.php, app/Http/Request/dbsiaw/catalogo_terminales/Basecatalogo_terminalesRequest.php, app/Http/Request/dbsiaw/catalogo_terminales/Storecatalogo_terminalesRequest.php,
+    app/Http/Request/dbsiaw/catalogo_terminales/Updatecatalogo_terminalesRequest.php]
+  service: [app/Services/catalogo_terminalesService.php]
+  controller: [app/Http/Controllers/Api/catalogo_terminalesController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/catalogo_cajasController.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_terminales/Basecatalogo_terminalesRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_terminalesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_terminalesFilters.php, via: declared}
+    request_trait:
+    - {path: app/Http/Request/dbsiaw/Traits/catalogo_terminales/ValidatesCatalogo_terminales.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_terminalesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_terminalesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_terminales/Storecatalogo_terminalesRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_terminales/Updatecatalogo_terminalesRequest.php, via: name_exact_full}
+- model: catalogo_tienda
+  path: app/Models/dbsiaw/catalogo_tienda.php
+  connection: mysql_dbsiaw
+  table: catalogo_tienda
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_tiendaFilters
+  relaciones:
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  - {catalogo_empresa: belongsToMany catalogo_empresa}
+  - {ambientestiendas: 'hasMany catalogo_ambientestiendas (tienda_id, pkid)'}
+  - {catalogo_ubigeo: 'belongsTo catalogo_ubigeo (ubigeo_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_tiendaFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_tiendaByUpdatedAtResource.php, app/Http/Resources/dbsiaw/catalogo_tiendaConAmbientesResource.php, app/Http/Resources/dbsiaw/catalogo_tiendaRelacionResource.php,
+    app/Http/Resources/dbsiaw/catalogo_tiendaResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_tienda/Basecatalogo_tiendaRequest.php, app/Http/Request/dbsiaw/catalogo_tienda/GetTiendasByUpdatedAtRequest.php, app/Http/Request/dbsiaw/catalogo_tienda/GetTiendasExternalRequest.php,
+    app/Http/Request/dbsiaw/catalogo_tienda/Storecatalogo_tiendaRequest.php, app/Http/Request/dbsiaw/catalogo_tienda/Updatecatalogo_tiendaRequest.php]
+  service: [app/Services/catalogo_tiendaService.php]
+  controller: [app/Http/Controllers/Api/api_externa/TiendasExternalController.php, app/Http/Controllers/Api/catalogo_tiendaController.php, app/Http/Controllers/Api/sincronizacion/subir_tiendasController.php]
+  routes: [routes/api.php, routes/external.php]
+  controller_usado_en: [app/Http/Controllers/Api/catalogo_cajasController.php, app/Http/Controllers/Api/catalogo_tiendazonaController.php, app/Http/Controllers/Api/catalogo_zonaController.php, app/Http/Controllers/Api/dbsiaw/catalogo_estructuraController.php,
+    app/Http/Controllers/Api/sincronizacion/subir_almacenesController.php, app/Http/Controllers/Api/sincronizacion/subir_ambientesController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_almacenesFilters.php, app/Filters/dbsiaw/catalogo_ambientestiendasFilters.php, app/Filters/dbsiaw/catalogo_empresatiendaFilters.php, app/Filters/dbsiaw/catalogo_preciartFilters.php,
+    app/Filters/dbsiaw/catalogo_preciart_logFilters.php, app/Filters/dbsiaw/catalogo_solicitud_proveedorFilters.php, app/Filters/dbsiaw/catalogo_topesconsumotiendaFilters.php]
+  service_usado_en: [app/Services/NotificacionService.php, app/Services/catalogo_almacenesService.php, app/Services/catalogo_ambientestiendasService.php, app/Services/catalogo_articulosService.php, app/Services/catalogo_empresatiendaService.php,
+    app/Services/catalogo_preciartService.php, app/Services/catalogo_preciart_logService.php, app/Services/catalogo_procesoscorreoService.php, app/Services/catalogo_regalosService.php, app/Services/catalogo_solicitud_proveedorService.php,
+    app/Services/catalogo_terminalesService.php, app/Services/catalogo_topesconsumotiendaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_tienda/Basecatalogo_tiendaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/api_externa/TiendasExternalController.php, via: name_prefix}
+    - {path: app/Http/Controllers/Api/catalogo_tiendaController.php, via: name_exact_full}
+    - {path: app/Http/Controllers/Api/sincronizacion/subir_tiendasController.php, via: import_single}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_tiendaFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_tienda/GetTiendasByUpdatedAtRequest.php, via: folder}
+    - {path: app/Http/Request/dbsiaw/catalogo_tienda/GetTiendasExternalRequest.php, via: folder}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiendaRelacionResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiendaByUpdatedAtResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiendaConAmbientesResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiendaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+    - {path: routes/external.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_tiendaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_tienda/Storecatalogo_tiendaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_tienda/Updatecatalogo_tiendaRequest.php, via: name_exact_full}
+- model: catalogo_tiendazona
+  path: app/Models/dbsiaw/catalogo_tiendazona.php
+  connection: mysql_dbsiaw
+  table: catalogo_tiendazona
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/dbsiaw/catalogo_tiendazonaResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_tiendazonaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/catalogo_zonaController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_tiendazonaController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiendazonaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_tipodocumento
+  path: app/Models/dbsiaw/catalogo_tipodocumento.php
+  connection: mysql_dbsiaw
+  table: catalogo_tipodocumento
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_tipodocumentoFilters
+  filter: [app/Filters/dbsiaw/catalogo_tipodocumentoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_tipodocumentoResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_tipodocumentoRequest.php, app/Http/Request/dbsiaw/Storecatalogo_tipodocumentoRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_tipodocumentoRequest.php]
+  service: [app/Services/catalogo_tipodocumentoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_tipodocumentoController.php]
+  routes: [routes/catalogo_clientes.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_tipodocumentoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_tipodocumentoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_tipodocumentoFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tipodocumentoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_clientes.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_tipodocumentoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_tipodocumentoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_tipodocumentoRequest.php, via: name_exact_full}
+- model: catalogo_tipoprecio
+  path: app/Models/dbsiaw/catalogo_tipoprecio.php
+  connection: mysql_dbsiaw
+  table: catalogo_tipoprecio
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_tipoprecioFilters
+  relaciones:
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_tipoprecioFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_tipoprecioRelationResource.php, app/Http/Resources/dbsiaw/catalogo_tipoprecioResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_tipoprecioRequest.php, app/Http/Request/dbsiaw/Storecatalogo_tipoprecioRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_tipoprecioRequest.php]
+  service: [app/Services/catalogo_tipoprecioService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_tipoprecioController.php]
+  routes: [routes/catalogo_tipoprecio.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/subir_ambientesController.php]
+  service_usado_en: [app/Services/catalogo_ambientesService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_tipoprecioRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_tipoprecioController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_tipoprecioFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tipoprecioRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tipoprecioResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_tipoprecio.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_tipoprecioService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_tipoprecioRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_tipoprecioRequest.php, via: name_exact_full}
+- model: catalogo_tiposgasto
+  path: app/Models/dbsiaw/catalogo_tiposgasto.php
+  connection: mysql_dbsiaw
+  table: catalogo_tiposgasto
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_tiposgastoFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  - {catalogo_clasesgasto: 'belongsTo catalogo_clasesgasto (clasesgasto_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_tiposgastoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_tiposgastoExternalResource.php, app/Http/Resources/dbsiaw/catalogo_tiposgastoRelationResource.php, app/Http/Resources/dbsiaw/catalogo_tiposgastoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_tiposgasto/Basecatalogo_tiposgastoRequest.php, app/Http/Request/dbsiaw/catalogo_tiposgasto/Storecatalogo_tiposgastoRequest.php, app/Http/Request/dbsiaw/catalogo_tiposgasto/Updatecatalogo_tiposgastoRequest.php]
+  service: [app/Services/catalogo_tiposgastoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_tiposgastoController.php]
+  routes: [routes/catalogo_tiposgasto.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_motivostipogastoFilters.php]
+  service_usado_en: [app/Services/catalogo_motivostipogastoService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_tiposgasto/Basecatalogo_tiposgastoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_tiposgastoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_tiposgastoFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiposgastoRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiposgastoExternalResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiposgastoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_tiposgasto.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_tiposgastoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_tiposgasto/Storecatalogo_tiposgastoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_tiposgasto/Updatecatalogo_tiposgastoRequest.php, via: name_exact_full}
+- model: catalogo_tiposistema
+  path: app/Models/dbsiaw/catalogo_tiposistema.php
+  connection: mysql_dbsiaw
+  table: catalogo_tiposistema
+  pk: {name: pkid, incrementing: true, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/dbsiaw/catalogo_tiposistemaResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_sistemasController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_sistemasController.php, via: import_single}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_tiposistemaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_topesconsumotienda
+  path: app/Models/dbsiaw/catalogo_topesconsumotienda.php
+  connection: mysql_dbsiaw
+  table: catalogo_topesconsumotienda
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_topesconsumotiendaFilters
+  relaciones:
+  - {tienda: 'belongsTo catalogo_tienda (tienda_id, pkid)'}
+  - {UsuarioCreate: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {UsuarioUpdate: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_topesconsumotiendaFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_topesconsumotiendaExternalResource.php, app/Http/Resources/dbsiaw/catalogo_topesconsumotiendaResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_topesconsumotiendaRequest.php, app/Http/Request/dbsiaw/Storecatalogo_topesconsumotiendaRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_topesconsumotiendaRequest.php]
+  service: [app/Services/catalogo_topesconsumotiendaService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_topesconsumotiendaController.php]
+  routes: [routes/topes_consumo_tienda.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_topesconsumotiendaRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_topesconsumotiendaController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_topesconsumotiendaFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_topesconsumotiendaExternalResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_topesconsumotiendaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/topes_consumo_tienda.php, via: name_exact}
+    service:
+    - {path: app/Services/catalogo_topesconsumotiendaService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_topesconsumotiendaRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_topesconsumotiendaRequest.php, via: name_exact_full}
+- model: catalogo_turnos
+  path: app/Models/dbsiaw/catalogo_turnos.php
+  connection: mysql_dbsiaw
+  table: catalogo_turnos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_turnosFilters
+  filter: [app/Filters/dbsiaw/catalogo_turnosFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_turnosResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_turnosController.php]
+  routes: [routes/api.php]
+  service_usado_en: [app/Services/catalogo_articulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_turnosController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_turnosFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_turnosResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_ubigeo
+  path: app/Models/dbsiaw/catalogo_ubigeo.php
+  connection: mysql_dbsiaw
+  table: catalogo_ubigeo
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_ubigeoFilters
+  relaciones:
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_ubigeoFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_ubigeoRelationResource.php, app/Http/Resources/dbsiaw/catalogo_ubigeoResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_ubigeo/Basecatalogo_ubigeoRequest.php, app/Http/Request/dbsiaw/catalogo_ubigeo/Storecatalogo_ubigeoRequest.php, app/Http/Request/dbsiaw/catalogo_ubigeo/Updatecatalogo_ubigeoRequest.php]
+  service: [app/Services/catalogo_ubigeoService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_ubigeoController.php]
+  routes: [routes/catalogo_ubigeo.php]
+  service_usado_en: [app/Services/catalogo_empresaService.php, app/Services/catalogo_solicitud_proveedorService.php, app/Services/catalogo_tiendaService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_ubigeo/Basecatalogo_ubigeoRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_ubigeoController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_ubigeoFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_ubigeoRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_ubigeoResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_ubigeo.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_ubigeoService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_ubigeo/Storecatalogo_ubigeoRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_ubigeo/Updatecatalogo_ubigeoRequest.php, via: name_exact_full}
+- model: catalogo_unidadmed
+  path: app/Models/dbsiaw/catalogo_unidadmed.php
+  connection: mysql_dbsiaw
+  table: catalogo_unidadmed
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  default_filters: catalogo_unidadmedFilters
+  filter: [app/Filters/dbsiaw/catalogo_unidadmedFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_unidadMedRelationResource.php, app/Http/Resources/dbsiaw/catalogo_unidadMedResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_unidadmedController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/sincronizacion/bajar_articulosController.php, app/Http/Controllers/Api/sincronizacion/subir_almacenesController.php, app/Http/Controllers/Api/sincronizacion/subir_articulosController.php]
+  service_usado_en: [app/Services/catalogo_almacartService.php, app/Services/catalogo_articulosService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_unidadmedController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_unidadmedFilters.php, via: declared}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_unidadMedRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_unidadMedResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_usuario
+  path: app/Models/dbsiaw/catalogo_usuario.php
+  connection: mysql_dbsiaw
+  table: catalogo_usuario
+  pk: {name: pkid, incrementing: true, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  relaciones:
+  - {catalogo_whitelistedusers: 'hasMany catalogo_whitelistedusers (user_id, pkid)'}
+  - {groupsRelation: 'hasMany catalogo_usuario_group (user_id, pkid)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_usuarioRelationResource.php, app/Http/Resources/dbsiaw/catalogo_usuarioResource.php, app/Http/Resources/dbsiaw/catalogo_usuarioWhiteResource.php, app/Http/Resources/dbsiaw/catalogo_usuario_fullResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_usuariosController.php]
+  routes: [routes/api.php]
+  filter_usado_en: [app/Filters/dbsiaw/catalogo_solicitud_proveedorFilters.php]
+  service_usado_en: [app/Services/PermissionGuardService.php, app/Services/catalogo_solicitud_proveedorService.php, app/Services/catalogo_whitelistedusersService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_usuariosController.php, via: name_prefix_full}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuarioRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuarioResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuarioWhiteResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuario_fullResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: catalogo_usuario_group
+  path: app/Models/dbsiaw/catalogo_usuario_group.php
+  connection: mysql_dbsiaw
+  table: catalogo_usuario_groups
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {groupRelation: 'belongsTo auth_group (group_id, id)'}
+  roles: {}
+- model: catalogo_usuariosexternos
+  path: app/Models/dbsiaw/catalogo_usuariosexternos.php
+  connection: mysql_dbsiaw
+  table: catalogo_usuariosexternos
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  controller: [app/Http/Controllers/Api/api_externa/AuthExternalController.php]
+  routes: [routes/external.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/api_externa/AuthExternalController.php, via: import_single}
+    route:
+    - {path: routes/external.php, via: route_controller}
+- model: catalogo_variables
+  path: app/Models/dbsiaw/catalogo_variables.php
+  connection: mysql_dbsiaw
+  table: catalogo_variables
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: catalogo_variablesFilters
+  relaciones:
+  - {create_by: 'belongsTo catalogo_usuario (created_by_id, pkid)'}
+  - {update_by: 'belongsTo catalogo_usuario (updated_by_id, pkid)'}
+  - {delete_by: 'belongsTo catalogo_usuario (deleted_by_id, pkid)'}
+  filter: [app/Filters/dbsiaw/catalogo_variablesFilters.php]
+  resources: [app/Http/Resources/dbsiaw/catalogo_variablesExternalResource.php, app/Http/Resources/dbsiaw/catalogo_variablesResource.php]
+  requests: [app/Http/Request/dbsiaw/Basecatalogo_variablesRequest.php, app/Http/Request/dbsiaw/Storecatalogo_variablesRequest.php, app/Http/Request/dbsiaw/Updatecatalogo_variablesRequest.php]
+  service: [app/Services/catalogo_variablesService.php]
+  controller: [app/Http/Controllers/Api/api_externa/VariablesExternalController.php, app/Http/Controllers/Api/dbsiaw/catalogo_variablesController.php]
+  routes: [routes/catalogo_variables.php, routes/external.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/dbsiaw/Basecatalogo_variablesRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/api_externa/VariablesExternalController.php, via: name_prefix}
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_variablesController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/dbsiaw/catalogo_variablesFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_variablesExternalResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_variablesResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_variables.php, via: name_exact_full}
+    - {path: routes/external.php, via: route_controller}
+    service:
+    - {path: app/Services/catalogo_variablesService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/Storecatalogo_variablesRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/dbsiaw/Updatecatalogo_variablesRequest.php, via: name_exact_full}
+- model: catalogo_whitelistedusers
+  path: app/Models/dbsiaw/catalogo_whitelistedusers.php
+  connection: mysql_dbsiaw
+  table: catalogo_whitelistedusers
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {user: 'belongsTo User (user_id, pkid)'}
+  - {created_by: 'belongsTo User (created_by_id, pkid)'}
+  - {updated_by: 'belongsTo User (updated_by_id, pkid)'}
+  - {deleted_by: 'belongsTo User (deleted_by_id, pkid)'}
+  resources: [app/Http/Resources/dbsiaw/catalogo_whitelistedusersResource.php]
+  requests: [app/Http/Request/dbsiaw/catalogo_whitelistedusers/StorecatalogWhitelistedusersRequest.php]
+  service: [app/Services/catalogo_whitelistedusersService.php]
+  controller: [app/Http/Controllers/Api/dbsiaw/catalogo_whitelistedusersController.php]
+  routes: [routes/catalogo_whitelistedusers.php]
+  service_usado_en: [app/Services/PermissionGuardService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/catalogo_whitelistedusersController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_whitelistedusersResource.php, via: name_exact_full}
+    route:
+    - {path: routes/catalogo_whitelistedusers.php, via: name_exact_full}
+    service:
+    - {path: app/Services/catalogo_whitelistedusersService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/dbsiaw/catalogo_whitelistedusers/StorecatalogWhitelistedusersRequest.php, via: folder}
+- model: catalogo_zona
+  path: app/Models/dbsiaw/catalogo_zona.php
+  connection: mysql_dbsiaw
+  table: catalogo_zona
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: true}
+  soft_delete: deleted_at
+  has_factory: true
+  auditoria: [created_by_id, updated_by_id]
+  resources: [app/Http/Resources/dbsiaw/catalogo_zonaResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_zonaController.php]
+  routes: [routes/api.php]
+  controller_usado_en: [app/Http/Controllers/Api/catalogo_tiendazonaController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_zonaController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_zonaResource.php, via: name_exact_full}
+    route:
+    - {path: routes/api.php, via: route_controller}
+- model: ProveedoresSap
+  path: app/Models/Sap/ProveedoresSap.php
+  connection: mysql_dbsiaw
+  table: proveedores_sap
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: SapAddressIdentifier
+  path: app/Models/Sap/SapAddressIdentifier.php
+  connection: mysql_dbsiaw
+  table: sap_address_identifiers
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {address: 'belongsTo SapBusinessPartnerAddress (address_pkid, pkid)'}
+  - {empresaConfig: 'belongsTo SapEmpresaConfig (sap_empresa_config_pkid, pkid)'}
+  service_usado_en: [app/Services/SapBusinessPartnerService.php]
+  roles: {}
+- model: SapBank
+  path: app/Models/Sap/SapBank.php
+  connection: mysql_dbsiaw
+  table: sap_banks
+  pk: {name: bank_code, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapMasterDataController.php]
+  roles: {}
+- model: SapBankIdentifier
+  path: app/Models/Sap/SapBankIdentifier.php
+  connection: mysql_dbsiaw
+  table: sap_bank_identifiers
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {bank: 'belongsTo SapBusinessPartnerBank (bank_pkid, pkid)'}
+  - {empresaConfig: 'belongsTo SapEmpresaConfig (sap_empresa_config_pkid, pkid)'}
+  service_usado_en: [app/Services/SapBusinessPartnerService.php]
+  roles: {}
+- model: SapBpGroup
+  path: app/Models/Sap/SapBpGroup.php
+  connection: mysql_dbsiaw
+  table: sap_bp_groups
+  pk: {name: code, incrementing: false, keyType: int, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapMasterDataController.php]
+  roles: {}
+- model: SapBusinessPartner
+  path: app/Models/Sap/SapBusinessPartner.php
+  connection: mysql_dbsiaw
+  table: sap_businesspartners
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SapBusinessPartnerFilters
+  relaciones:
+  - {companies: 'hasMany SapBusinessPartnerCompany (sap_businesspartner_pkid, pkid)'}
+  - {addresses: 'hasMany SapBusinessPartnerAddress (sap_businesspartner_pkid, pkid)'}
+  - {banks: 'hasMany SapBusinessPartnerBank (sap_businesspartner_pkid, pkid)'}
+  - {contacts: 'hasMany SapBusinessPartnerContact (businesspartner_id, pkid)'}
+  - {salesPersonAssignments: 'hasMany SapBusinessPartnerSalesPerson (businesspartner_pkid, pkid)'}
+  - {salesPersons: 'belongsToMany SapSalesPerson (sap_businesspartner_salespersons, businesspartner_pkid)'}
+  - {solicitudProveedor: 'hasOne catalogo_solicitud_proveedor (business_partner_id, pkid)'}
+  - {createdBy: 'belongsTo User (created_by_id, pkid)'}
+  - {updatedBy: 'belongsTo User (updated_by_id, pkid)'}
+  filter: [app/Filters/Sap/SapBusinessPartnerFilters.php]
+  resources: [app/Http/Resources/Sap/SapBusinessPartnerResource.php]
+  requests: [app/Http/Request/Sap/BaseSapBusinessPartnerRequest.php, app/Http/Request/Sap/StoreSapBusinessPartnerRequest.php, app/Http/Request/Sap/UpdateSapBusinessPartnerRequest.php]
+  service: [app/Services/SapBusinessPartnerService.php]
+  controller: [app/Http/Controllers/Api/Sap/SapBusinessPartnerController.php]
+  routes: [routes/sap_businesspartners.php]
+  filter_usado_en: [app/Filters/Sap/SapBusinessPartnerContactFilters.php, app/Filters/dbsiaw/catalogo_procesosauditFilters.php]
+  service_usado_en: [app/Services/Sap/SapSyncDispatcher.php, app/Services/SapBusinessPartnerContactService.php, app/Services/SapBusinessPartnerSalesPersonService.php, app/Services/catalogo_solicitud_proveedorService.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/Sap/BaseSapBusinessPartnerRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/Sap/SapBusinessPartnerController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Sap/SapBusinessPartnerFilters.php, via: declared}
+    resource:
+    - {path: app/Http/Resources/Sap/SapBusinessPartnerResource.php, via: name_exact_full}
+    route:
+    - {path: routes/sap_businesspartners.php, via: name_exact_full}
+    service:
+    - {path: app/Services/SapBusinessPartnerService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/Sap/StoreSapBusinessPartnerRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/Sap/UpdateSapBusinessPartnerRequest.php, via: name_exact_full}
+- model: SapBusinessPartnerAddress
+  path: app/Models/Sap/SapBusinessPartnerAddress.php
+  connection: mysql_dbsiaw
+  table: sap_businesspartner_addresses
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {businessPartner: 'belongsTo SapBusinessPartner (sap_businesspartner_pkid, pkid)'}
+  - {sapIdentifiers: 'hasMany SapAddressIdentifier (address_pkid, pkid)'}
+  resources: [app/Http/Resources/Sap/SapBusinessPartnerAddressResource.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sap/SapBusinessPartnerAddressResource.php, via: name_exact_full}
+- model: SapBusinessPartnerBank
+  path: app/Models/Sap/SapBusinessPartnerBank.php
+  connection: mysql_dbsiaw
+  table: sap_businesspartner_banks
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {businessPartner: 'belongsTo SapBusinessPartner (sap_businesspartner_pkid, pkid)'}
+  - {sapIdentifiers: 'hasMany SapBankIdentifier (bank_pkid, pkid)'}
+  resources: [app/Http/Resources/Sap/SapBusinessPartnerBankResource.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sap/SapBusinessPartnerBankResource.php, via: name_exact_full}
+- model: SapBusinessPartnerCompany
+  path: app/Models/Sap/SapBusinessPartnerCompany.php
+  connection: mysql_dbsiaw
+  table: sap_businesspartner_companies
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {businessPartner: 'belongsTo SapBusinessPartner (sap_businesspartner_pkid, pkid)'}
+  - {empresaConfig: 'belongsTo SapEmpresaConfig (sap_empresa_config_pkid, pkid)'}
+  resources: [app/Http/Resources/Sap/SapBusinessPartnerCompanyResource.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapBusinessPartnerController.php]
+  service_usado_en: [app/Services/Sap/SapSyncDispatcher.php, app/Services/SapBusinessPartnerService.php]
+  roles:
+    resource:
+    - {path: app/Http/Resources/Sap/SapBusinessPartnerCompanyResource.php, via: name_exact_full}
+- model: SapBusinessPartnerContact
+  path: app/Models/Sap/SapBusinessPartnerContact.php
+  connection: mysql_dbsiaw
+  table: sap_businesspartner_contacts
+  pk: {name: id, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  default_filters: SapBusinessPartnerContactFilters
+  relaciones:
+  - {businessPartner: 'belongsTo SapBusinessPartner (businesspartner_id, pkid)'}
+  - {created_by: belongsTo User (created_by_id)}
+  - {updated_by: belongsTo User (updated_by_id)}
+  - {deleted_by: belongsTo User (deleted_by_id)}
+  filter: [app/Filters/Sap/SapBusinessPartnerContactFilters.php]
+  resources: [app/Http/Resources/Sap/SapBusinessPartnerContactRelationResource.php, app/Http/Resources/Sap/SapBusinessPartnerContactResource.php]
+  requests: [app/Http/Request/Sap/BaseSapBusinessPartnerContactRequest.php, app/Http/Request/Sap/BulkSapBusinessPartnerContactRequest.php, app/Http/Request/Sap/StoreSapBusinessPartnerContactRequest.php,
+    app/Http/Request/Sap/UpdateSapBusinessPartnerContactRequest.php]
+  service: [app/Services/SapBusinessPartnerContactService.php]
+  controller: [app/Http/Controllers/Api/Sap/SapBusinessPartnerContactController.php]
+  routes: [routes/sap_businesspartner_contacts.php]
+  roles:
+    base_request:
+    - {path: app/Http/Request/Sap/BaseSapBusinessPartnerContactRequest.php, via: name_exact_full}
+    controller:
+    - {path: app/Http/Controllers/Api/Sap/SapBusinessPartnerContactController.php, via: name_exact_full}
+    filter:
+    - {path: app/Filters/Sap/SapBusinessPartnerContactFilters.php, via: declared}
+    other_request:
+    - {path: app/Http/Request/Sap/BulkSapBusinessPartnerContactRequest.php, via: name_exact_full}
+    relation_resource:
+    - {path: app/Http/Resources/Sap/SapBusinessPartnerContactRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sap/SapBusinessPartnerContactResource.php, via: name_exact_full}
+    route:
+    - {path: routes/sap_businesspartner_contacts.php, via: name_exact_full}
+    service:
+    - {path: app/Services/SapBusinessPartnerContactService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/Sap/StoreSapBusinessPartnerContactRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/Sap/UpdateSapBusinessPartnerContactRequest.php, via: name_exact_full}
+- model: SapBusinessPartnerSalesPerson
+  path: app/Models/Sap/SapBusinessPartnerSalesPerson.php
+  connection: mysql_dbsiaw
+  table: sap_businesspartner_salespersons
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {businessPartner: 'belongsTo SapBusinessPartner (businesspartner_pkid, pkid)'}
+  - {empresaConfig: 'belongsTo SapEmpresaConfig (sap_empresa_config_pkid, pkid)'}
+  - {salesPerson: 'belongsTo SapSalesPerson (salesperson_pkid, pkid)'}
+  resources: [app/Http/Resources/Sap/SapBusinessPartnerSalesPersonResource.php]
+  requests: [app/Http/Request/Sap/BulkSapBusinessPartnerSalesPersonRequest.php, app/Http/Request/Sap/StoreSapBusinessPartnerSalesPersonRequest.php, app/Http/Request/Sap/UpdateSapBusinessPartnerSalesPersonRequest.php]
+  service: [app/Services/SapBusinessPartnerSalesPersonService.php]
+  controller: [app/Http/Controllers/Api/Sap/SapBusinessPartnerSalesPersonController.php]
+  routes: [routes/sap_businesspartner_salespersons.php]
+  service_usado_en: [app/Services/SapBusinessPartnerService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sap/SapBusinessPartnerSalesPersonController.php, via: name_exact_full}
+    other_request:
+    - {path: app/Http/Request/Sap/BulkSapBusinessPartnerSalesPersonRequest.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sap/SapBusinessPartnerSalesPersonResource.php, via: name_exact_full}
+    route:
+    - {path: routes/sap_businesspartner_salespersons.php, via: name_exact_full}
+    service:
+    - {path: app/Services/SapBusinessPartnerSalesPersonService.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/Sap/StoreSapBusinessPartnerSalesPersonRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/Sap/UpdateSapBusinessPartnerSalesPersonRequest.php, via: name_exact_full}
+- model: SapContactIdentifier
+  path: app/Models/Sap/SapContactIdentifier.php
+  connection: mysql_dbsiaw
+  table: sap_contact_identifiers
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {contact: 'belongsTo SapBusinessPartnerContact (contact_pkid, pkid)'}
+  - {empresaConfig: 'belongsTo SapEmpresaConfig (sap_empresa_config_pkid, pkid)'}
+  service_usado_en: [app/Services/SapBusinessPartnerContactService.php, app/Services/SapBusinessPartnerService.php]
+  roles: {}
+- model: SapCountry
+  path: app/Models/Sap/SapCountry.php
+  connection: mysql_dbsiaw
+  table: sap_countries
+  pk: {name: code, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapMasterDataController.php]
+  roles: {}
+- model: SapCurrency
+  path: app/Models/Sap/SapCurrency.php
+  connection: mysql_dbsiaw
+  table: sap_currencies
+  pk: {name: code, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapMasterDataController.php]
+  service_usado_en: [app/Services/catalogo_solicitud_proveedorService.php]
+  roles: {}
+- model: SapEmpresaConfig
+  path: app/Models/Sap/SapEmpresaConfig.php
+  connection: mysql_dbsiaw
+  table: sap_empresa_config
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {empresa: 'belongsTo catalogo_empresa (catalogo_empresa_id, pkid)'}
+  resources: [app/Http/Resources/Sap/SapEmpresaConfigResource.php]
+  requests: [app/Http/Request/Sap/StoreSapEmpresaConfigRequest.php, app/Http/Request/Sap/UpdateSapEmpresaConfigRequest.php]
+  controller: [app/Http/Controllers/Api/Sap/SapEmpresaConfigController.php]
+  routes: [routes/sap_empresa_config.php]
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapBusinessPartnerController.php, app/Http/Controllers/Api/Sap/SapPaymentTermMappingController.php, app/Http/Controllers/Api/Sap/SapSalesPersonController.php]
+  service_usado_en: [app/Services/Sap/SapServiceLayerClient.php, app/Services/Sap/SapSyncDispatcher.php, app/Services/SapBusinessPartnerService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sap/SapEmpresaConfigController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sap/SapEmpresaConfigResource.php, via: name_exact_full}
+    route:
+    - {path: routes/sap_empresa_config.php, via: name_exact_full}
+    store_request:
+    - {path: app/Http/Request/Sap/StoreSapEmpresaConfigRequest.php, via: name_exact_full}
+    update_request:
+    - {path: app/Http/Request/Sap/UpdateSapEmpresaConfigRequest.php, via: name_exact_full}
+- model: SapEmpresaPaymentTerm
+  path: app/Models/Sap/SapEmpresaPaymentTerm.php
+  connection: mysql_dbsiaw
+  table: sap_empresa_payment_terms
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {empresaConfig: 'belongsTo SapEmpresaConfig (sap_empresa_config_id, pkid)'}
+  - {mappings: hasMany SapPaymentTermMapping (sap_empresa_payment_term_id)}
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapPaymentTermMappingController.php]
+  roles: {}
+- model: SapImportRuc
+  path: app/Models/Sap/SapImportRuc.php
+  connection: mysql_dbsiaw
+  table: sap_import_rucs
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: SapPaymentTerm
+  path: app/Models/Sap/SapPaymentTerm.php
+  connection: mysql_dbsiaw
+  table: sap_payment_terms
+  pk: {name: group_number, incrementing: false, keyType: int, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapMasterDataController.php, app/Http/Controllers/Api/Sap/SapPaymentTermMappingController.php]
+  filter_usado_en: [app/Filters/Sap/SapBusinessPartnerFilters.php, app/Filters/dbsiaw/catalogo_solicitud_proveedorFilters.php]
+  requests_usado_en: [app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Storecatalogo_solicitud_proveedorRequest.php, app/Http/Request/dbsiaw/catalogo_solicitud_proveedor/Updatecatalogo_solicitud_proveedorRequest.php]
+  roles: {}
+- model: SapPaymentTermMapping
+  path: app/Models/Sap/SapPaymentTermMapping.php
+  connection: mysql_dbsiaw
+  table: sap_payment_term_mappings
+  pk: {name: id, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {paymentTerm: 'belongsTo SapPaymentTerm (group_number, group_number)'}
+  - {empresaPaymentTerm: belongsTo SapEmpresaPaymentTerm (sap_empresa_payment_term_id)}
+  controller: [app/Http/Controllers/Api/Sap/SapPaymentTermMappingController.php]
+  routes: [routes/sap_master_data.php]
+  service_usado_en: [app/Services/SapBusinessPartnerService.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sap/SapPaymentTermMappingController.php, via: name_exact_full}
+    route:
+    - {path: routes/sap_master_data.php, via: route_controller}
+- model: SapSalesPerson
+  path: app/Models/Sap/SapSalesPerson.php
+  connection: mysql_dbsiaw
+  table: sap_sales_persons
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: deleted_at
+  has_factory: false
+  auditoria: [created_by_id, updated_by_id, deleted_by_id]
+  relaciones:
+  - {empresaConfig: 'belongsTo SapEmpresaConfig (sap_company_id, pkid)'}
+  - {businessPartners: 'belongsToMany SapBusinessPartner (sap_businesspartner_salespersons, salesperson_pkid)'}
+  resources: [app/Http/Resources/Sap/SapSalesPersonResource.php]
+  controller: [app/Http/Controllers/Api/Sap/SapSalesPersonController.php]
+  routes: [routes/sap_sales_persons.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/Sap/SapSalesPersonController.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/Sap/SapSalesPersonResource.php, via: name_exact_full}
+    route:
+    - {path: routes/sap_sales_persons.php, via: name_exact_full}
+- model: SapSalesTaxCode
+  path: app/Models/Sap/SapSalesTaxCode.php
+  connection: mysql_dbsiaw
+  table: sap_salestaxcodes
+  pk: {name: code, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapMasterDataController.php]
+  roles: {}
+- model: SapState
+  path: app/Models/Sap/SapState.php
+  connection: mysql_dbsiaw
+  table: sap_states
+  pk: {name: code, incrementing: false, keyType: string, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller_usado_en: [app/Http/Controllers/Api/Sap/SapMasterDataController.php]
+  roles: {}
+- model: sip_multitabladetalle
+  path: app/Models/dbsip/sip_multitabladetalle.php
+  connection: mysql_dbsip
+  table: sip_multitabladetalle
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: sip_personal
+  path: app/Models/dbsip/sip_personal.php
+  connection: mysql_dbsip
+  table: sip_personal
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  controller: [app/Http/Controllers/Api/dbsiaw/sip_personalController.php]
+  routes: [routes/sip_personal.php]
+  controller_usado_en: [app/Http/Controllers/Api/dbsiaw/catalogo_estructuraController.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/dbsiaw/sip_personalController.php, via: name_exact_full}
+    route:
+    - {path: routes/sip_personal.php, via: name_exact_full}
+- model: sip_personal_cargo
+  path: app/Models/dbsip/sip_personal_cargo.php
+  connection: mysql_dbsip
+  table: sip_personalcargos
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: sip_personalmovimientocargo
+  path: app/Models/dbsip/sip_personalmovimientocargo.php
+  connection: mysql_dbsip
+  table: sip_personalmovimientocargo
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  relaciones:
+  - {cargos: 'belongsTo sip_personal_cargo (cargo_personal_id, pkid)'}
+  controller_usado_en: [app/Http/Controllers/Api/dbsiaw/catalogo_estructuraController.php, app/Http/Controllers/Api/dbsiaw/sip_personalController.php]
+  roles: {}
+- model: sip_personalplanillatda
+  path: app/Models/dbsip/sip_personalplanillatda.php
+  connection: mysql_dbsip
+  table: sip_personalplanillatda
+  pk: {name: pkid, incrementing: default, keyType: default, pkid_en_fillable: true}
+  soft_delete: 'no'
+  has_factory: false
+  auditoria: []
+  roles: {}
+- model: User
+  path: app/Models/User.php
+  connection: mysql_dbsiaw
+  table: catalogo_usuario
+  pk: {name: id, incrementing: false, keyType: default, pkid_en_fillable: false}
+  soft_delete: 'no'
+  has_factory: true
+  auditoria: []
+  resources: [app/Http/Resources/dbsiaw/catalogo_usuarioRelationResource.php, app/Http/Resources/dbsiaw/catalogo_usuarioResource.php, app/Http/Resources/dbsiaw/catalogo_usuarioWhiteResource.php, app/Http/Resources/dbsiaw/catalogo_usuario_fullResource.php]
+  controller: [app/Http/Controllers/Api/catalogo_usuariosController.php]
+  routes: [routes/api.php]
+  roles:
+    controller:
+    - {path: app/Http/Controllers/Api/catalogo_usuariosController.php, via: name_prefix_full}
+    relation_resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuarioRelationResource.php, via: name_exact_full}
+    resource:
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuarioResource.php, via: name_exact_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuarioWhiteResource.php, via: name_prefix_full}
+    - {path: app/Http/Resources/dbsiaw/catalogo_usuario_fullResource.php, via: name_prefix_full}
+    route:
+    - {path: routes/api.php, via: route_controller}

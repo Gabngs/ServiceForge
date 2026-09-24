@@ -26,7 +26,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import match_learner, naming
+from . import match_learner, naming, structure_scan
 from .db import Column
 
 _CLASS_RE = re.compile(r"\bclass\s+(\w+)")
@@ -77,6 +77,10 @@ class ModelResourceMatch:
     table: str
     model: ModelInfo | None
     candidates: list[MatchCandidate] = field(default_factory=list)
+    # Archivos YA existentes de los demás roles (Filter, Requests, Service, Controller, rutas...) que el
+    # modelo de estructura reconoce como de este Model, mejor puntuados primero. Es informativo: la
+    # generación todavía solo usa los Resources confirmados de `candidates` (ver gui.py).
+    others: dict[str, list["structure_scan.RoleCandidate"]] = field(default_factory=dict)
 
     @property
     def best(self) -> MatchCandidate | None:
@@ -236,6 +240,20 @@ def build_features(
     }
 
 
+def _resource_info(f: "structure_scan.FileX", backend_root: Path) -> ResourceInfo:
+    """FileX del escáner de estructura -> ResourceInfo, el tipo que ya consumen la GUI y la generación."""
+    role = "tiny_resource" if f.class_name.endswith("TinyResource") else f.role
+    return ResourceInfo(
+        class_name=f.class_name,
+        namespace=f.namespace,
+        path=backend_root / f.path,
+        role=role,
+        base_name=_resource_role(f.class_name)[1],
+        fields=set(f.keys),
+        mixin_target=f.mixin_target,
+    )
+
+
 def find_candidates(
     table: str,
     business_columns: list[Column],
@@ -245,37 +263,53 @@ def find_candidates(
     min_score: float = 0.35,
     relation_names: set[str] | None = None,
 ) -> ModelResourceMatch:
-    """Candidatos de Resource ya existentes para `table`, puntuados por
-    `learner` (ver match_learner.py) y ordenados de mayor a menor score --
-    `min_score` filtra ruido, un Resource sin ninguna señal en común no
-    aparece ni como candidato débil. Sin `learner` explícito usa uno nuevo
-    cargado de disco (pesos aprendidos si ya hay confirmaciones previas,
-    prior heurístico si no) -- siempre da un score razonable, incluso antes
-    de que el desarrollador confirme un solo match.
+    """Candidatos ya existentes en el proyecto para `table`, puntuados por `learner` (ver
+    match_learner.py) y ordenados de mayor a menor score -- `min_score` filtra ruido, un archivo sin
+    ninguna señal en común no aparece ni como candidato débil.
 
-    `relation_names` -- nombres de relación (alias de FK ya resueltas +
-    'created_by'/'updated_by'/'deleted_by') que se suman a las columnas de
-    negocio para el cálculo de `field_jaccard`: un {Modulo}RelationResource
-    típicamente expone esas claves (`'articulo' => ...`, `whenLoaded(...)`),
-    no solo columnas planas -- sin esto, el solapamiento de campos se
-    subestima justo para el rol que más lo necesita. Se arma reusando la
-    misma resolución de FK ya cacheada/importada/exportada por fk_resolver
-    (ver GUI), no una detección nueva."""
-    learner = learner or match_learner.MatchLearner.load()
-    _, modulo = naming.split_prefijo_modulo(table)
+    Escanea el proyecto con `structure_scan` (el mismo código con el que se armó el dataset de
+    entrenamiento, así las features de entrenamiento y las de uso no divergen). Devuelve los
+    Resources (completo / de relación / tiny) en `candidates`, con la forma de siempre, y los
+    archivos de los demás roles en `others`.
+
+    Sin `learner` explícito usa `StructureLearner` cargado de disco: el modelo de estructura de
+    fábrica, más lo que ya haya aprendido de las confirmaciones del desarrollador en esta máquina.
+    Si no hay ningún modelo entrenado, cae al prior heurístico -- siempre da un score razonable.
+
+    `relation_names` -- nombres de relación (alias de FK ya resueltas + 'created_by'/'updated_by'/
+    'deleted_by') que se suman a las columnas de negocio para el cálculo de `field_jaccard`: un
+    {Modulo}RelationResource típicamente expone esas claves (`'articulo' => ...`, `whenLoaded(...)`),
+    no solo columnas planas -- sin esto, el solapamiento de campos se subestima justo para el rol
+    que más lo necesita."""
+    learner = learner or match_learner.StructureLearner.load()
     model_class = naming.model_class_name(table)
-
-    models = scan_models(backend_root)
-    resources = scan_resources(backend_root)
-    model = find_model_for_table(models, table, model_class)
-
     columns = {c.name for c in business_columns} | (relation_names or set())
-    candidates: list[MatchCandidate] = []
-    for resource in resources:
-        features = build_features(resource, table=table, modulo=modulo, model=model, business_columns=columns)
-        score = learner.score(features)
-        if score >= min_score:
-            candidates.append(MatchCandidate(resource=resource, features=features, score=score))
 
+    index = structure_scan.scan_repo(backend_root)
+    existing = structure_scan.find_model(index, table, model_class)
+    if existing is not None:
+        existing.columns |= columns
+        model = existing
+    else:
+        model = structure_scan.synth_model(index, table, model_class, columns)
+
+    ranked = structure_scan.rank_candidates(index, model, learner, min_score=min_score)
+
+    candidates = [
+        MatchCandidate(resource=_resource_info(c.file, backend_root), features=c.features, score=c.score)
+        for role in ("resource", "relation_resource")
+        for c in ranked[role]
+    ]
     candidates.sort(key=lambda c: c.score, reverse=True)
-    return ModelResourceMatch(table=table, model=model, candidates=candidates)
+
+    others = {role: found[:3] for role, found in ranked.items() if role not in ("resource", "relation_resource") and found}
+
+    model_info = None
+    if existing is not None:
+        model_info = ModelInfo(
+            class_name=existing.class_name,
+            namespace=existing.namespace,
+            path=backend_root / existing.path,
+            table_hint=existing.table if existing.table != existing.class_name else None,
+        )
+    return ModelResourceMatch(table=table, model=model_info, candidates=candidates, others=others)

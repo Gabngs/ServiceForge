@@ -1,0 +1,86 @@
+{
+  "protocol": "leave-one-real-repo-out: en cada fold se prueba en UN repo real no visto y se entrena con los demás reales (+ sintéticos train)",
+  "real_folds": {
+    "siaw-laravel-backend": {
+      "test": "siaw-laravel-backend",
+      "train_real": [
+        "sip-laravel-backend",
+        "gsp-back",
+        "AgencyWeb-Back",
+        "Peru_Lex_Back"
+      ]
+    },
+    "sip-laravel-backend": {
+      "test": "sip-laravel-backend",
+      "train_real": [
+        "siaw-laravel-backend",
+        "gsp-back",
+        "AgencyWeb-Back",
+        "Peru_Lex_Back"
+      ]
+    },
+    "gsp-back": {
+      "test": "gsp-back",
+      "train_real": [
+        "siaw-laravel-backend",
+        "sip-laravel-backend",
+        "AgencyWeb-Back",
+        "Peru_Lex_Back"
+      ]
+    },
+    "AgencyWeb-Back": {
+      "test": "AgencyWeb-Back",
+      "train_real": [
+        "siaw-laravel-backend",
+        "sip-laravel-backend",
+        "gsp-back",
+        "Peru_Lex_Back"
+      ]
+    },
+    "Peru_Lex_Back": {
+      "test": "Peru_Lex_Back",
+      "train_real": [
+        "siaw-laravel-backend",
+        "sip-laravel-backend",
+        "gsp-back",
+        "AgencyWeb-Back"
+      ]
+    }
+  },
+  "synthetic_train": [
+    "repo_01",
+    "repo_02",
+    "repo_03",
+    "repo_04",
+    "repo_05",
+    "repo_06",
+    "repo_07",
+    "repo_09",
+    "repo_11",
+    "repo_13",
+    "repo_14",
+    "repo_15",
+    "repo_16",
+    "repo_17",
+    "repo_18",
+    "repo_19",
+    "repo_20",
+    "repo_21",
+    "repo_22",
+    "repo_23",
+    "repo_24",
+    "repo_25",
+    "repo_27",
+    "repo_28"
+  ],
+  "synthetic_val": [
+    "repo_08",
+    "repo_10",
+    "repo_12",
+    "repo_26",
+    "repo_29",
+    "repo_30"
+  ],
+  "note": "Los sintéticos NUNCA se usan como test principal: evaluar sobre ellos mediría al generador, no a los proyectos.",
+  "seed": 20260923
+}

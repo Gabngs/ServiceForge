@@ -12,6 +12,7 @@ a = Analysis(
         ("src/generador/templates", "generador/templates"),
         ("src/generador/standard_docs", "generador/standard_docs"),
         ("src/generador/model_resource_matcher_pretrained.joblib", "generador"),
+        ("src/generador/structure_matcher_pretrained.joblib", "generador"),
     ],
     hiddenimports=[],
     hookspath=[],

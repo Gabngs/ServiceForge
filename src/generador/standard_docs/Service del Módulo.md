@@ -278,6 +278,58 @@ class {Modulo}Service extends AbstractModuleService
 
 ---
 
+## Errores de negocio — el Service los lanza, el frontend solo los muestra
+
+Toda regla de negocio que impide una operación (un dato que falta, un estado que no lo permite, un registro que no cumple una condición) se comunica con **una sola forma**: el Service lanza `ValidationException::withMessages()` con el mensaje ya redactado para el usuario. Laravel lo responde solo como **422** con `message` y `errors` por campo — la misma forma que un `FormRequest` fallido (ver [[ApiResponse#Respuesta de validación — 422 (automática)]]), sin tocar el Controller.
+
+```php
+use Illuminate\Validation\ValidationException;
+
+public function getTienda(Model $model): Model
+{
+    if (! $model->tienda_id) {
+        throw ValidationException::withMessages([
+            // La clave es el campo que el usuario tendría que corregir o el más relacionado
+            'personal_id' => ['El personal no tiene una tienda asignada.'],
+        ]);
+    }
+
+    return $model->load('catalogo_tienda')->catalogo_tienda;
+}
+```
+
+```json
+{
+    "message": "El personal no tiene una tienda asignada.",
+    "errors": { "personal_id": ["El personal no tiene una tienda asignada."] }
+}
+```
+
+**Por qué es la regla:**
+- El Controller sigue siendo solo orquestación (ver [[Controller]]): no atrapa nada ni arma respuestas de error; el `throw` del Service llega al handler de Laravel.
+- El **mensaje lo redacta el backend** y el frontend lo lee de forma dinámica con `HelperMessage` (ver [[Helper de Mensajes]]) para mostrarlo en un toast. Por eso cada error posible se mapea aquí, en el Service, y **no existe ningún catálogo de errores en el frontend**: es imposible enumerar todas las respuestas y no depende del CRUD básico sino de cada método con lógica propia.
+- Los mensajes van completos y en lenguaje del usuario (`"La caja del 2026-09-01 ya está cerrada — no se pueden registrar movimientos con esa fecha."`), no códigos ni claves técnicas.
+
+**Requisito en `bootstrap/app.php`:** la API es JSON pura, así que el proyecto debe forzar que toda excepción responda como JSON sin importar el header `Accept` (curl, Postman y Swagger mandan `*/*` y, sin esto, Laravel intenta redirigir a un `login` que no existe):
+
+```php
+->withExceptions(function (Exceptions $exceptions): void {
+    $exceptions->shouldRenderJsonWhen(fn () => true);
+})
+```
+
+**Otras excepciones, cada una con su respuesta automática:**
+
+| Situación | Se lanza | Respuesta |
+|---|---|---|
+| Regla de negocio no cumplida / dato inválido | `ValidationException::withMessages([...])` | 422 + `errors` |
+| Credenciales, sesión o bloqueo (solo flujo de auth) | `AuthenticationException('mensaje')` | 401 + `message` |
+| Registro inexistente por route model binding o `findOrFail` | (Laravel, automática) | 404 |
+
+`abort(404)` queda reservado para middleware (ej. Swagger deshabilitado en producción, ver [[Documentación Swagger (OpenAPI)]]), no para reglas de negocio de un Service.
+
+---
+
 ## Errores comunes a evitar
 
 ```php

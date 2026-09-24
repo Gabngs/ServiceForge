@@ -21,3 +21,9 @@ src/generador/_version.py
 # IDE
 .vscode/
 .idea/
+
+# Dataset de estructura: los esqueletos sintéticos son efímeros (se borran solos al construir el dataset),
+# el CSV duplica al parquet y los PNG se regeneran con scripts/make_dataset_stats.py
+datasets/structure/synthetic/
+datasets/structure/pairs.csv
+datasets/structure/stats/*.png
