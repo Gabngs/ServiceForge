@@ -2,7 +2,7 @@
 
 GUI de escritorio que genera el boilerplate repetitivo de un módulo CRUD Laravel a partir de la base de datos: analiza una tabla, detecta relaciones FK, y genera el patrón de servicio completo — Model, Service, Filters, Requests + Trait, Controller y ruta — más las interfaces TypeScript del frontend correspondientes (`I{Modulo}`, `Create`, `Update`, `Tiny`).
 
-> **Estado: v1.0.0 — prototipo.** Primera versión estable de la herramienta en modo prototipo: el flujo completo funciona de punta a punta, pero todavía se usa y se valida contra proyectos reales antes de considerarla de producción.
+> **Estado: v2.1.1 — prototipo.** Segunda versión estable de la herramienta en modo prototipo: el flujo completo funciona de punta a punta, pero todavía se usa y se valida contra proyectos reales antes de considerarla de producción.
 
 ## Qué hace
 
