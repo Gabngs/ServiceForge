@@ -17,7 +17,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import Qt, QStringListModel, QThread, Signal
+from PySide6.QtCore import QEvent, Qt, QStringListModel, QThread, QTimer, Signal
 from PySide6.QtGui import QAction, QColor, QSyntaxHighlighter, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
     QApplication,
@@ -366,6 +366,87 @@ class BackupProgressDialog(QDialog):
             event.accept()
 
 
+class SearchableComboBox(QComboBox):
+    """Combo que se puede escribir para filtrar: con listas largas (tablas de
+    una BD con cientos de tablas) buscar con el scroll es tedioso.
+
+    - Filtra la lista mientras se escribe, por coincidencia en cualquier parte
+      del texto (no solo el prefijo) y sin distinguir mayúsculas.
+    - Al confirmar (Enter, elegir del popup o salir del campo) el texto tiene
+      que ser un ítem de la lista -- exacto, o el único que contiene lo escrito.
+      Si no, vuelve al último valor válido, así el combo nunca queda con texto
+      que no corresponde a nada (salvo `allow_free_text=True`, para campos donde
+      escribir un valor que no está en la lista es legítimo).
+    - `setCurrentText` selecciona el ítem igual que en un combo no editable,
+      así `currentIndexChanged` sirve tanto para cambios del usuario como
+      programáticos (en un combo editable `currentTextChanged`, en cambio, se
+      dispara con cada tecla)."""
+
+    def __init__(self, parent=None, *, allow_free_text: bool = False) -> None:
+        super().__init__(parent)
+        self._allow_free_text = allow_free_text
+        self.setEditable(True)
+        self.setInsertPolicy(QComboBox.NoInsert)
+        self.setMaxVisibleItems(15)
+
+        completer = QCompleter(self.model(), self)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setFilterMode(Qt.MatchContains)
+        completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.setCompleter(completer)
+
+        self.lineEdit().editingFinished.connect(self._commit_typed_text)
+        # Al entrar al campo se selecciona todo el texto: el combo muestra el
+        # valor actual, y sin esto habría que borrarlo a mano antes de escribir
+        # lo que se busca (el texto tipeado se agregaría al final del valor).
+        self._select_all_on_release = False
+        self.lineEdit().installEventFilter(self)
+
+    def eventFilter(self, watched, event) -> bool:  # noqa: N802 — override Qt
+        if watched is self.lineEdit():
+            kind = event.type()
+            if kind == QEvent.MouseButtonPress and not watched.hasFocus():
+                # El clic que da el foco reposiciona el cursor: se selecciona al soltar.
+                self._select_all_on_release = True
+            elif kind == QEvent.MouseButtonRelease and self._select_all_on_release:
+                self._select_all_on_release = False
+                watched.selectAll()
+        return super().eventFilter(watched, event)
+
+    def focusInEvent(self, event) -> None:  # noqa: N802 — override Qt
+        # Entrada con Tab o al activarse la ventana (el clic se maneja arriba).
+        # QComboBox reenvía este evento al QLineEdit sin pasar por el filtro.
+        super().focusInEvent(event)
+        if event.reason() not in (Qt.MouseFocusReason, Qt.PopupFocusReason):
+            QTimer.singleShot(0, self.lineEdit().selectAll)
+
+    def setCurrentText(self, text: str) -> None:  # noqa: N802 — override Qt
+        index = self.findText(text, Qt.MatchExactly)
+        if index >= 0:
+            self.setCurrentIndex(index)
+        else:
+            super().setCurrentText(text)
+
+    def _matching_index(self, text: str) -> int:
+        index = self.findText(text, Qt.MatchFixedString)  # exacto, sin distinguir mayúsculas
+        if index >= 0:
+            return index
+        needle = text.lower()
+        contains = [i for i in range(self.count()) if needle in self.itemText(i).lower()]
+        return contains[0] if len(contains) == 1 else -1
+
+    def _commit_typed_text(self) -> None:
+        if self._allow_free_text:
+            return
+        text = self.lineEdit().text().strip()
+        index = self._matching_index(text) if text else -1
+        if index >= 0:
+            self.setCurrentIndex(index)
+            self.lineEdit().setText(self.itemText(index))
+        else:
+            self.lineEdit().setText(self.itemText(self.currentIndex()) if self.currentIndex() >= 0 else "")
+
+
 class FkResolutionDialog(QDialog):
     """Bloqueante: el desarrollador elige la tabla para cada FK ambigua o sin candidatos."""
 
@@ -389,7 +470,7 @@ class FkResolutionDialog(QDialog):
             hint.setWordWrap(True)
             form.addRow(hint)
 
-            combo = QComboBox()
+            combo = SearchableComboBox()
             combo.addItem("(elegir)")
             combo.addItems(res.candidates or tables)
             self._combos[res.column] = combo
@@ -635,6 +716,10 @@ class ProjectScanDialog(QDialog):
         ]
         if result.existing_module_routes:
             summary_lines.append("Rutas de módulo ya generadas: " + ", ".join(result.existing_module_routes))
+        if result.eloquent_connections:
+            summary_lines.append(
+                "Conexiones Eloquent (config/database.php): " + ", ".join(result.eloquent_connections)
+            )
         summary = QLabel("\n".join(summary_lines))
         summary.setWordWrap(True)
         layout.addWidget(summary)
@@ -1391,8 +1476,9 @@ class MainWindow(QMainWindow):
         root.addWidget(self._build_project_box())
 
         table_row = QHBoxLayout()
-        self.table_combo = QComboBox()
+        self.table_combo = SearchableComboBox()
         self.table_combo.setMinimumWidth(240)
+        self.table_combo.lineEdit().setPlaceholderText("Escribí para filtrar las tablas…")
         self.analyze_btn = QPushButton("→ Analizar")
         self.analyze_btn.clicked.connect(self._on_analyze)
         self.analyze_btn.setEnabled(False)
@@ -1522,15 +1608,12 @@ class MainWindow(QMainWindow):
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
         self.database_input = QLineEdit()
-        self.connection_name_input = QLineEdit()
-        self.connection_name_input.setPlaceholderText("nombre de la conexión Eloquent, ej. mysql_dbmdt_siaw")
 
         form.addRow("Host:", self.host_input)
         form.addRow("Puerto:", self.port_input)
         form.addRow("Usuario:", self.user_input)
         form.addRow("Contraseña:", self.password_input)
         form.addRow("Base de datos:", self.database_input)
-        form.addRow("Conexión Eloquent ($connection):", self.connection_name_input)
         layout.addLayout(form)
 
         connect_row = QHBoxLayout()
@@ -1573,6 +1656,17 @@ class MainWindow(QMainWindow):
         backend_row.addWidget(backend_browse)
         backend_row.addWidget(scan_btn)
         form.addRow("Backend (raíz):", backend_row)
+
+        # `$connection` de Eloquent: es una propiedad del PROYECTO (las
+        # conexiones de config/database.php), no de la BD a la que se conecta
+        # esta herramienta -- por eso vive acá y no en el diálogo de conexión.
+        # Se llena sola al elegir/analizar el backend; es editable por si el
+        # nombre que se necesita no está en la lista.
+        self.connection_name_combo = SearchableComboBox(allow_free_text=True)
+        self.connection_name_combo.lineEdit().setPlaceholderText(
+            "Elegí el backend o usá \"Analizar proyecto\" para listar las conexiones"
+        )
+        form.addRow("Conexión Eloquent ($connection):", self.connection_name_combo)
 
         self.frontend_root_input = QLineEdit()
         self.frontend_root_input.setReadOnly(True)
@@ -1836,8 +1930,8 @@ class MainWindow(QMainWindow):
         self.config = config
         self.conn = outcome.connection
         self.tables = outcome.tables
-        if not self.connection_name_input.text().strip():
-            self.connection_name_input.setText(config.database)
+        # Con la BD ya conocida se puede sugerir la conexión Eloquent que le corresponde.
+        self._refresh_eloquent_connections()
 
         self.table_combo.clear()
         self.table_combo.addItems(self.tables)
@@ -1860,6 +1954,7 @@ class MainWindow(QMainWindow):
         if chosen:
             self.backend_root = Path(chosen)
             self.backend_root_input.setText(chosen)
+            self._refresh_eloquent_connections()
 
     def _on_choose_frontend_root(self) -> None:
         chosen = QFileDialog.getExistingDirectory(self, "Raíz del proyecto frontend")
@@ -1872,6 +1967,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Falta la raíz del backend", "Elegí primero la carpeta del proyecto backend.")
             return
         result = project_scan.scan_backend_project(self.backend_root)
+        self._refresh_eloquent_connections()
         scaffold_status = scaffold.detect_scaffold_status(self.backend_root)
         prefijo = self.current_manifest.prefijo if self.current_manifest else None
         project_name = self.database_input.text().strip() or self.backend_root.name
@@ -1883,6 +1979,32 @@ class MainWindow(QMainWindow):
             prefijo=prefijo,
             project_name=project_name,
         ).exec()
+
+    def _refresh_eloquent_connections(self) -> None:
+        """Llena el combo de `$connection` con las conexiones de
+        config/database.php del backend elegido. Conserva lo que el
+        desarrollador ya tenga elegido/escrito; si está vacío, sugiere la que
+        corresponde a la BD conectada (ver project_scan.suggest_eloquent_connection)."""
+        if not self.backend_root:
+            return
+        names = project_scan.scan_eloquent_connections(self.backend_root)
+        combo = self.connection_name_combo
+        current = combo.currentText().strip()
+        combo.clear()
+        combo.addItems(names)
+        if current:
+            combo.setCurrentText(current)
+            return
+        suggested = project_scan.suggest_eloquent_connection(names, self.database_input.text())
+        if suggested:
+            combo.setCurrentText(suggested)
+        else:
+            combo.setCurrentIndex(-1)
+            combo.lineEdit().clear()
+
+    def _eloquent_connection_name(self) -> str:
+        # Sin nada elegido se cae al nombre de la BD (o "mysql"), como antes.
+        return self.connection_name_combo.currentText().strip() or self.database_input.text().strip() or "mysql"
 
     # ------------------------------------------------------------- análisis
     def _on_analyze(self) -> None:
@@ -2124,7 +2246,7 @@ class MainWindow(QMainWindow):
             tiny_cb.setChecked(row < 2)  # misma sugerencia inicial que Relación, editable
             self.grid.setCellWidget(row, 5, tiny_cb)
 
-            fk_combo = QComboBox()
+            fk_combo = SearchableComboBox()
             fk_combo.addItem(_FK_NONE_LABEL)
             fk_combo.addItems(sorted(self.tables))
             if resolution and resolution.table:
@@ -2142,8 +2264,11 @@ class MainWindow(QMainWindow):
                     "Sin relación detectada automáticamente — se puede asignar igual a mano "
                     "(no hace falta que el nombre de la columna termine en \"_id\")."
                 )
-            fk_combo.currentTextChanged.connect(
-                lambda text, name=column.name: self._on_fk_combo_changed(name, text)
+            # currentIndexChanged (no currentTextChanged): en un combo editable
+            # este último se dispara con cada tecla y aplicaría relaciones a
+            # medias mientras se escribe para filtrar.
+            fk_combo.currentIndexChanged.connect(
+                lambda _index, name=column.name, combo=fk_combo: self._on_fk_combo_changed(name, combo.currentText())
             )
             self.grid.setCellWidget(row, 6, fk_combo)
 
@@ -2213,7 +2338,7 @@ class MainWindow(QMainWindow):
         included, tiny, relation = self._current_field_selection()
         fk_resolutions = {name: res for name, res in self.current_resolutions.items() if res.table}
         user_model_class = self.user_model_input.text().strip() or generator.DEFAULT_USER_MODEL_CLASS
-        connection_name = self.connection_name_input.text().strip() or self.database_input.text().strip() or "mysql"
+        connection_name = self._eloquent_connection_name()
         return generator.build_manifest(
             self.current_table,
             self.current_columns,

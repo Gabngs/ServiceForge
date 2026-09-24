@@ -1,4 +1,9 @@
-from generador.project_scan import scan_backend_project, suggested_loader_snippet
+from generador.project_scan import (
+    scan_backend_project,
+    scan_eloquent_connections,
+    suggest_eloquent_connection,
+    suggested_loader_snippet,
+)
 
 
 def test_scan_unknown_root(tmp_path):
@@ -87,3 +92,71 @@ def test_suggested_snippet_varies_by_version():
     assert "RouteServiceProvider.php" in l10_snippet
     assert "routes/modules" in l11_snippet
     assert "routes/modules" in l10_snippet
+
+
+_DATABASE_PHP = """<?php
+
+return [
+    'default' => env('DB_CONNECTION', 'mysql'),
+
+    // 'comentada' => [ ... ],
+    'connections' => [
+
+        'sqlite' => [
+            'driver' => 'sqlite',
+            'url' => env('DATABASE_URL'),
+            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+        ],
+
+        'mysql_dbsiaw' => [
+            'driver' => 'mysql',
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        "mysql_dbsip" => array(
+            'driver' => 'mysql',
+        ),
+    ],
+
+    'redis' => [
+        'client' => 'phpredis',
+        'options' => ['cluster' => 'redis'],
+        'default' => ['host' => '127.0.0.1'],
+        'cache' => ['database' => '1'],
+    ],
+];
+"""
+
+
+def test_scan_eloquent_connections_reads_only_the_connections_block(tmp_path):
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "database.php").write_text(_DATABASE_PHP, encoding="utf-8")
+
+    # No debe colar 'default', 'options', 'cache' (Redis) ni la clave comentada.
+    assert scan_eloquent_connections(tmp_path) == ["sqlite", "mysql_dbsiaw", "mysql_dbsip"]
+
+
+def test_scan_eloquent_connections_without_config_returns_empty(tmp_path):
+    assert scan_eloquent_connections(tmp_path) == []
+
+
+def test_scan_backend_project_exposes_eloquent_connections(tmp_path):
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "database.php").write_text(_DATABASE_PHP, encoding="utf-8")
+    assert scan_backend_project(tmp_path).eloquent_connections == ["sqlite", "mysql_dbsiaw", "mysql_dbsip"]
+
+
+def test_suggest_eloquent_connection_matches_database_name():
+    connections = ["sqlite", "mysql", "mysql_dbsiaw", "mysql_dbsip"]
+    assert suggest_eloquent_connection(connections, "dbsiaw") == "mysql_dbsiaw"
+    assert suggest_eloquent_connection(connections, "DBSIP") == "mysql_dbsip"
+    assert suggest_eloquent_connection(connections, "mysql") == "mysql"
+
+
+def test_suggest_eloquent_connection_returns_none_when_ambiguous_or_unknown():
+    connections = ["mysql_a_ventas", "mysql_b_ventas"]
+    assert suggest_eloquent_connection(connections, "ventas") is None  # dos candidatas
+    assert suggest_eloquent_connection(connections, "otra") is None
+    assert suggest_eloquent_connection(connections, "") is None

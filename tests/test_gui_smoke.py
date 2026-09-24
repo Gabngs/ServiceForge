@@ -434,3 +434,180 @@ def test_model_resource_dialog_without_other_files_shows_no_info_section(qtbot):
     from PySide6.QtWidgets import QLabel
 
     assert not any("solo informativo" in label.text() for label in dialog.findChildren(QLabel))
+
+
+def test_connection_dialog_has_no_eloquent_connection_field(qtbot):
+    # `$connection` es del proyecto backend (config/database.php), no de la BD
+    # conectada: ya no se pide en el diálogo de conexión.
+    from PySide6.QtWidgets import QLabel
+
+    window = MainWindow()
+    qtbot.addWidget(window)
+    labels = [w.text() for w in window.connection_dialog.findChildren(QLabel)]
+    assert not any("$connection" in text for text in labels)
+    assert not hasattr(window, "connection_name_input")
+    # ...y sí está entre los "Proyectos destino".
+    assert window.connection_name_combo.parentWidget().title() == "Proyectos destino"
+
+
+def test_eloquent_connections_are_filled_from_the_backend_project(qtbot, tmp_path):
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "database.php").write_text(
+        "<?php return ['connections' => ['mysql' => [], 'mysql_dbsiaw' => [], 'mysql_dbsip' => []]];",
+        encoding="utf-8",
+    )
+    window = MainWindow()
+    qtbot.addWidget(window)
+    window.backend_root = tmp_path
+    window.database_input.setText("dbsiaw")
+
+    window._refresh_eloquent_connections()
+
+    combo = window.connection_name_combo
+    assert [combo.itemText(i) for i in range(combo.count())] == ["mysql", "mysql_dbsiaw", "mysql_dbsip"]
+    assert combo.currentText() == "mysql_dbsiaw"  # sugerida por la BD conectada
+    assert window._eloquent_connection_name() == "mysql_dbsiaw"
+
+    # Refrescar de nuevo no pisa lo que el desarrollador ya eligió.
+    combo.setCurrentText("mysql_dbsip")
+    window._refresh_eloquent_connections()
+    assert combo.currentText() == "mysql_dbsip"
+
+
+def test_eloquent_connection_falls_back_to_database_name_without_backend(qtbot):
+    window = MainWindow()
+    qtbot.addWidget(window)
+    window.database_input.setText("dbsiaw")
+    assert window._eloquent_connection_name() == "dbsiaw"
+    window.database_input.setText("")
+    assert window._eloquent_connection_name() == "mysql"
+
+
+def test_eloquent_connection_allows_free_text(qtbot):
+    window = MainWindow()
+    qtbot.addWidget(window)
+    window.connection_name_combo.setEditText("mysql_otra")
+    window.connection_name_combo.lineEdit().editingFinished.emit()
+    assert window._eloquent_connection_name() == "mysql_otra"
+
+
+def _searchable(qtbot, items):
+    from generador.gui import SearchableComboBox
+
+    combo = SearchableComboBox()
+    qtbot.addWidget(combo)
+    combo.addItems(items)
+    return combo
+
+
+def test_searchable_combo_completer_filters_by_substring_ignoring_case(qtbot):
+    combo = _searchable(qtbot, ["catalogo_tienda", "catalogo_usuario", "sip_personal", "auth_user"])
+    completer = combo.completer()
+    completer.setCompletionPrefix("USU")
+    shown = [completer.completionModel().index(i, 0).data() for i in range(completer.completionCount())]
+    assert shown == ["catalogo_usuario"]  # coincide en el medio del nombre, sin distinguir mayúsculas
+
+    completer.setCompletionPrefix("catalogo")
+    assert completer.completionCount() == 2
+
+
+def test_searchable_combo_commits_a_valid_or_unique_match(qtbot):
+    combo = _searchable(qtbot, ["catalogo_tienda", "catalogo_usuario", "sip_personal"])
+
+    combo.lineEdit().setText("SIP_PERSONAL")  # exacto sin distinguir mayúsculas
+    combo.lineEdit().editingFinished.emit()
+    assert combo.currentText() == "sip_personal"
+
+    combo.lineEdit().setText("usuar")  # fragmento que solo está en un ítem
+    combo.lineEdit().editingFinished.emit()
+    assert combo.currentText() == "catalogo_usuario"
+
+
+def test_searchable_combo_reverts_invalid_or_ambiguous_text(qtbot):
+    combo = _searchable(qtbot, ["catalogo_tienda", "catalogo_usuario", "sip_personal"])
+    combo.setCurrentText("sip_personal")
+
+    combo.lineEdit().setText("catalogo")  # dos candidatas: ambiguo
+    combo.lineEdit().editingFinished.emit()
+    assert combo.currentText() == "sip_personal"
+
+    combo.lineEdit().setText("no_existe")
+    combo.lineEdit().editingFinished.emit()
+    assert combo.currentText() == "sip_personal"
+
+    combo.lineEdit().setText("")
+    combo.lineEdit().editingFinished.emit()
+    assert combo.currentText() == "sip_personal"
+
+
+def test_searchable_combo_typing_does_not_change_index_until_committed(qtbot):
+    combo = _searchable(qtbot, ["a_uno", "b_dos", "c_tres"])
+    changes = []
+    combo.currentIndexChanged.connect(changes.append)
+
+    for partial in ("b", "b_", "b_d"):
+        combo.lineEdit().setText(partial)
+    assert changes == []  # escribir para filtrar no dispara nada
+
+    combo.lineEdit().editingFinished.emit()
+    assert combo.currentText() == "b_dos"
+    assert changes == [1]
+
+
+def test_fk_combo_ignores_partial_text_while_typing(qtbot):
+    from generador.db import Column
+
+    window = MainWindow()
+    qtbot.addWidget(window)
+    window.config = ConnectionConfig(host="127.0.0.1", port=3306, user="root", password="", database="db_test")
+    window.tables = ["auth_group", "auth_group_permissions", "catalogo_tienda"]
+    window.current_table = "productos"
+    window.current_columns = [Column("tienda", "int", nullable=False, key="", default=None, extra="")]
+    window.current_resolutions = {}
+    window._populate_grid()
+
+    fk_combo = window.grid.cellWidget(0, 6)
+    # Se escribe "auth_group_permissions" pasando por "auth_group", que también
+    # es una tabla válida: mientras se escribe no se debe aplicar ninguna.
+    for partial in ("a", "auth_group", "auth_group_perm"):
+        fk_combo.lineEdit().setText(partial)
+    assert "tienda" not in window.current_resolutions
+
+    fk_combo.lineEdit().setText("auth_group_permissions")
+    fk_combo.lineEdit().editingFinished.emit()
+    assert window.current_resolutions["tienda"].table == "auth_group_permissions"
+
+
+def test_main_table_selector_is_searchable(qtbot):
+    from generador.gui import SearchableComboBox
+
+    window = MainWindow()
+    qtbot.addWidget(window)
+    assert isinstance(window.table_combo, SearchableComboBox)
+    assert window.table_combo.isEditable()
+
+
+def test_searchable_combo_typing_replaces_current_value_and_selects_from_popup(qtbot):
+    """Flujo real: el combo muestra el valor actual, se empieza a escribir sin
+    borrarlo antes, el popup queda filtrado y con flecha + Enter se elige."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+
+    combo = _searchable(qtbot, ["actualizacion_archivos", "auth_group", "catalogo_tienda", "catalogo_usuario"])
+    combo.show()
+    combo.activateWindow()
+    qtbot.waitUntil(combo.isActiveWindow)
+    combo.lineEdit().setFocus()
+    qtbot.wait(20)  # deja correr el selectAll diferido de la entrada al campo
+
+    QTest.keyClicks(combo.lineEdit(), "usu")
+    assert combo.lineEdit().text() == "usu"  # reemplazó "actualizacion_archivos", no se agregó al final
+
+    popup = combo.completer().popup()
+    assert popup.isVisible()
+    assert popup.model().rowCount() == 1  # solo catalogo_usuario
+
+    QTest.keyClick(popup, Qt.Key_Down)
+    QTest.keyClick(popup, Qt.Key_Return)
+    assert combo.currentText() == "catalogo_usuario"
+    assert combo.currentIndex() == 3

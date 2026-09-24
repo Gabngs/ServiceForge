@@ -74,6 +74,8 @@ Sugerencia: si el análisis de la tabla detecta una PK `char(32)` o `char(36)` s
 
 **Decisión:** la conexión **no se infiere ni se hardcodea** a partir del nombre de la BD. El usuario la declara. El análisis del proyecto **ofrece las opciones** leyendo las claves de `config/database.php` → `connections` (SIAW y SIREH: `mysql`, `mysql_dbsiaw`, `mysql_dbsip`, …).
 
+> **Implementado en 2.2.1:** la conexión ya no está en el diálogo de conexión a la BD. Se elige en "Proyectos destino", con las conexiones que lee de `config/database.php` y una sugerencia según la BD conectada (`project_scan.scan_eloquent_connections`).
+
 La conexión elegida se usa en:
 
 - `protected $connection` del modelo;

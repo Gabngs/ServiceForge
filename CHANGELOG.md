@@ -2,6 +2,19 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [2.2.1]
+
+### Añadido
+- **Selectores con búsqueda** (`SearchableComboBox`): el combo de "Tabla", el de "FK -> tabla" de la grilla y el de la resolución manual de FKs ambiguas se pueden escribir para filtrar la lista, en vez de recorrerla con el scroll (con una BD de cientos de tablas era tedioso).
+  - Filtra por coincidencia en cualquier parte del nombre y sin distinguir mayúsculas (`usu` encuentra `catalogo_usuario`).
+  - Al entrar al campo se selecciona el valor actual, así se puede empezar a escribir sin borrarlo.
+  - Se confirma con Enter, eligiendo del popup o saliendo del campo: vale el texto exacto o el único ítem que contiene lo escrito; si no, vuelve al último valor válido (el combo nunca queda con una tabla que no existe).
+  - En la grilla, la relación se aplica al confirmar y no con cada tecla, para no asignar tablas intermedias mientras se escribe (escribir `auth_group_permissions` pasa por `auth_group`, que también es una tabla).
+- `project_scan.scan_eloquent_connections` y `suggest_eloquent_connection`: leen las conexiones de `config/database.php` (solo las claves de `connections`, sin ejecutar PHP ni resolver `env()`; ignoran `options`, `cache`, comentarios y `array(...)`) y sugieren la que corresponde a la BD conectada (`mysql_dbsiaw` para `dbsiaw`). "Analizar proyecto" también las lista.
+
+### Cambiado
+- **`$connection` de Eloquent ya no se pide en el diálogo de conexión.** Es una propiedad del proyecto backend y no de la BD a la que se conecta la herramienta, así que pasó a "Proyectos destino" como un selector que se llena solo al elegir la raíz del backend, al usar "Analizar proyecto" y al conectar la BD. Conserva lo que el desarrollador ya eligió y permite escribir un nombre que no esté en la lista. Sin backend ni elección, se sigue usando el nombre de la BD (o `mysql`), como antes.
+
 ## [2.1.1]
 
 ### Añadido

@@ -10,6 +10,7 @@ desarrollador lo pegue, que adivinar mal y romper el arranque de la app.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -25,6 +26,9 @@ class ProjectScanResult:
     modules_loader_registered: bool
     provider_files_checked: list[Path]
     warnings: list[str] = field(default_factory=list)
+    # Claves de `connections` en config/database.php -- las opciones reales que
+    # el proyecto ofrece para `$connection` de Eloquent (ver scan_eloquent_connections).
+    eloquent_connections: list[str] = field(default_factory=list)
 
 
 def _read_text(path: Path) -> str:
@@ -32,6 +36,80 @@ def _read_text(path: Path) -> str:
         return path.read_text(encoding="utf-8", errors="ignore")
     except OSError:
         return ""
+
+
+def _skip_php_noise(text: str, i: int) -> int:
+    """Si en `i` empieza un string o un comentario PHP, devuelve el índice
+    siguiente a su cierre; si no, devuelve `i` sin moverlo."""
+    ch = text[i]
+    if ch in ("'", '"'):
+        j = i + 1
+        while j < len(text) and text[j] != ch:
+            j += 2 if text[j] == "\\" else 1
+        return j + 1
+    if text.startswith("//", i) or ch == "#":
+        j = text.find("\n", i)
+        return len(text) if j == -1 else j
+    if text.startswith("/*", i):
+        j = text.find("*/", i + 2)
+        return len(text) if j == -1 else j + 2
+    return i
+
+
+def scan_eloquent_connections(backend_root: Path) -> list[str]:
+    """Nombres de conexión declarados en `config/database.php` -> `connections`
+    (los que Eloquent acepta en `$connection`). Lectura de solo texto: no
+    ejecuta PHP ni resuelve `env()`. Devuelve `[]` si el archivo no existe o no
+    tiene el bloque -- el desarrollador igual puede escribir el nombre a mano.
+
+    Solo toma las claves del primer nivel de `connections` (no `options` ni
+    `cache` de Redis, que viven en otros arrays del mismo archivo)."""
+    text = _read_text(backend_root / "config" / "database.php")
+    marker = re.search(r"""['"]connections['"]\s*=>\s*(?:\[|array\s*\()""", text)
+    if not marker:
+        return []
+
+    names: list[str] = []
+    # Pila de aperturas ([ , array( , y paréntesis de llamadas como env(...)) --
+    # vacía significa "directamente dentro de `connections`".
+    stack: list[str] = []
+    i = marker.end()
+    while i < len(text):
+        skipped = _skip_php_noise(text, i)
+        if skipped != i:
+            if not stack and text[i] in ("'", '"'):
+                key = text[i + 1 : skipped - 1]
+                if re.match(r"\s*=>\s*(?:\[|array\s*\()", text[skipped:]):
+                    names.append(key)
+            i = skipped
+            continue
+        ch = text[i]
+        if ch in "[(":
+            stack.append(ch)
+        elif ch in "])":
+            if not stack:
+                break  # cierre del array `connections`
+            stack.pop()
+        i += 1
+    return names
+
+
+def suggest_eloquent_connection(connections: list[str], database: str) -> str | None:
+    """Conexión que más probablemente corresponde a la BD conectada: la que
+    termina en el nombre de la base (`mysql_dbsiaw` para `dbsiaw`), o la única
+    que lo contiene. `None` si no hay una candidata clara -- mejor que el
+    desarrollador elija a que se le asigne una conexión equivocada en silencio."""
+    db_name = database.strip().lower()
+    if not db_name:
+        return None
+    exact = [c for c in connections if c.lower() in (db_name, f"mysql_{db_name}")]
+    if len(exact) == 1:
+        return exact[0]
+    suffix = [c for c in connections if c.lower().endswith(f"_{db_name}")]
+    if len(suffix) == 1:
+        return suffix[0]
+    contains = [c for c in connections if db_name in c.lower()]
+    return contains[0] if len(contains) == 1 else None
 
 
 def scan_backend_project(backend_root: Path) -> ProjectScanResult:
@@ -88,6 +166,7 @@ def scan_backend_project(backend_root: Path) -> ProjectScanResult:
         modules_loader_registered=modules_loader_registered,
         provider_files_checked=provider_files,
         warnings=warnings,
+        eloquent_connections=scan_eloquent_connections(backend_root),
     )
 
 
