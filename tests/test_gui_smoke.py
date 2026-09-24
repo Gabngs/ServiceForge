@@ -46,6 +46,7 @@ def test_main_window_constructs(qtbot):
         "&Archivo",
         "&Editar",
         "&Logs",
+        "&Mapa",
         "&Estándar",
         "A&yuda",
     ]
@@ -611,3 +612,64 @@ def test_searchable_combo_typing_replaces_current_value_and_selects_from_popup(q
     QTest.keyClick(popup, Qt.Key_Return)
     assert combo.currentText() == "catalogo_usuario"
     assert combo.currentIndex() == 3
+
+
+def _shown_combo(qtbot, items):
+    combo = _searchable(qtbot, items)
+    combo.show()
+    combo.activateWindow()
+    qtbot.waitUntil(combo.isActiveWindow)
+    return combo
+
+
+def test_searchable_combo_opens_with_all_options_on_click(qtbot):
+    """Como el p-select de PrimeNG: un clic abre la lista COMPLETA, sin tener que
+    escribir una letra; después, escribir filtra."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+
+    items = ["actualizacion_archivos", "auth_group", "catalogo_tienda", "catalogo_usuario", "sip_personal"]
+    combo = _shown_combo(qtbot, items)
+    popup = combo.completer().popup()
+    assert not popup.isVisible()
+
+    QTest.mouseClick(combo.lineEdit(), Qt.LeftButton)
+    qtbot.waitUntil(popup.isVisible)
+    assert popup.model().rowCount() == len(items)  # todas, sin escribir nada
+
+    # Con el popup abierto las teclas llegan al popup, que las reenvía al campo.
+    QTest.keyClicks(popup, "catalogo")
+    assert combo.lineEdit().text() == "catalogo"  # reemplazó el valor seleccionado
+    assert popup.isVisible()
+    assert popup.model().rowCount() == 2  # ahora filtra
+
+    QTest.keyClick(popup, Qt.Key_Down)
+    QTest.keyClick(popup, Qt.Key_Return)
+    assert combo.currentText() == "catalogo_tienda"
+
+
+def test_searchable_combo_arrow_button_and_down_key_open_the_full_list(qtbot):
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+
+    items = ["a_uno", "b_dos", "c_tres"]
+    combo = _shown_combo(qtbot, items)
+    popup = combo.completer().popup()
+
+    combo.showPopup()  # lo que dispara la flecha del combo
+    assert popup.isVisible()
+    assert popup.model().rowCount() == 3
+    popup.hide()
+
+    combo.lineEdit().setFocus()
+    QTest.keyClick(combo.lineEdit(), Qt.Key_Down)
+    qtbot.waitUntil(popup.isVisible)
+    assert popup.model().rowCount() == 3
+
+
+def test_searchable_combo_open_popup_is_wide_enough_for_long_names(qtbot):
+    long_name = "catalogo_" + "x" * 60
+    combo = _shown_combo(qtbot, [long_name, "corto"])
+    combo.setFixedWidth(120)
+    combo.showPopup()
+    assert combo.completer().popup().width() > 120

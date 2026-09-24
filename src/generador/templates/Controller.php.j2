@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Api\{{ manifest.prefijo_studly }};
+namespace {{ manifest.ns('controller') }};
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}\Store{{ manifest.modulo_studly }}Request;
-use App\Http\Requests\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}\Update{{ manifest.modulo_studly }}Request;
-use App\Http\Resources\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}Resource;
-use App\Http\Resources\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }}TinyResource;
-use App\Models\db{{ manifest.prefijo }}\{{ manifest.model_class }};
-use App\Services\{{ manifest.modulo_studly }}Service;
+use {{ manifest.fqcn('store_request') }};
+use {{ manifest.fqcn('update_request') }};
+use {{ manifest.fqcn('resource') }};
+use {{ manifest.fqcn('tiny_resource') }};
+use {{ manifest.fqcn('model') }};
+use {{ manifest.fqcn('service') }};
 use Essa\APIToolKit\Api\ApiResponse;
 use Illuminate\Http\Request;
 
 /**
  * @OA\Tag(name="{{ manifest.modulo_studly }}")
  */
-class {{ manifest.model_class }}Controller extends Controller
+class {{ manifest.cls('controller') }} extends Controller
 {
     use ApiResponse;
 
-    public function __construct(protected {{ manifest.modulo_studly }}Service $service) {}
+    public function __construct(protected {{ manifest.cls('service') }} $service) {}
 
     // ─── INDEX ────────────────────────────────────────────────────────────────
 {% if manifest.supports_pagination %}
@@ -34,11 +34,11 @@ class {{ manifest.model_class }}Controller extends Controller
      *      @OA\Parameter(name="tiny", in="query", @OA\Schema(type="boolean")),
      *      @OA\Response(
      *          response=200,
-     *          description="Listado de {{ manifest.modulo }}. Con ?tiny=true, cada item de `data` sigue {{ manifest.modulo_studly }}TinySchema en vez de {{ manifest.modulo_studly }}Schema. Con ?paginate=true, se agrega `meta` al mismo nivel que `data` — ver ApiResponse.md#Paginación sin duplicar `data`.",
+     *          description="Listado de {{ manifest.modulo }}. Con ?tiny=true, cada item de `data` sigue {{ manifest.schema_name('tiny_resource') }} en vez de {{ manifest.schema_name('resource') }}. Con ?paginate=true, se agrega `meta` al mismo nivel que `data` — ver ApiResponse.md#Paginación sin duplicar `data`.",
      *          @OA\JsonContent(
      *              @OA\Property(property="status", type="integer", example=200),
      *              @OA\Property(property="message", type="string", example="Registros obtenidos correctamente"),
-     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/{{ manifest.modulo_studly }}Schema"))
+     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/{{ manifest.schema_name('resource') }}"))
      *          )
      *      )
      * )
@@ -53,8 +53,8 @@ class {{ manifest.model_class }}Controller extends Controller
         // El Resource a usar (completo o tiny) es una decisión de presentación,
         // no del Service — ver Controller.md#Parámetro `tiny`.
         $resource = $request->boolean('tiny')
-            ? {{ manifest.modulo_studly }}TinyResource::class
-            : {{ manifest.modulo_studly }}Resource::class;
+            ? {{ manifest.cls('tiny_resource') }}::class
+            : {{ manifest.cls('resource') }}::class;
 
         if (! $paginate) {
             return $this->responseSuccess(
@@ -96,11 +96,11 @@ class {{ manifest.model_class }}Controller extends Controller
      *      @OA\Parameter(name="tiny", in="query", @OA\Schema(type="boolean")),
      *      @OA\Response(
      *          response=200,
-     *          description="Listado de {{ manifest.modulo }}. Con ?tiny=true, cada item de `data` sigue {{ manifest.modulo_studly }}TinySchema en vez de {{ manifest.modulo_studly }}Schema.",
+     *          description="Listado de {{ manifest.modulo }}. Con ?tiny=true, cada item de `data` sigue {{ manifest.schema_name('tiny_resource') }} en vez de {{ manifest.schema_name('resource') }}.",
      *          @OA\JsonContent(
      *              @OA\Property(property="status", type="integer", example=200),
      *              @OA\Property(property="message", type="string", example="Registros obtenidos correctamente"),
-     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/{{ manifest.modulo_studly }}Schema"))
+     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/{{ manifest.schema_name('resource') }}"))
      *          )
      *      )
      * )
@@ -112,8 +112,8 @@ class {{ manifest.model_class }}Controller extends Controller
         // El Resource a usar (completo o tiny) es una decisión de presentación,
         // no del Service — ver Controller.md#Parámetro `tiny`.
         $resource = $request->boolean('tiny')
-            ? {{ manifest.modulo_studly }}TinyResource::class
-            : {{ manifest.modulo_studly }}Resource::class;
+            ? {{ manifest.cls('tiny_resource') }}::class
+            : {{ manifest.cls('resource') }}::class;
 
         return $this->responseSuccess(
             'Registros obtenidos correctamente',
@@ -137,7 +137,7 @@ class {{ manifest.model_class }}Controller extends Controller
      *          @OA\JsonContent(
      *              @OA\Property(property="status", type="integer", example=200),
      *              @OA\Property(property="message", type="string", example="Registro obtenido correctamente"),
-     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.modulo_studly }}Schema")
+     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.schema_name('resource') }}")
      *          )
      *      ),
      *      @OA\Response(response=404, description="Registro no encontrado")
@@ -149,7 +149,7 @@ class {{ manifest.model_class }}Controller extends Controller
 
         return $this->responseSuccess(
             'Registro obtenido correctamente',
-            new {{ manifest.modulo_studly }}Resource($model)
+            new {{ manifest.cls('resource') }}($model)
         );
     }
 
@@ -178,19 +178,19 @@ class {{ manifest.model_class }}Controller extends Controller
      *          @OA\JsonContent(
      *              @OA\Property(property="status", type="integer", example=201),
      *              @OA\Property(property="message", type="string", example="Registro creado correctamente"),
-     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.modulo_studly }}Schema")
+     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.schema_name('resource') }}")
      *          )
      *      ),
      *      @OA\Response(response=422, description="Error de validación")
      * )
      */
-    public function store(Store{{ manifest.modulo_studly }}Request $request)
+    public function store({{ manifest.cls('store_request') }} $request)
     {
         $model = $this->service->store($request->validated());
 
         return $this->responseSuccess(
             'Registro creado correctamente',
-            new {{ manifest.modulo_studly }}Resource($model)
+            new {{ manifest.cls('resource') }}($model)
         );
     }
 
@@ -216,20 +216,20 @@ class {{ manifest.model_class }}Controller extends Controller
      *          @OA\JsonContent(
      *              @OA\Property(property="status", type="integer", example=200),
      *              @OA\Property(property="message", type="string", example="Registro actualizado correctamente"),
-     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.modulo_studly }}Schema")
+     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.schema_name('resource') }}")
      *          )
      *      ),
      *      @OA\Response(response=404, description="Registro no encontrado"),
      *      @OA\Response(response=422, description="Error de validación")
      * )
      */
-    public function update(Update{{ manifest.modulo_studly }}Request $request, {{ manifest.model_class }} ${{ manifest.table }})
+    public function update({{ manifest.cls('update_request') }} $request, {{ manifest.model_class }} ${{ manifest.table }})
     {
         $model = $this->service->update(${{ manifest.table }}, $request->validated());
 
         return $this->responseSuccess(
             'Registro actualizado correctamente',
-            new {{ manifest.modulo_studly }}Resource($model)
+            new {{ manifest.cls('resource') }}($model)
         );
     }
 
@@ -248,7 +248,7 @@ class {{ manifest.model_class }}Controller extends Controller
      *          @OA\JsonContent(
      *              @OA\Property(property="status", type="integer", example=200),
      *              @OA\Property(property="message", type="string", example="Registro eliminado correctamente"),
-     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.modulo_studly }}Schema")
+     *              @OA\Property(property="data", ref="#/components/schemas/{{ manifest.schema_name('resource') }}")
      *          )
      *      ),
      *      @OA\Response(response=404, description="Registro no encontrado")
@@ -260,7 +260,7 @@ class {{ manifest.model_class }}Controller extends Controller
 
         return $this->responseSuccess(
             'Registro eliminado correctamente',
-            new {{ manifest.modulo_studly }}Resource($deleted)
+            new {{ manifest.cls('resource') }}($deleted)
         );
     }
 }

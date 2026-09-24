@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filters;
+namespace {{ manifest.ns('filters') }};
 
-{% for prefijo, table in fk_model_imports %}
-use App\Models\db{{ prefijo }}\{{ table }};
+{% for fqcn in fk_model_imports %}
+use {{ fqcn }};
 {% endfor %}
 use Essa\APIToolKit\Filters\QueryFilters;
 
-class {{ manifest.model_class }}Filters extends QueryFilters
+class {{ manifest.cls('filters') }} extends QueryFilters
 {
     // Campos permitidos para búsqueda de texto libre (LIKE) — ver ?search=
     // OJO: la propiedad real de QueryFilters se llama $columnSearch, no $allowedSearch
@@ -59,7 +59,7 @@ class {{ manifest.model_class }}Filters extends QueryFilters
             return $this->builder;
         }
 
-        $pkid = {{ f.fk_table }}::where('id', $value)->value('pkid');
+        $pkid = {{ manifest.related_model_short(f.fk_table) }}::where('id', $value)->value('pkid');
 
         // Si el UUID no resuelve a un pkid, forzar 0 para que el filtro
         // devuelva vacío — nunca whereNull, que traería las filas con

@@ -2,6 +2,34 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [2.3.1]
+
+Esta versión pasa la estructura del proyecto y las relaciones de "el generador supone" a "el generador propone y el desarrollador decide". La red neuronal deja de ser solo informativa: lo que detecta llega a lo que se genera, y lo que se confirma queda guardado.
+
+### Añadido
+- **Estructura del proyecto** (`layout.py`, `structure_profile.py`, `ProjectStructureDialog`). Al analizar la primera tabla con un backend, un diálogo muestra la estructura del estándar junto a la que el modelo detectó en el proyecto (carpeta y patrón de nombre de cada tipo de archivo, con cuántos archivos la respaldan), y deja elegir por fila: estándar, proyecto o una carpeta/nombre propios (con tokens `{table}`, `{Table}`, `{prefijo}`, `{Prefijo}`, `{modulo}`, `{Modulo}`). La columna "Se generaría en" muestra la ruta resultante con la tabla en análisis.
+  - **Auto-registrar** aplica y guarda en un paso lo que el proyecto ya usa donde lo tiene, y el estándar donde no.
+  - Un tipo de archivo que el proyecto no tiene (por ejemplo, RelationResource) se deduce de su vecino (la carpeta y el estilo de nombre de los Resources, o de Store para Update) en vez de caer en la carpeta del estándar y quedar separado del resto.
+  - La decisión se guarda por proyecto y se puede reabrir desde el botón "Estructura…" o el menú Mapa.
+  - Probado sobre dos backends reales con estructuras distintas (`Http/Request` en singular con carpeta por tabla y rutas en `routes/`, frente a `Http/Requests` con nombres sin prefijo y rutas en `routes/modules/`): el Controller generado sale con los mismos namespaces e imports que el existente.
+- **Relaciones confirmadas antes de generar** (`relation_resolution.py`, `RelationsDialog`). Para cada tabla relacionada por FK, un diálogo propone qué Model y qué RelationResource usa el código, con la confianza de la red ("Sugerido (98 %). ¿Es el correcto?"), y permite cambiarlos con un selector con búsqueda entre los archivos reales del proyecto, elegir "generar nuevo" o "sin Resource" (la columna sale plana, sin `whenLoaded()`).
+  - Si el proyecto no tiene un RelationResource para esa tabla y se elige generarlo, se escribe uno mínimo (`id` más hasta dos columnas descriptivas) en la carpeta de la estructura elegida y nunca sobreescribe un archivo existente.
+  - Si cambian los imports de una pestaña del preview que se editó a mano, se pregunta antes de reemplazarla.
+- **Mapa del proyecto** (`relation_map.py`, `RelationMapDialog`, menú **Mapa**). Lo confirmado se guarda en notas `.md` con `[[wikilinks]]` (una por tabla, más `_estructura.md`), en `%APPDATA%\ServiceForge\mapas\{proyecto}\`: legibles, editables a mano y abribles en Obsidian, donde las relaciones entre tablas forman el grafo. Las rutas son relativas al backend y la carpeta se nombra por el del proyecto, así el mapa funciona igual en otra PC. Menú Mapa: ver el mapa, ver/cambiar la estructura, exportar a una carpeta (por ejemplo un vault) e importar.
+  - Una confirmación vale para **cualquier** módulo que use esa tabla: si `catalogo_tiposistema` ya tiene su RelationResource confirmado, el siguiente módulo con una FK a esa tabla lo trae precargado ("✓ Confirmado antes").
+  - Solo se guarda lo que el desarrollador validó; una sugerencia sin confirmar nunca se guarda. Un "generar nuevo" se guarda recién cuando el archivo se escribió.
+  - Los Resources confirmados en "Revisar Model/Resource detectado" y lo que se genera de cada módulo también quedan en el mapa, y esa revisión los trae tildados.
+- **La red aprende de cada confirmación de relaciones**: el archivo elegido es un ejemplo positivo y los otros candidatos que se le mostraron, negativos; corregir una propuesta le enseña más que confirmarla, y confirmar lo que ya venía recordado no le enseña nada nuevo.
+
+### Cambiado
+- **El selector abre con todas las opciones**, como el `p-select` de PrimeNG: un clic, la flecha o la tecla Abajo despliegan la lista completa y al escribir se filtra. Antes solo aparecía la lista después de escribir una letra. Aplica a todos los selectores con búsqueda, incluido el de la conexión Eloquent (`widgets.SearchableComboBox`). Un clic deja el valor seleccionado, así lo siguiente que se escribe lo reemplaza, y el desplegable se ensancha para los nombres largos.
+- **El generador ya no inventa el import del RelationResource** a partir del nombre de la tabla (`{Prefijo}\{Modulo}RelationResource`, que fallaba al serializar si esa clase no existía o vivía en otro lado). Usa lo confirmado, o la convención del layout elegido si se aceptó generarlo. Con la estructura estándar, la salida es idéntica a la de la 2.2.1 (comparada byte a byte en 28 archivos).
+- Los namespaces, carpetas, nombres de clase, imports cruzados, nombres de schema Swagger y la ruta del archivo de rutas salen del layout del manifiesto (`ModuleManifest.layout`, `RelationTarget`) en vez de estar fijos en `paths.py` y en las plantillas. Un Service que queda fuera de `App\Services` importa `AbstractModuleService` y `CrudService`.
+- Los Models relacionados (imports en Model/Service/Filters y `belongsTo`) usan el Model confirmado, con su namespace real, en lugar de suponer `App\Models\db{prefijo}`.
+
+### Corregido
+- El popup del selector perdía la selección del valor actual al abrirse, y escribir agregaba el texto en medio del valor en vez de reemplazarlo.
+
 ## [2.2.1]
 
 ### Añadido

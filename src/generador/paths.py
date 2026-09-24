@@ -1,8 +1,8 @@
 """Dónde se escribe cada archivo generado, relativo a la raíz de cada proyecto.
 
-Sigue la "Estructura de Carpetas" documentada en Estandar Desarrollo Backend.md /
-Interfaz de Modulo.md — el generador no inventa su propio layout, escribe donde
-un desarrollador humano ya escribiría estos archivos a mano.
+Por defecto sigue la "Estructura de Carpetas" documentada en Estandar Desarrollo Backend.md /
+Interfaz de Modulo.md (`layout.STANDARD_LAYOUT`); si el proyecto tiene su propia estructura y el
+desarrollador la elige, el manifiesto trae ese layout -- ver layout.py.
 """
 
 from __future__ import annotations
@@ -10,26 +10,16 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from . import layout
+
 if TYPE_CHECKING:
     from .generator import ModuleManifest
 
 
 def backend_paths(manifest: "ModuleManifest") -> dict[str, Path]:
-    modulo = manifest.modulo_studly
-    prefijo = manifest.prefijo_studly
-    return {
-        "model": Path(f"app/Models/db{manifest.prefijo}/{manifest.model_class}.php"),
-        "service": Path(f"app/Services/{modulo}Service.php"),
-        "filters": Path(f"app/Filters/{manifest.model_class}Filters.php"),
-        "store_request": Path(f"app/Http/Requests/{prefijo}/{modulo}/Store{modulo}Request.php"),
-        "update_request": Path(f"app/Http/Requests/{prefijo}/{modulo}/Update{modulo}Request.php"),
-        "trait": Path(f"app/Http/Requests/{prefijo}/Traits/{modulo}/Validates{modulo}.php"),
-        "resource": Path(f"app/Http/Resources/{prefijo}/{modulo}Resource.php"),
-        "relation_resource": Path(f"app/Http/Resources/{prefijo}/{modulo}RelationResource.php"),
-        "tiny_resource": Path(f"app/Http/Resources/{prefijo}/{modulo}TinyResource.php"),
-        "controller": Path(f"app/Http/Controllers/Api/{prefijo}/{manifest.model_class}Controller.php"),
-        "routes_module": Path(f"routes/modules/{manifest.modulo}.php"),
-    }
+    """Ruta de cada archivo del módulo según el layout del manifiesto (el estándar, salvo
+    que el desarrollador haya elegido el del proyecto -- ver layout.py)."""
+    return {role: manifest.layout.path(role, manifest.table) for role in layout.ROLES}
 
 
 def frontend_paths(manifest: "ModuleManifest") -> dict[str, Path]:

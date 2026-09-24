@@ -15,6 +15,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from . import mapping, naming, paths
 from .db import Column
 from .fk_resolver import FkResolution
+from .layout import STANDARD_LAYOUT, StructureLayout
 
 _TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -117,8 +118,37 @@ class ManifestField:
 class ManifestRelation:
     column: str
     method: str
-    model_class: str  # clase del Model relacionado (nombre literal de tabla, ver naming.model_class_name)
-    fk_table_prefijo: str  # prefijo (namespace App\Models\db{prefijo}) de la tabla relacionada
+    model_class: str  # clase (nombre corto) del Model relacionado
+    fk_table_prefijo: str  # prefijo de la tabla relacionada
+    fk_table: str = ""  # tabla relacionada
+    model_fqcn: str = ""  # clase completa del Model relacionado (según el layout o lo confirmado por el desarrollador)
+
+
+@dataclass
+class RelationTarget:
+    """Qué archivos usa el código generado para la tabla relacionada de una FK.
+
+    Los confirma el desarrollador (ver gui.RelationsDialog): el generador nunca debe importar una
+    clase que no comprobó que existe. `None` en un campo = "derivarlo del layout" (la convención,
+    que el desarrollador aceptó generar si todavía no existe)."""
+
+    table: str
+    model_fqcn: str | None = None
+    resource_fqcn: str | None = None  # RelationResource de la tabla relacionada
+    no_resource: bool = False  # sin RelationResource: la columna sale como valor plano, sin whenLoaded()
+
+
+def schema_of(class_name: str) -> str:
+    """`XRelationResource` -> `XRelationSchema`: el schema Swagger de un Resource sigue el nombre de su clase."""
+    return (class_name[: -len("Resource")] if class_name.endswith("Resource") else class_name) + "Schema"
+
+
+def short_class(fqcn: str) -> str:
+    return fqcn.rsplit("\\", 1)[-1]
+
+
+def namespace_of(fqcn: str) -> str:
+    return fqcn.rsplit("\\", 1)[0] if "\\" in fqcn else ""
 
 
 @dataclass
@@ -139,10 +169,53 @@ class ModuleManifest:
 
     supports_pagination: bool = True
     add_comments: bool = True
+    # Dónde va cada archivo y cómo se llama: el estándar de la herramienta o la estructura del
+    # proyecto que el desarrollador eligió (ver layout.py).
+    layout: StructureLayout = field(default_factory=lambda: STANDARD_LAYOUT)
+    relation_targets: dict[str, RelationTarget] = field(default_factory=dict)
 
     @property
     def model_class(self) -> str:
-        return naming.model_class_name(self.table)
+        return self.layout.class_name("model", self.table)
+
+    def cls(self, role: str) -> str:
+        """Nombre de la clase de este módulo para `role` (según el layout)."""
+        return self.layout.class_name(role, self.table)
+
+    def ns(self, role: str) -> str:
+        return self.layout.namespace(role, self.table)
+
+    def fqcn(self, role: str) -> str:
+        return self.layout.fqcn(role, self.table)
+
+    def related_model_fqcn(self, table: str) -> str:
+        target = self.relation_targets.get(table)
+        return target.model_fqcn if target and target.model_fqcn else self.layout.fqcn("model", table)
+
+    def related_model_short(self, table: str) -> str:
+        return short_class(self.related_model_fqcn(table))
+
+    def related_resource_fqcn(self, table: str) -> str | None:
+        """RelationResource que importa el Resource para la FK a `table`; `None` = sin Resource."""
+        target = self.relation_targets.get(table)
+        if target and target.no_resource:
+            return None
+        if target and target.resource_fqcn:
+            return target.resource_fqcn
+        return self.layout.fqcn("relation_resource", table)
+
+    def related_resource_short(self, table: str) -> str | None:
+        fqcn = self.related_resource_fqcn(table)
+        return short_class(fqcn) if fqcn else None
+
+    def related_resource_schema(self, table: str) -> str | None:
+        """Nombre del @OA\\Schema del RelationResource relacionado (`XRelationResource` -> `XRelationSchema`)."""
+        short = self.related_resource_short(table)
+        return schema_of(short) if short else None
+
+    def schema_name(self, role: str) -> str:
+        """Nombre del @OA\\Schema del Resource de `role` (`{Modulo}Resource` -> `{Modulo}Schema`)."""
+        return schema_of(self.cls(role))
 
     @property
     def prefijo_studly(self) -> str:
@@ -163,7 +236,7 @@ class ModuleManifest:
 
     @property
     def user_model_needs_import(self) -> bool:
-        return self.user_model_namespace != "" and self.user_model_namespace != f"App\\Models\\db{self.prefijo}"
+        return self.user_model_namespace != "" and self.user_model_namespace != self.ns("model")
 
 
 def build_manifest(
@@ -179,7 +252,11 @@ def build_manifest(
     user_model_class: str = DEFAULT_USER_MODEL_CLASS,
     supports_pagination: bool = True,
     add_comments: bool = True,
+    layout: StructureLayout | None = None,
+    relation_targets: dict[str, RelationTarget] | None = None,
 ) -> ModuleManifest:
+    layout = layout or STANDARD_LAYOUT
+    relation_targets = dict(relation_targets or {})
     prefijo, modulo = naming.split_prefijo_modulo(table)
     modulo_studly = naming.studly(modulo)
 
@@ -244,12 +321,16 @@ def build_manifest(
         f.relation_alias = f.fk_related_modulo_snake
 
         fk_prefijo, _ = naming.split_prefijo_modulo(f.fk_table)
+        target = relation_targets.get(f.fk_table)
+        model_fqcn = target.model_fqcn if target and target.model_fqcn else layout.fqcn("model", f.fk_table)
         relations.append(
             ManifestRelation(
                 column=f.name,
                 method=f.relation_method,
-                model_class=naming.model_class_name(f.fk_table),
+                model_class=short_class(model_fqcn),
                 fk_table_prefijo=fk_prefijo,
+                fk_table=f.fk_table,
+                model_fqcn=model_fqcn,
             )
         )
 
@@ -266,6 +347,8 @@ def build_manifest(
         soft_delete_column=soft_delete_col,
         supports_pagination=supports_pagination,
         add_comments=add_comments,
+        layout=layout,
+        relation_targets=relation_targets,
     )
 
 
@@ -310,12 +393,9 @@ class Renderer:
         included = self._included(manifest)
         casts = [(f.name, f.cast) for f in included if f.cast]
 
-        cross_prefix_imports = sorted(
-            {
-                (rel.fk_table_prefijo, rel.model_class)
-                for rel in manifest.relations
-                if rel.fk_table_prefijo != manifest.prefijo
-            }
+        # Los Models relacionados que viven en otro namespace se importan; los del mismo no hace falta.
+        model_imports = sorted(
+            {rel.model_fqcn for rel in manifest.relations if namespace_of(rel.model_fqcn) != manifest.ns("model")}
         )
         return self._render(
             "Model.php.j2",
@@ -323,18 +403,28 @@ class Renderer:
             fields=included,
             casts=casts,
             relations=manifest.relations,
-            cross_prefix_imports=cross_prefix_imports,
+            model_imports=model_imports,
         )
 
     def render_service_php(self, manifest: ModuleManifest) -> str:
         included = self._included(manifest)
 
-        own = (manifest.prefijo, manifest.model_class)
-        relation_imports = sorted(
-            {(rel.fk_table_prefijo, rel.model_class) for rel in manifest.relations} - {own}
+        own = manifest.fqcn("model")
+        relation_imports = sorted({rel.model_fqcn for rel in manifest.relations} - {own})
+        # AbstractModuleService y CrudService se resuelven por namespace: si el Service no vive
+        # en App\Services (estructura propia del proyecto), hay que importarlos.
+        base_imports = (
+            []
+            if manifest.ns("service") == "App\\Services"
+            else ["App\\Services\\AbstractModuleService", "App\\Services\\CrudService"]
         )
         return self._render(
-            "Service.php.j2", manifest, fields=included, relations=manifest.relations, relation_imports=relation_imports
+            "Service.php.j2",
+            manifest,
+            fields=included,
+            relations=manifest.relations,
+            relation_imports=relation_imports,
+            base_imports=base_imports,
         )
 
     def render_filters_php(self, manifest: ModuleManifest) -> str:
@@ -353,13 +443,9 @@ class Renderer:
     def _fk_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
         return [f for f in self._included(manifest) if f.is_fk]
 
-    def _fk_model_imports(self, manifest: ModuleManifest) -> list[tuple[str, str]]:
+    def _fk_model_imports(self, manifest: ModuleManifest) -> list[str]:
         return sorted(
-            {
-                (f.fk_table_prefijo, f.fk_table)
-                for f in self._fk_fields(manifest)
-                if f.fk_table_prefijo and f.fk_table
-            }
+            {manifest.related_model_fqcn(f.fk_table) for f in self._fk_fields(manifest) if f.fk_table}
         )
 
     def _non_fk_fields(self, manifest: ModuleManifest) -> list[ManifestField]:
@@ -378,12 +464,14 @@ class Renderer:
         responde su propio ?tiny=true (ver ApiResponse.md#Resource triple)."""
         return [f for f in self._included(manifest) if f.relation]
 
-    def _fk_resource_imports(self, manifest: ModuleManifest) -> list[tuple[str, str]]:
+    def _fk_resource_imports(self, manifest: ModuleManifest) -> list[str]:
+        """RelationResources que importa el Resource: los que confirmó el desarrollador o, si no,
+        los de la convención -- los FK marcados "sin Resource" no importan nada."""
         return sorted(
             {
-                (f.fk_table_prefijo_studly, f.fk_related_modulo_studly)
+                fqcn
                 for f in self._fk_fields(manifest)
-                if f.fk_table_prefijo_studly and f.fk_related_modulo_studly
+                if f.fk_table and (fqcn := manifest.related_resource_fqcn(f.fk_table))
             }
         )
 
@@ -571,6 +659,48 @@ def write_files(
             target.write_text(contents["audit_user"], encoding="utf-8")
             written["audit_user"] = target
 
+    return written
+
+
+def render_related_relation_resource(
+    table: str,
+    columns: list[Column],
+    *,
+    layout: StructureLayout,
+    add_comments: bool = True,
+    renderer: Renderer | None = None,
+) -> tuple[Path, str]:
+    """RelationResource mínimo de una tabla relacionada que todavía no tiene uno: `id` más hasta dos
+    columnas descriptivas (las de texto primero). Devuelve (ruta relativa según el layout, contenido).
+    Con `columns` vacío queda solo `id`: el desarrollador lo completa a mano."""
+    # Las columnas `*_id` son FK (llaves internas), no datos descriptivos de la entidad.
+    business = [c for c in mapping.business_columns(columns) if not c.name.endswith("_id")]
+    text_columns = [c for c in business if mapping.is_searchable(mapping.parse_sql_type(c.sql_type))]
+    chosen = [c.name for c in (text_columns + [c for c in business if c not in text_columns])[:2]]
+    manifest = build_manifest(
+        table,
+        columns,
+        fk_resolutions={},
+        unique_indexes={},
+        relation_fields=set(chosen),
+        layout=layout,
+        add_comments=add_comments,
+    )
+    content = (renderer or Renderer()).render_relation_resource_php(manifest)
+    return layout.path("relation_resource", table), content
+
+
+def write_new_files(backend_root: Path, files: dict[Path, str]) -> list[Path]:
+    """Escribe archivos que todavía no existen (rutas relativas a `backend_root`). Nunca sobreescribe:
+    un archivo que ya está en el destino se salta. Devuelve las rutas realmente escritas."""
+    written: list[Path] = []
+    for relative, content in files.items():
+        target = backend_root / relative
+        if target.exists():
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding="utf-8")
+        written.append(target)
     return written
 
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\{{ manifest.prefijo_studly }}\Traits\{{ manifest.modulo_studly }};
+namespace {{ manifest.ns('trait') }};
 
-trait Validates{{ manifest.modulo_studly }}
+trait {{ manifest.cls('trait') }}
 {
     /**
      * Reglas para campos que son FK (llegan como UUID desde el frontend).

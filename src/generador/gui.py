@@ -17,8 +17,8 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import QEvent, Qt, QStringListModel, QThread, QTimer, Signal
-from PySide6.QtGui import QAction, QColor, QSyntaxHighlighter, QTextCharFormat, QTextCursor
+from PySide6.QtCore import Qt, QStringListModel, QThread, QUrl, Signal
+from PySide6.QtGui import QAction, QColor, QDesktopServices, QSyntaxHighlighter, QTextCharFormat, QTextCursor
 from PySide6.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -65,12 +65,19 @@ from . import (
     model_resource_scan,
     naming,
     project_scan,
+    relation_map,
+    relation_resolution,
     scaffold,
     standard_docs,
+    structure_profile,
+    structure_scan,
     table_mapping,
 )
+from . import layout as layout_module
+from .gui_dialogs import ProjectStructureDialog, RelationMapDialog, RelationsDialog, confirm_overwrite_edits
 from .settings import Settings
 from .theme import build_stylesheet, palette, status_colors
+from .widgets import SearchableComboBox
 
 _GRID_COLUMNS = ["Campo", "Tipo SQL", "Nullable", "Incluir", "Relación", "Tiny", "FK -> tabla"]
 
@@ -366,87 +373,6 @@ class BackupProgressDialog(QDialog):
             event.accept()
 
 
-class SearchableComboBox(QComboBox):
-    """Combo que se puede escribir para filtrar: con listas largas (tablas de
-    una BD con cientos de tablas) buscar con el scroll es tedioso.
-
-    - Filtra la lista mientras se escribe, por coincidencia en cualquier parte
-      del texto (no solo el prefijo) y sin distinguir mayúsculas.
-    - Al confirmar (Enter, elegir del popup o salir del campo) el texto tiene
-      que ser un ítem de la lista -- exacto, o el único que contiene lo escrito.
-      Si no, vuelve al último valor válido, así el combo nunca queda con texto
-      que no corresponde a nada (salvo `allow_free_text=True`, para campos donde
-      escribir un valor que no está en la lista es legítimo).
-    - `setCurrentText` selecciona el ítem igual que en un combo no editable,
-      así `currentIndexChanged` sirve tanto para cambios del usuario como
-      programáticos (en un combo editable `currentTextChanged`, en cambio, se
-      dispara con cada tecla)."""
-
-    def __init__(self, parent=None, *, allow_free_text: bool = False) -> None:
-        super().__init__(parent)
-        self._allow_free_text = allow_free_text
-        self.setEditable(True)
-        self.setInsertPolicy(QComboBox.NoInsert)
-        self.setMaxVisibleItems(15)
-
-        completer = QCompleter(self.model(), self)
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
-        completer.setFilterMode(Qt.MatchContains)
-        completer.setCompletionMode(QCompleter.PopupCompletion)
-        self.setCompleter(completer)
-
-        self.lineEdit().editingFinished.connect(self._commit_typed_text)
-        # Al entrar al campo se selecciona todo el texto: el combo muestra el
-        # valor actual, y sin esto habría que borrarlo a mano antes de escribir
-        # lo que se busca (el texto tipeado se agregaría al final del valor).
-        self._select_all_on_release = False
-        self.lineEdit().installEventFilter(self)
-
-    def eventFilter(self, watched, event) -> bool:  # noqa: N802 — override Qt
-        if watched is self.lineEdit():
-            kind = event.type()
-            if kind == QEvent.MouseButtonPress and not watched.hasFocus():
-                # El clic que da el foco reposiciona el cursor: se selecciona al soltar.
-                self._select_all_on_release = True
-            elif kind == QEvent.MouseButtonRelease and self._select_all_on_release:
-                self._select_all_on_release = False
-                watched.selectAll()
-        return super().eventFilter(watched, event)
-
-    def focusInEvent(self, event) -> None:  # noqa: N802 — override Qt
-        # Entrada con Tab o al activarse la ventana (el clic se maneja arriba).
-        # QComboBox reenvía este evento al QLineEdit sin pasar por el filtro.
-        super().focusInEvent(event)
-        if event.reason() not in (Qt.MouseFocusReason, Qt.PopupFocusReason):
-            QTimer.singleShot(0, self.lineEdit().selectAll)
-
-    def setCurrentText(self, text: str) -> None:  # noqa: N802 — override Qt
-        index = self.findText(text, Qt.MatchExactly)
-        if index >= 0:
-            self.setCurrentIndex(index)
-        else:
-            super().setCurrentText(text)
-
-    def _matching_index(self, text: str) -> int:
-        index = self.findText(text, Qt.MatchFixedString)  # exacto, sin distinguir mayúsculas
-        if index >= 0:
-            return index
-        needle = text.lower()
-        contains = [i for i in range(self.count()) if needle in self.itemText(i).lower()]
-        return contains[0] if len(contains) == 1 else -1
-
-    def _commit_typed_text(self) -> None:
-        if self._allow_free_text:
-            return
-        text = self.lineEdit().text().strip()
-        index = self._matching_index(text) if text else -1
-        if index >= 0:
-            self.setCurrentIndex(index)
-            self.lineEdit().setText(self.itemText(index))
-        else:
-            self.lineEdit().setText(self.itemText(self.currentIndex()) if self.currentIndex() >= 0 else "")
-
-
 class FkResolutionDialog(QDialog):
     """Bloqueante: el desarrollador elige la tabla para cada FK ambigua o sin candidatos."""
 
@@ -502,6 +428,14 @@ class FkResolutionDialog(QDialog):
         return result
 
 
+def _relative_posix(path: Path, root: Path) -> str:
+    """`path` relativa a `root` con '/', o "" si no está dentro (rutas portables entre PCs)."""
+    try:
+        return Path(path).relative_to(root).as_posix()
+    except ValueError:
+        return ""
+
+
 class ModelResourceMatchDialog(QDialog):
     """Confirmar o corregir qué Resource(s) ya existentes en el proyecto
     corresponden al Model de la tabla analizada — ver model_resource_scan.py.
@@ -514,8 +448,15 @@ class ModelResourceMatchDialog(QDialog):
     convención de esta herramienta — más de uno puede ser correcto a la vez.
     """
 
-    def __init__(self, match: "model_resource_scan.ModelResourceMatch", parent=None) -> None:
+    def __init__(
+        self,
+        match: "model_resource_scan.ModelResourceMatch",
+        parent=None,
+        *,
+        remembered_paths: "set[Path] | None" = None,
+    ) -> None:
         super().__init__(parent)
+        remembered_paths = remembered_paths or set()
         self.setWindowTitle(f"Model/Resource existentes — {match.table}")
         self.setMinimumWidth(560)
         self.match = match
@@ -538,7 +479,8 @@ class ModelResourceMatchDialog(QDialog):
                 checkbox = QCheckBox(
                     f"{resource.class_name}  [{resource.role}]  —  confianza {candidate.score:.0%}  —  {resource.path}"
                 )
-                checkbox.setChecked(candidate.score >= 0.65)
+                # lo que ya se confirmó antes viene tildado aunque la red hoy le dé menos confianza
+                checkbox.setChecked(candidate.score >= 0.65 or resource.path in remembered_paths)
                 self._checkboxes.append(checkbox)
                 layout.addWidget(checkbox)
         else:
@@ -889,12 +831,13 @@ class SettingsDialog(QDialog):
         form.addRow("Idioma:", self.language_combo)
         layout.addLayout(form)
 
-        mapping_box = QGroupBox("Mapeo de relaciones (.md)")
+        mapping_box = QGroupBox("Mapeo de columnas FK (.md)")
         mapping_layout = QVBoxLayout(mapping_box)
         hint = QLabel(
             "Importá un .md con columnas FK ya conocidas (columna → tabla) para no "
             "repreguntarlas, o exportá las que se resolvieron en esta sesión para "
-            "compartirlas con el equipo — ver Script Generador Backend.md."
+            "compartirlas con el equipo — ver Script Generador Backend.md. El mapa de "
+            "Models/Resources confirmados (con wikilinks) está en el menú Mapa."
         )
         hint.setWordWrap(True)
         mapping_layout.addWidget(hint)
@@ -1409,6 +1352,18 @@ class MainWindow(QMainWindow):
         # nuevo encima del que ya hay.
         self.confirmed_resources: dict[str, Path] = {}
 
+        # Estructura del proyecto (dónde va cada archivo y cómo se llama) y mapa de lo que el
+        # desarrollador confirmó (ver layout.py / relation_map.py). Se cargan al elegir la raíz
+        # del backend; sin proyecto, se usa el estándar.
+        self.structure_layout: layout_module.StructureLayout = layout_module.STANDARD_LAYOUT
+        self.layout_decision: str | None = None
+        self.relation_map: relation_map.RelationMap | None = None
+        self.relation_targets: dict[str, generator.RelationTarget] = {}
+        self._pending_generated_relations: list[str] = []
+        self._repo_index: structure_scan.RepoIndex | None = None
+        self._structure_prompt_declined = False
+        self._last_rendered: dict[str, str] = {}
+
         self.backend_root: Path | None = None
         self.frontend_root: Path | None = None
 
@@ -1446,6 +1401,21 @@ class MainWindow(QMainWindow):
         logs_action = QAction("Historial de generación…", self)
         logs_action.triggered.connect(self._on_open_logs)
         logs_menu.addAction(logs_action)
+
+        map_menu = menu_bar.addMenu("&Mapa")
+        for text, handler in (
+            ("Mapa del proyecto…", self._on_open_relation_map),
+            ("Estructura del proyecto…", self._on_open_structure),
+            (None, None),
+            ("Exportar mapa…", self._on_export_relation_map),
+            ("Importar mapa…", self._on_import_relation_map),
+        ):
+            if text is None:
+                map_menu.addSeparator()
+                continue
+            action = QAction(text, self)
+            action.triggered.connect(handler)
+            map_menu.addAction(action)
 
         standard_menu = menu_bar.addMenu("&Estándar")
         standard_action = QAction("Ver estándar del proyecto…", self)
@@ -1652,9 +1622,13 @@ class MainWindow(QMainWindow):
         backend_browse.clicked.connect(self._on_choose_backend_root)
         scan_btn = QPushButton("Analizar proyecto")
         scan_btn.clicked.connect(self._on_scan_backend_project)
+        structure_btn = QPushButton("Estructura…")
+        structure_btn.setToolTip("Compará la estructura del estándar con la del proyecto y elegí cuál usar.")
+        structure_btn.clicked.connect(self._on_open_structure)
         backend_row.addWidget(self.backend_root_input)
         backend_row.addWidget(backend_browse)
         backend_row.addWidget(scan_btn)
+        backend_row.addWidget(structure_btn)
         form.addRow("Backend (raíz):", backend_row)
 
         # `$connection` de Eloquent: es una propiedad del PROYECTO (las
@@ -1954,6 +1928,7 @@ class MainWindow(QMainWindow):
         if chosen:
             self.backend_root = Path(chosen)
             self.backend_root_input.setText(chosen)
+            self._load_project_state()
             self._refresh_eloquent_connections()
 
     def _on_choose_frontend_root(self) -> None:
@@ -1979,6 +1954,255 @@ class MainWindow(QMainWindow):
             prefijo=prefijo,
             project_name=project_name,
         ).exec()
+
+    # ------------------------------------------------- estructura y mapa
+    def _load_project_state(self) -> None:
+        """Al elegir el backend: su mapa de lo confirmado y la estructura que ya se había decidido."""
+        self._repo_index = None
+        self._structure_prompt_declined = False
+        self.structure_layout = layout_module.STANDARD_LAYOUT
+        self.layout_decision = None
+        if not self.backend_root:
+            self.relation_map = None
+            return
+        self.relation_map = relation_map.RelationMap.for_project(self.backend_root)
+        saved = self.relation_map.load_layout()
+        if saved is not None:
+            self.structure_layout, self.layout_decision = saved
+
+    def _get_repo_index(self, *, refresh: bool = False) -> structure_scan.RepoIndex:
+        if self._repo_index is None or refresh:
+            self._repo_index = structure_scan.scan_repo(self.backend_root)
+        return self._repo_index
+
+    def _ensure_structure_decided(self, *, example_table: str) -> None:
+        """Primera vez que se analiza una tabla con este backend: muestra la estructura detectada
+        frente al estándar para que el desarrollador decida. Si cancela, no vuelve a preguntar en la
+        sesión (se usa el estándar); se puede abrir cuando quiera desde "Estructura…"."""
+        if not self.backend_root or self.layout_decision is not None or self._structure_prompt_declined:
+            return
+        if not self._open_structure_dialog(example_table=example_table, refresh_preview=False):
+            self._structure_prompt_declined = True
+
+    def _open_structure_dialog(self, *, example_table: str, refresh_preview: bool = True) -> bool:
+        structure = structure_profile.detect_layout(self.backend_root, index=self._get_repo_index(refresh=True))
+        dialog = ProjectStructureDialog(
+            structure,
+            self.structure_layout,
+            first_time=self.layout_decision is None,
+            example_table=example_table,
+            parent=self,
+        )
+        if dialog.exec() != QDialog.Accepted:
+            return False
+        self.structure_layout = dialog.result_layout()
+        self.layout_decision = dialog.decision()
+        if self.relation_map is not None:
+            self.relation_map.save_layout(self.structure_layout, self.layout_decision)
+        self.status_label.setText(f"Estructura del proyecto: {self.layout_decision}.")
+        if refresh_preview and self.current_table:
+            self._on_update_preview()  # con las rutas y namespaces nuevos
+        return True
+
+    def _on_open_structure(self) -> None:
+        if not self.backend_root:
+            QMessageBox.warning(self, "Falta la raíz del backend", "Elegí primero la carpeta del proyecto backend.")
+            return
+        self._open_structure_dialog(example_table=self.current_table or "catalogo_ejemplo")
+
+    def _on_open_relation_map(self) -> None:
+        if self.relation_map is None:
+            QMessageBox.warning(self, "Falta la raíz del backend", "Elegí primero la carpeta del proyecto backend.")
+            return
+        dialog = RelationMapDialog(self.relation_map, self)
+        dialog.export_btn.clicked.connect(self._on_export_relation_map)
+        dialog.import_btn.clicked.connect(lambda: (self._on_import_relation_map(), dialog.reload()))
+        dialog.open_btn.clicked.connect(lambda: QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.relation_map.folder))))
+        dialog.exec()
+
+    def _on_export_relation_map(self) -> None:
+        if self.relation_map is None or not (self.relation_map.tables() or self.relation_map.load_layout()):
+            QMessageBox.information(
+                self,
+                "Nada para exportar",
+                "Todavía no hay nada confirmado en el mapa de este proyecto. Se llena al confirmar las relaciones antes de generar.",
+            )
+            return
+        chosen = QFileDialog.getExistingDirectory(
+            self, "Exportar el mapa a una carpeta (por ejemplo, un vault de Obsidian)"
+        )
+        if not chosen:
+            return
+        destination = Path(chosen) / f"mapa-{self.relation_map.folder.name}"
+        try:
+            count = self.relation_map.export_to(destination)
+        except OSError as exc:
+            QMessageBox.critical(self, "Error al exportar", str(exc))
+            return
+        QMessageBox.information(self, "Mapa exportado", f"Se exportaron {count} nota(s) a:\n{destination}")
+
+    def _on_import_relation_map(self) -> None:
+        if self.relation_map is None:
+            QMessageBox.warning(self, "Falta la raíz del backend", "Elegí primero la carpeta del proyecto backend.")
+            return
+        chosen = QFileDialog.getExistingDirectory(self, "Carpeta con las notas del mapa (.md) a importar")
+        if not chosen:
+            return
+        try:
+            count = self.relation_map.import_from(Path(chosen))
+        except OSError as exc:
+            QMessageBox.critical(self, "Error al importar", str(exc))
+            return
+        saved = self.relation_map.load_layout()
+        if saved is not None and self.layout_decision is None:
+            self.structure_layout, self.layout_decision = saved
+        QMessageBox.information(self, "Mapa importado", f"Se importaron {count} nota(s) de tabla desde:\n{chosen}")
+
+    def _remember_file(self, table: str, role: str, namespace: str, class_name: str, path: Path | str) -> None:
+        """Recuerda en el mapa un archivo que el desarrollador confirmó para `table` (ruta relativa al backend)."""
+        if self.relation_map is None or self.backend_root is None or role not in relation_map.FILE_ROLES:
+            return
+        fqcn = f"{namespace}\\{class_name}" if namespace else class_name
+        try:
+            relative = Path(path).relative_to(self.backend_root).as_posix()
+        except ValueError:
+            relative = ""
+        self.relation_map.remember(table, role, fqcn, relative)
+
+    def _remembered_paths(self, table: str) -> set[Path]:
+        if self.relation_map is None or self.backend_root is None:
+            return set()
+        note = self.relation_map.get(table)
+        if note is None:
+            return set()
+        return {self.backend_root / ref.path for ref in note.files.values() if ref.path}
+
+    def _related_columns(self, tables: list[str]) -> dict[str, set[str]]:
+        """Columnas reales de las tablas relacionadas (mejoran las features de la red); vacío sin conexión."""
+        result: dict[str, set[str]] = {}
+        if not self.conn:
+            return result
+        for table in tables:
+            try:
+                result[table] = {c.name for c in db.describe_table(self.conn, table)}
+            except Exception:  # noqa: BLE001 -- una tabla que no se puede leer no debe frenar la generación
+                continue
+        return result
+
+    def _confirm_relations(self) -> bool:
+        """Antes de escribir: el desarrollador confirma qué Model y qué RelationResource usa el código
+        para cada tabla relacionada. La red propone con su confianza, no decide. False si cancela."""
+        manifest = self._build_manifest()
+        if manifest is None:
+            return False
+        related: dict[str, list[str]] = {}
+        for rel in manifest.relations:
+            related.setdefault(rel.fk_table, []).append(rel.column)
+        self._pending_generated_relations = []
+        if not related or self.backend_root is None:
+            self.relation_targets = {}
+            return True
+
+        choices = relation_resolution.build_choices(
+            self._get_repo_index(),
+            self.match_learner,
+            self.relation_map,
+            self.structure_layout,
+            related,
+            columns_by_table=self._related_columns(list(related)),
+        )
+        dialog = RelationsDialog(choices, module_table=manifest.table, parent=self)
+        if dialog.exec() != QDialog.Accepted:
+            return False
+
+        confirmations = dialog.confirmations()
+        relation_resolution.apply_confirmation(
+            self.relation_map,
+            self.match_learner,
+            choices,
+            confirmations,
+            module_table=manifest.table,
+            module_relations={rel.column: rel.fk_table for rel in manifest.relations},
+        )
+        self.relation_targets = relation_resolution.to_targets(confirmations, self.structure_layout)
+        self._pending_generated_relations = [
+            c.table for c in confirmations if c.resource == relation_resolution.GENERATE
+        ]
+        self._refresh_preview_after_relations()
+        return True
+
+    def _refresh_preview_after_relations(self) -> None:
+        """Lo confirmado cambia los imports de Model/Service/Filters/Resource: se vuelve a renderizar y
+        se actualizan las pestañas, salvo las que el desarrollador editó a mano (ahí se pregunta)."""
+        manifest = self._build_manifest()
+        if manifest is None:
+            return
+        self.current_manifest = manifest
+        fresh = generator.render_all(manifest)
+        titles = dict(_PREVIEW_TABS)
+        edited: list[str] = []
+        for key in ("model", "service", "filters", "resource"):
+            widget = self.preview_widgets.get(key)
+            if widget is None or fresh[key] == self._last_rendered.get(key):
+                continue
+            if widget.toPlainText() == self._last_rendered.get(key, widget.toPlainText()):
+                widget.setPlainText(fresh[key])
+                self._last_rendered[key] = fresh[key]
+            else:
+                edited.append(key)
+        if edited and confirm_overwrite_edits(self, [titles.get(k, k) for k in edited]):
+            for key in edited:
+                self.preview_widgets[key].setPlainText(fresh[key])
+                self._last_rendered[key] = fresh[key]
+
+    def _write_generated_relation_resources(self, backend_root: Path) -> dict[str, tuple[Path, str]]:
+        """Escribe los RelationResource que el desarrollador pidió generar para tablas relacionadas
+        que no tenían uno (nunca sobreescribe) y recién ahí los recuerda en el mapa."""
+        generated: dict[str, tuple[Path, str]] = {}
+        files: dict[Path, str] = {}
+        for table in self._pending_generated_relations:
+            columns: list[db.Column] = []
+            if self.conn:
+                try:
+                    columns = db.describe_table(self.conn, table)
+                except Exception:  # noqa: BLE001 -- sin columnas queda un RelationResource con solo `id`
+                    columns = []
+            path, content = generator.render_related_relation_resource(
+                table,
+                columns,
+                layout=self.structure_layout,
+                add_comments=self.add_comments_checkbox.isChecked(),
+            )
+            files[path] = content
+            generated[table] = (path, content)
+        written = {p.relative_to(backend_root) for p in generator.write_new_files(backend_root, files)}
+        result: dict[str, tuple[Path, str]] = {}
+        for table, (path, content) in generated.items():
+            if (backend_root / path).exists():
+                relation_resolution.remember_generated(
+                    self.relation_map, table, self.structure_layout.fqcn("relation_resource", table), path.as_posix()
+                )
+            if path in written:
+                result[table] = (backend_root / path, content)
+        self._pending_generated_relations = []
+        return result
+
+    def _remember_generated_module(
+        self, manifest: generator.ModuleManifest, written: dict[str, Path], backend_root: Path
+    ) -> None:
+        """Lo que se acaba de generar ya existe y sigue la estructura elegida: se recuerda para esta
+        tabla, así el próximo módulo con una FK a ella lo trae confirmado."""
+        if self.relation_map is None:
+            return
+        for role in relation_map.FILE_ROLES:
+            if role not in written:
+                continue
+            self.relation_map.remember(
+                manifest.table,
+                role,
+                manifest.fqcn(role),
+                _relative_posix(written[role], backend_root),
+            )
 
     def _refresh_eloquent_connections(self) -> None:
         """Llena el combo de `$connection` con las conexiones de
@@ -2114,6 +2338,12 @@ class MainWindow(QMainWindow):
                         column, base, candidates, "resolved_from_cache", table_name
                     )
 
+        # La estructura (dónde va cada archivo) se decide antes de armar el preview: cambia rutas,
+        # namespaces e imports de todo lo que se genera.
+        self._ensure_structure_decided(example_table=table)
+        self.relation_targets = {}
+        self._pending_generated_relations = []
+
         self.current_table = table
         self.current_columns = business_columns
         self.current_resolutions = resolutions
@@ -2183,7 +2413,7 @@ class MainWindow(QMainWindow):
         if match is None:
             return
 
-        dialog = ModelResourceMatchDialog(match, self)
+        dialog = ModelResourceMatchDialog(match, self, remembered_paths=self._remembered_paths(match.table))
         if dialog.exec() != QDialog.Accepted:
             return
 
@@ -2209,6 +2439,9 @@ class MainWindow(QMainWindow):
         for i in confirmed:
             resource = match.candidates[i].resource
             self.confirmed_resources[(match.table, resource.role)] = resource.path
+            self._remember_file(match.table, resource.role, resource.namespace, resource.class_name, resource.path)
+        if match.model is not None:
+            self._remember_file(match.table, "model", match.model.namespace, match.model.class_name, match.model.path)
 
         if confirmed:
             names = ", ".join(match.candidates[i].resource.class_name for i in confirmed)
@@ -2351,6 +2584,8 @@ class MainWindow(QMainWindow):
             user_model_class=user_model_class,
             supports_pagination=self.pagination_checkbox.isChecked(),
             add_comments=self.add_comments_checkbox.isChecked(),
+            layout=self.structure_layout,
+            relation_targets=self.relation_targets,
         )
 
     def _on_update_preview(self) -> None:
@@ -2359,6 +2594,7 @@ class MainWindow(QMainWindow):
             return
         self.current_manifest = manifest
         contents = generator.render_all(manifest)
+        self._last_rendered = dict(contents)  # para saber después qué pestañas se editaron a mano
         for key, content in contents.items():
             if key in self.preview_widgets:
                 self.preview_widgets[key].setPlainText(content)
@@ -2413,6 +2649,11 @@ class MainWindow(QMainWindow):
             if proceed != QMessageBox.Yes:
                 return
 
+        # Antes de escribir nada: el desarrollador confirma qué Model y qué RelationResource usa el
+        # código para cada tabla relacionada (la red propone, no decide) -- ver RelationsDialog.
+        if not self._confirm_relations():
+            return
+
         # Si el preview nunca se actualizó a mano, lo generamos ahora para no
         # escribir pestañas vacías.
         if self.current_manifest is None:
@@ -2465,22 +2706,29 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error al generar archivos", str(exc))
             return
 
+        generated_relations = self._write_generated_relation_resources(write_backend_root)
+        self._remember_generated_module(manifest, written, write_backend_root)
+        self._repo_index = None  # hay archivos nuevos: el próximo análisis tiene que volver a mirar
+
         elapsed = (
             time.monotonic() - self._analysis_started_at
             if self._analysis_started_at is not None
             else 0.0
         )
+        contents_by_key = {key: contents[key] for key in written if key in contents}
+        for table, (_path, content) in generated_relations.items():
+            contents_by_key[f"relation_resource:{table}"] = content
         entry = logs.build_entry(
             table=manifest.table,
             fk_count=len(manifest.relations),
             field_count=len([f for f in manifest.fields if f.include]),
             elapsed_seconds=elapsed,
-            contents_by_key={key: contents[key] for key in written if key in contents},
+            contents_by_key=contents_by_key,
         )
         logs.append_entry(entry)
         self._analysis_started_at = None
 
-        listing = "\n".join(f"- {p}" for p in written.values())
+        listing = "\n".join(f"- {p}" for p in [*written.values(), *(path for path, _ in generated_relations.values())])
         QMessageBox.information(
             self,
             "Archivos generados",

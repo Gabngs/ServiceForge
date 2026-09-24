@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Services;
+namespace {{ manifest.ns('service') }};
 
-use App\Models\db{{ manifest.prefijo }}\{{ manifest.model_class }};
-{% for prefijo, model_class in relation_imports %}
-use App\Models\db{{ prefijo }}\{{ model_class }};
+use {{ manifest.fqcn('model') }};
+{% for fqcn in relation_imports %}
+use {{ fqcn }};
+{% endfor %}
+{% for fqcn in base_imports %}
+use {{ fqcn }};
 {% endfor %}
 
-class {{ manifest.modulo_studly }}Service extends AbstractModuleService
+class {{ manifest.cls('service') }} extends AbstractModuleService
 {
     public function __construct(protected CrudService $crud) {}
 

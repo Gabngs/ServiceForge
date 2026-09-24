@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\{{ manifest.prefijo_studly }}\{{ manifest.model_class }}Controller;
+use {{ manifest.fqcn('controller') }};
 use Illuminate\Support\Facades\Route;
 
 // Se fuerza el parameter name explícito para que el Route Model Binding
 // inyecte la variable con el mismo nombre que usa el Controller/Service
 // (evita que Laravel intente singularizar "{{ manifest.table }}" y rompa el binding).
-Route::apiResource('{{ manifest.table }}', {{ manifest.model_class }}Controller::class)
+Route::apiResource('{{ manifest.table }}', {{ manifest.cls('controller') }}::class)
     ->parameters(['{{ manifest.table }}' => '{{ manifest.table }}']);

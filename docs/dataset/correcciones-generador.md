@@ -28,6 +28,8 @@ Ejemplo real: en SIAW el generador creó estas carpetas propias:
 | Controller | `App\Http\Controllers\Api\Catalogo\...` | `App\Http\Controllers\Api\dbsiaw\{tabla}Controller` |
 | Route | `routes/modules/` (nada lo carga) | `routes/{tabla}.php` + registro en `RouteServiceProvider` |
 
+> **Implementado en 2.3.1:** el generador detecta la estructura del proyecto (`structure_profile.detect_layout`), la compara con el estándar en un diálogo y genera dentro de la elegida (`layout.py`). Queda pendiente lo que este apartado dice de la Base Request, el middleware de rutas y el registro en `RouteServiceProvider`.
+
 Esas carpetas vacías quedaron en el repo (`app/Models/dbcatalogo`, `app/Http/Requests/Catalogo`, `app/Http/Resources/Catalogo`, `app/Http/Controllers/Api/Catalogo`, `routes/modules`). **No** deben contar como “estructura existente” en el escaneo (ver §8.4).
 
 ---
@@ -142,6 +144,8 @@ La conexión elegida se usa en:
 ---
 
 ## 7. RelationResources de las FK
+
+> **Implementado en 2.3.1:** un diálogo antes de generar propone, por cada FK, el Model y el RelationResource que existen en el proyecto (la red con su confianza, o lo confirmado antes en el mapa), permite elegir otro, "generar nuevo" o "sin Resource", y solo guarda lo validado (`relation_resolution.py`, `relation_map.py`).
 
 **Defecto:** `ParametrosistemaResource` importaba `Catalogo\TiposistemaRelationResource`, que no existe. Habría fallado al serializar.
 

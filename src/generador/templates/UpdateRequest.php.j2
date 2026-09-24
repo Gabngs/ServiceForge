@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\{{ manifest.prefijo_studly }}\{{ manifest.modulo_studly }};
+namespace {{ manifest.ns('update_request') }};
 
-use App\Http\Requests\{{ manifest.prefijo_studly }}\Traits\{{ manifest.modulo_studly }}\Validates{{ manifest.modulo_studly }};
+use {{ manifest.fqcn('trait') }};
 use Illuminate\Foundation\Http\FormRequest;
 
-class Update{{ manifest.modulo_studly }}Request extends FormRequest
+class {{ manifest.cls('update_request') }} extends FormRequest
 {
-    use Validates{{ manifest.modulo_studly }};
+    use {{ manifest.cls('trait') }};
 
     public function authorize(): bool
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models\db{{ manifest.prefijo }};
+namespace {{ manifest.ns('model') }};
 
-{% for prefijo, model_class in cross_prefix_imports %}
-use App\Models\db{{ prefijo }}\{{ model_class }};
+{% for fqcn in model_imports %}
+use {{ fqcn }};
 {% endfor %}
 {% if manifest.user_model_needs_import %}
 use {{ manifest.user_model_class }};
@@ -60,7 +60,7 @@ class {{ manifest.model_class }} extends Model
 {% endfor %}
 
     // created_by_id/updated_by_id/deleted_by_id son FKs como cualquier otra —
-    // ver `const RELATIONS` en {{ manifest.modulo_studly }}Service y Auditoría.md.
+    // ver `const RELATIONS` en {{ manifest.cls('service') }} y Auditoría.md.
     public function created_by(): BelongsTo
     {
         return $this->belongsTo({{ manifest.user_model_short_class }}::class, 'created_by_id', 'pkid');
